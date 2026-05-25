@@ -4,6 +4,11 @@ Render exported EMI recipe layouts (schema v2) in the browser. Unofficial—not 
 
 ## Usage
 
+```bash
+npm install emi-recipe-renderer
+# dist/emi.js and dist/emi.css after install
+```
+
 ```html
 <link rel="stylesheet" href="/path/to/emi.css">
 <script src="/path/to/emi.js"></script>
@@ -33,3 +38,15 @@ Cross-origin export needs CORS on `fetch`.
 ## API
 
 `EmiRecipeRenderer`, `EmiRecipeRenderer.mountAll`, `initEmiSlotCarousels`, `hideEmiTagPopover`.
+
+## Development
+
+Requires Node **18+** (see `.nvmrc`).
+
+```bash
+npm install
+npm run build    # dist/emi.js + dist/emi.css
+npm run watch    # rebuild on src changes
+```
+
+Point `demo/index.html` at a local export folder (symlink `demo/export` → your export root), then serve the repo root, e.g. `python3 -m http.server 8765`.

@@ -1,0 +1,41 @@
+{
+  "name": "emi-recipe-renderer",
+  "version": "0.1.0",
+  "description": "Browser renderer for exported EMI recipe layouts (schema v2)",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "type": "module",
+  "files": [
+    "dist",
+    "LICENSE"
+  ],
+  "main": "./dist/emi.js",
+  "exports": {
+    ".": "./dist/emi.js",
+    "./emi.css": "./dist/emi.css",
+    "./style.css": "./dist/emi.css"
+  },
+  "sideEffects": [
+    "*.css"
+  ],
+  "scripts": {
+    "build": "node esbuild.config.mjs",
+    "watch": "node esbuild.config.mjs --watch",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  },
+  "keywords": [
+    "emi",
+    "minecraft",
+    "recipe",
+    "renderer"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jmecn/emi-recipe-renderer.git"
+  }
+}
