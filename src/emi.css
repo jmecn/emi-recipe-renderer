@@ -296,6 +296,7 @@
   background: rgba(16, 16, 20, 0.95);
   border: 1px solid var(--border);
   border-radius: 4px;
+  color: var(--text);
   font-size: 0.8rem;
   pointer-events: none;
   display: none;
@@ -326,6 +327,7 @@
 .tag-popover-panel {
   margin-top: min(10vh, 48px);
   background: var(--panel);
+  color: var(--text);
   border: 1px solid var(--border);
   border-radius: 8px;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
@@ -335,6 +337,37 @@
 .tag-popover-header {
   padding: 12px 14px 8px;
   border-bottom: 1px solid var(--border);
+}
+
+.tag-popover-header-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.tag-popover-header-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.tag-popover-close {
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0 6px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.tag-popover-close:hover,
+.tag-popover-close:focus-visible {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.08);
+  outline: none;
 }
 
 .tag-popover-title {

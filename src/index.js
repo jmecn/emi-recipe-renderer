@@ -1246,11 +1246,23 @@
   }
 
   let tagPopoverAnchor = null;
+  let tagPopoverDismissInstalled = false;
 
   function hideEmiTagPopover(popEl) {
     const pop = popEl || document.getElementById('tag-popover');
     if (pop) pop.hidden = true;
     tagPopoverAnchor = null;
+  }
+
+  function installTagPopoverDismiss(pop) {
+    if (!pop || tagPopoverDismissInstalled) return;
+    tagPopoverDismissInstalled = true;
+    pop.addEventListener('click', (e) => {
+      if (e.target === pop) hideEmiTagPopover(pop);
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && pop && !pop.hidden) hideEmiTagPopover(pop);
+    });
   }
 
   function listPopoverItems(parsed) {
@@ -1309,6 +1321,7 @@
   }) {
     const pop = renderer._tagPopoverEl;
     if (!pop) return;
+    installTagPopoverDismiss(pop);
 
     if (tagPopoverAnchor === anchorEl && !pop.hidden) {
       hideEmiTagPopover(pop);
@@ -1329,14 +1342,33 @@
     const footer = pop.querySelector('.tag-popover-footer');
 
     header.replaceChildren();
+    const headRow = document.createElement('div');
+    headRow.className = 'tag-popover-header-row';
+
+    const headText = document.createElement('div');
+    headText.className = 'tag-popover-header-text';
     const titleEl = document.createElement('div');
     titleEl.className = 'tag-popover-title';
     titleEl.textContent = title;
     const subEl = document.createElement('div');
     subEl.className = 'tag-popover-emi-id';
     subEl.textContent = subtitle;
-    header.appendChild(titleEl);
-    header.appendChild(subEl);
+    headText.appendChild(titleEl);
+    headText.appendChild(subEl);
+
+    const closeBtn = document.createElement('button');
+    closeBtn.type = 'button';
+    closeBtn.className = 'tag-popover-close';
+    closeBtn.setAttribute('aria-label', 'Close');
+    closeBtn.textContent = '\u00d7';
+    closeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      hideEmiTagPopover(pop);
+    });
+
+    headRow.appendChild(headText);
+    headRow.appendChild(closeBtn);
+    header.appendChild(headRow);
     footer.textContent = subtitle;
 
     stageWrap.replaceChildren();

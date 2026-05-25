@@ -14,12 +14,22 @@ npm install emi-recipe-renderer
 <script src="/path/to/emi.js"></script>
 
 <div id="tooltip"></div>
-<div id="tag-popover" hidden></div>
+<div id="tag-popover" class="tag-popover" hidden>
+  <div class="tag-popover-panel">
+    <div class="tag-popover-header"></div>
+    <div class="tag-popover-stage-wrap"></div>
+    <div class="tag-popover-footer"></div>
+  </div>
+</div>
 
 <div class="emi-recipe" data-recipe-id="namespace:path"></div>
 
 <script>
-  EmiRecipeRenderer.mountAll({ baseUrl: '/your-export-root', lazy: true });
+  EmiRecipeRenderer.mountAll({
+    baseUrl: '/your-export-root',
+    injectIconStylesheets: true,
+    lazy: true,
+  });
 </script>
 ```
 

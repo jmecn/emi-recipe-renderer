@@ -5,20 +5,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>emi-recipe-renderer demo</title>
   <link rel="stylesheet" href="../dist/emi.css">
+  <link rel="stylesheet" href="demo.css">
 </head>
 <body>
   <p>
     <label>Export root <input id="base-url" type="text" value="export" size="40"></label>
     <button type="button" id="reload">Reload</button>
   </p>
-  <div class="emi-recipe" data-recipe-id="minecraft:crafting_table"></div>
+  <div class="emi-recipe" data-recipe-id="alekiships:crafting/oar"></div>
   <div id="tooltip"></div>
-  <div id="tag-popover" hidden></div>
+  <div id="tag-popover" class="tag-popover" hidden>
+    <div class="tag-popover-panel" role="dialog" aria-modal="true">
+      <div class="tag-popover-header"></div>
+      <div class="tag-popover-stage-wrap"></div>
+      <div class="tag-popover-footer"></div>
+    </div>
+  </div>
   <script src="../dist/emi.js"></script>
   <script>
     async function run() {
       const baseUrl = document.getElementById('base-url').value.trim() || 'export';
-      await EmiRecipeRenderer.mountAll({ baseUrl });
+      await EmiRecipeRenderer.mountAll({
+        baseUrl,
+        injectIconStylesheets: true,
+      });
     }
     document.getElementById('reload').addEventListener('click', run);
     run();
