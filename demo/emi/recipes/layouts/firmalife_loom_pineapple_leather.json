@@ -1,0 +1,58 @@
+{
+  "schema": 2,
+  "id": "firmalife:loom/pineapple_leather",
+  "scale": 2,
+  "panel": {
+    "width": 78,
+    "height": 26,
+    "margin": 4,
+    "frameWidth": 86,
+    "frameHeight": 34
+  },
+  "emiId": "toomanyrecipeviewers:/firmalife/loom/pineapple_leather",
+  "category": "tfc:loom",
+  "widgets": [
+    {
+      "x": 0,
+      "y": 0,
+      "w": 78,
+      "h": 26,
+      "type": "root_chrome",
+      "chrome": "chrome/sh/26/26f15d48936f471000924598de54f33cc552d2b3fc4ca24330e7acd8a7d90770.png",
+      "javaClass": "dev.nolij.toomanyrecipeviewers.impl.recipe.TMRVRecipe$RootWidget"
+    },
+    {
+      "x": 5,
+      "y": 4,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "input",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": {
+        "type": "item",
+        "id": "firmalife:pineapple_yarn",
+        "amount": 16
+      },
+      "tagDisplayItem": "firmalife:pineapple_yarn"
+    },
+    {
+      "x": 55,
+      "y": 4,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "output",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": "item:firmalife:pineapple_leather",
+      "tagDisplayItem": "firmalife:pineapple_leather"
+    }
+  ],
+  "referencePng": "generated/recipes/firmalife_loom_pineapple_leather.png"
+}

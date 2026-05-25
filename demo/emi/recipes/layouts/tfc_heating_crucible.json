@@ -1,0 +1,54 @@
+{
+  "schema": 2,
+  "id": "tfc:heating/crucible",
+  "scale": 2,
+  "panel": {
+    "width": 120,
+    "height": 38,
+    "margin": 4,
+    "frameWidth": 128,
+    "frameHeight": 46
+  },
+  "emiId": "toomanyrecipeviewers:/tfc/heating/crucible",
+  "category": "tfc:heating",
+  "widgets": [
+    {
+      "x": 0,
+      "y": 0,
+      "w": 120,
+      "h": 38,
+      "type": "root_chrome",
+      "chrome": "chrome/sh/35/3568189d2c27fd1ed0870f2225ffac285d330161164d60dc143484c8787d4a87.png",
+      "javaClass": "dev.nolij.toomanyrecipeviewers.impl.recipe.TMRVRecipe$RootWidget"
+    },
+    {
+      "x": 20,
+      "y": 16,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "input",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": "item:tfc:ceramic/unfired_crucible",
+      "tagDisplayItem": "tfc:ceramic/unfired_crucible"
+    },
+    {
+      "x": 84,
+      "y": 16,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "output",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": "item:tfc:crucible",
+      "tagDisplayItem": "tfc:crucible"
+    }
+  ],
+  "referencePng": "generated/recipes/tfc_heating_crucible.png"
+}

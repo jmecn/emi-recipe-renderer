@@ -1,0 +1,58 @@
+{
+  "schema": 2,
+  "id": "tfcchannelcasting:clay_knapping/unfired_heart_mold",
+  "scale": 2,
+  "panel": {
+    "width": 155,
+    "height": 82,
+    "margin": 4,
+    "frameWidth": 163,
+    "frameHeight": 90
+  },
+  "emiId": "toomanyrecipeviewers:/tfcchannelcasting/clay_knapping/unfired_heart_mold",
+  "category": "tfc:clay_knapping",
+  "widgets": [
+    {
+      "x": 0,
+      "y": 0,
+      "w": 155,
+      "h": 82,
+      "type": "root_chrome",
+      "chrome": "chrome/sh/8f/8fe136320586b6e8a4779f170fd731202ffb9e1959a14d90270bb0aa0f433cd4.png",
+      "javaClass": "dev.nolij.toomanyrecipeviewers.impl.recipe.TMRVRecipe$RootWidget"
+    },
+    {
+      "x": -1,
+      "y": 32,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "input",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": {
+        "type": "item",
+        "id": "minecraft:clay_ball",
+        "amount": 5
+      },
+      "tagDisplayItem": "minecraft:clay_ball"
+    },
+    {
+      "x": 136,
+      "y": 32,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "output",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": "item:tfcchannelcasting:unfired_heart_mold",
+      "tagDisplayItem": "tfcchannelcasting:unfired_heart_mold"
+    }
+  ],
+  "referencePng": "generated/recipes/tfcchannelcasting_clay_knapping_unfired_heart_mold.png"
+}

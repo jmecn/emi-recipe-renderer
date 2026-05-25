@@ -1,0 +1,73 @@
+{
+  "schema": 2,
+  "id": "tfc:barrel/dye/disc_chirp",
+  "scale": 2,
+  "panel": {
+    "width": 148,
+    "height": 32,
+    "margin": 4,
+    "frameWidth": 156,
+    "frameHeight": 40
+  },
+  "emiId": "toomanyrecipeviewers:/tfc/barrel/dye/disc_chirp",
+  "category": "tfc:sealed_barrel",
+  "widgets": [
+    {
+      "x": 0,
+      "y": 0,
+      "w": 148,
+      "h": 32,
+      "type": "root_chrome",
+      "chrome": "chrome/sh/40/40978c1933a9cea17aec4417e50915698efbe4a5b71d11c4ef1572eeaeb71395.png",
+      "javaClass": "dev.nolij.toomanyrecipeviewers.impl.recipe.TMRVRecipe$RootWidget"
+    },
+    {
+      "x": 20,
+      "y": 4,
+      "w": 18,
+      "h": 18,
+      "type": "tank",
+      "role": "input",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "capacity": 1,
+      "ingredient": {
+        "type": "fluid",
+        "id": "tfc:red_dye",
+        "amount": 25
+      },
+      "tagDisplayItem": "tfc:red_dye"
+    },
+    {
+      "x": 40,
+      "y": 4,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "input",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": "item:etched:blank_music_disc",
+      "tagDisplayItem": "etched:blank_music_disc"
+    },
+    {
+      "x": 90,
+      "y": 4,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "output",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": "item:minecraft:music_disc_chirp",
+      "tagDisplayItem": "minecraft:music_disc_chirp"
+    }
+  ],
+  "referencePng": "generated/recipes/tfc_barrel_dye_disc_chirp.png"
+}

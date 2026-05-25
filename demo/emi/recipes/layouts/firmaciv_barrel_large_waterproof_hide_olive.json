@@ -1,0 +1,73 @@
+{
+  "schema": 2,
+  "id": "firmaciv:barrel/large_waterproof_hide_olive",
+  "scale": 2,
+  "panel": {
+    "width": 148,
+    "height": 32,
+    "margin": 4,
+    "frameWidth": 156,
+    "frameHeight": 40
+  },
+  "emiId": "toomanyrecipeviewers:/firmaciv/barrel/large_waterproof_hide_olive",
+  "category": "tfc:sealed_barrel",
+  "widgets": [
+    {
+      "x": 0,
+      "y": 0,
+      "w": 148,
+      "h": 32,
+      "type": "root_chrome",
+      "chrome": "chrome/sh/a2/a264e6b037f4c635494fa81a40d591267ede2177a5315bb6e5bbd87b23c13e08.png",
+      "javaClass": "dev.nolij.toomanyrecipeviewers.impl.recipe.TMRVRecipe$RootWidget"
+    },
+    {
+      "x": 20,
+      "y": 4,
+      "w": 18,
+      "h": 18,
+      "type": "tank",
+      "role": "input",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "capacity": 1,
+      "ingredient": {
+        "type": "fluid",
+        "id": "tfc:olive_oil",
+        "amount": 200
+      },
+      "tagDisplayItem": "tfc:olive_oil"
+    },
+    {
+      "x": 40,
+      "y": 4,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "input",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": "item:tfc:large_prepared_hide",
+      "tagDisplayItem": "tfc:large_prepared_hide"
+    },
+    {
+      "x": 90,
+      "y": 4,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "output",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": "item:firmaciv:large_waterproof_hide",
+      "tagDisplayItem": "firmaciv:large_waterproof_hide"
+    }
+  ],
+  "referencePng": "generated/recipes/firmaciv_barrel_large_waterproof_hide_olive.png"
+}

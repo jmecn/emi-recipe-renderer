@@ -5,10 +5,14 @@ node_modules/
 dist/
 *.tsbuildinfo
 
-# Local export samples (large; point baseUrl at your own copy)
-export/
-sample-export/
-guide-export/
+# Built library copy for demo / GitHub Pages (see npm run build:demo)
+demo/lib/
+
+# Local export samples at repo root (not the committed demo/emi bundle)
+/export/
+/emi/
+/sample-export/
+/guide-export/
 
 # Logs and diagnostics
 *.log

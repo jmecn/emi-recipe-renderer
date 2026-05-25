@@ -1,0 +1,74 @@
+{
+  "schema": 2,
+  "id": "tfg:barrel/soak_hardwood_strip",
+  "scale": 2,
+  "panel": {
+    "width": 148,
+    "height": 32,
+    "margin": 4,
+    "frameWidth": 156,
+    "frameHeight": 40
+  },
+  "emiId": "toomanyrecipeviewers:/tfg/barrel/soak_hardwood_strip",
+  "category": "tfc:sealed_barrel",
+  "widgets": [
+    {
+      "x": 0,
+      "y": 0,
+      "w": 148,
+      "h": 32,
+      "type": "root_chrome",
+      "chrome": "chrome/sh/3c/3c299128bc88396cf6621e53f2a8b89203f3653fa51e649720e1ca327c3b16ea.png",
+      "javaClass": "dev.nolij.toomanyrecipeviewers.impl.recipe.TMRVRecipe$RootWidget"
+    },
+    {
+      "x": 20,
+      "y": 4,
+      "w": 18,
+      "h": 18,
+      "type": "tank",
+      "role": "input",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "capacity": 1,
+      "ingredient": {
+        "type": "tag",
+        "registry": "minecraft:fluid",
+        "id": "tfc:water",
+        "amount": 100
+      },
+      "tagDisplayItem": "minecraft:water"
+    },
+    {
+      "x": 40,
+      "y": 4,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "input",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": "item:tfg:hardwood_strip",
+      "tagDisplayItem": "tfg:hardwood_strip"
+    },
+    {
+      "x": 90,
+      "y": 4,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "output",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": "item:tfg:soaked_hardwood_strip",
+      "tagDisplayItem": "tfg:soaked_hardwood_strip"
+    }
+  ],
+  "referencePng": "generated/recipes/tfg_barrel_soak_hardwood_strip.png"
+}

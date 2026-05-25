@@ -1,0 +1,58 @@
+{
+  "schema": 2,
+  "id": "tfc:loom/burlap_cloth",
+  "scale": 2,
+  "panel": {
+    "width": 78,
+    "height": 26,
+    "margin": 4,
+    "frameWidth": 86,
+    "frameHeight": 34
+  },
+  "emiId": "toomanyrecipeviewers:/tfc/loom/burlap_cloth",
+  "category": "tfc:loom",
+  "widgets": [
+    {
+      "x": 0,
+      "y": 0,
+      "w": 78,
+      "h": 26,
+      "type": "root_chrome",
+      "chrome": "chrome/sh/76/76417704c6d28879d6b99a505a4f69c70f8e224ef04018cbbb6f6b8a0cc34b75.png",
+      "javaClass": "dev.nolij.toomanyrecipeviewers.impl.recipe.TMRVRecipe$RootWidget"
+    },
+    {
+      "x": 5,
+      "y": 4,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "input",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": {
+        "type": "item",
+        "id": "tfc:jute_fiber",
+        "amount": 12
+      },
+      "tagDisplayItem": "tfc:jute_fiber"
+    },
+    {
+      "x": 55,
+      "y": 4,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "output",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": "item:tfc:burlap_cloth",
+      "tagDisplayItem": "tfc:burlap_cloth"
+    }
+  ],
+  "referencePng": "generated/recipes/tfc_loom_burlap_cloth.png"
+}

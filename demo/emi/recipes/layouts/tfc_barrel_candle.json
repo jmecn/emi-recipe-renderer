@@ -1,0 +1,73 @@
+{
+  "schema": 2,
+  "id": "tfc:barrel/candle",
+  "scale": 2,
+  "panel": {
+    "width": 148,
+    "height": 32,
+    "margin": 4,
+    "frameWidth": 156,
+    "frameHeight": 40
+  },
+  "emiId": "toomanyrecipeviewers:/tfc/barrel/candle",
+  "category": "tfc:sealed_barrel",
+  "widgets": [
+    {
+      "x": 0,
+      "y": 0,
+      "w": 148,
+      "h": 32,
+      "type": "root_chrome",
+      "chrome": "chrome/sh/31/318b49313f52bb4b49971182ffb21a250d51f7a4be39bb9d625cabe8f3c245fc.png",
+      "javaClass": "dev.nolij.toomanyrecipeviewers.impl.recipe.TMRVRecipe$RootWidget"
+    },
+    {
+      "x": 20,
+      "y": 4,
+      "w": 18,
+      "h": 18,
+      "type": "tank",
+      "role": "input",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "capacity": 1,
+      "ingredient": {
+        "type": "fluid",
+        "id": "tfc:tallow",
+        "amount": 40
+      },
+      "tagDisplayItem": "tfc:tallow"
+    },
+    {
+      "x": 40,
+      "y": 4,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "input",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": "#item:forge:string",
+      "tagDisplayItem": "minecraft:string"
+    },
+    {
+      "x": 90,
+      "y": 4,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "output",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": "item:tfc:candle",
+      "tagDisplayItem": "tfc:candle"
+    }
+  ],
+  "referencePng": "generated/recipes/tfc_barrel_candle.png"
+}

@@ -1,12 +1,29 @@
-Symlink an export tree as `export/` (must contain `generated/recipes/layouts-index.json`). Use a `data-recipe-id` that exists in that index (the sample page uses `alekiships:crafting/oar`).
+# Demo
 
-From the repo root:
+Self-contained static site: `index.html`, `demo-app.js`, `lib/` (built from `dist/` via `npm run build:demo`), and `emi/` (sample export bundle, committed for GitHub Pages).
+
+## Local
 
 ```bash
-npm run build
-python3 -m http.server 8765
+npm run demo
 ```
 
-Open `http://localhost:8765/demo/`.
+Opens `http://127.0.0.1:8766/` (serve root is this `demo/` folder).
 
-The page passes `injectIconStylesheets: true` (same as `emi-demo`’s `demo-app.js`) so `generated/icons/icons.css` is loaded from the export root.
+After changing library source, run `npm run build:demo` again (or use `npm run demo`).
+
+## Refresh sample data
+
+```bash
+python3 scripts/migrate-guide-export-to-emi-bundle.py ~/Downloads/guide-export demo/emi
+```
+
+Then commit `demo/emi/` if you want the live site updated.
+
+## GitHub Pages
+
+Push to `main`/`master`; the [pages workflow](../.github/workflows/pages.yml) runs `build:demo` and deploys this directory.
+
+Live site: **https://jmecn.github.io/emi-recipe-renderer/**
+
+In the repo: **Settings → Pages → Build and deployment → Source: GitHub Actions**.

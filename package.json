@@ -22,7 +22,9 @@
   ],
   "scripts": {
     "build": "node esbuild.config.mjs",
+    "build:demo": "npm run build && node scripts/copy-demo-lib.mjs",
     "watch": "node esbuild.config.mjs --watch",
+    "demo": "npm run build:demo && python3 -m http.server 8766 --directory demo",
     "prepublishOnly": "npm run build"
   },
   "devDependencies": {

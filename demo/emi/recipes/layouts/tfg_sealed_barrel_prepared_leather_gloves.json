@@ -1,0 +1,73 @@
+{
+  "schema": 2,
+  "id": "tfg:sealed_barrel/prepared_leather_gloves",
+  "scale": 2,
+  "panel": {
+    "width": 148,
+    "height": 32,
+    "margin": 4,
+    "frameWidth": 156,
+    "frameHeight": 40
+  },
+  "emiId": "toomanyrecipeviewers:/tfg/sealed_barrel/prepared_leather_gloves",
+  "category": "tfc:sealed_barrel",
+  "widgets": [
+    {
+      "x": 0,
+      "y": 0,
+      "w": 148,
+      "h": 32,
+      "type": "root_chrome",
+      "chrome": "chrome/sh/1e/1e3f66cc84a85ff500992bde43b6e5ae7f633758a0e3aafa377fc3a73fa0d3f0.png",
+      "javaClass": "dev.nolij.toomanyrecipeviewers.impl.recipe.TMRVRecipe$RootWidget"
+    },
+    {
+      "x": 20,
+      "y": 4,
+      "w": 18,
+      "h": 18,
+      "type": "tank",
+      "role": "input",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "capacity": 1,
+      "ingredient": {
+        "type": "fluid",
+        "id": "tfc:vinegar",
+        "amount": 1000
+      },
+      "tagDisplayItem": "tfc:vinegar"
+    },
+    {
+      "x": 40,
+      "y": 4,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "input",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": "item:tfchotornot:mittens{Damage:0}",
+      "tagDisplayItem": "tfchotornot:mittens@c6782f6a3a7dee47"
+    },
+    {
+      "x": 90,
+      "y": 4,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "output",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": "item:tfg:prepared_leather_gloves",
+      "tagDisplayItem": "tfg:prepared_leather_gloves"
+    }
+  ],
+  "referencePng": "generated/recipes/tfg_sealed_barrel_prepared_leather_gloves.png"
+}

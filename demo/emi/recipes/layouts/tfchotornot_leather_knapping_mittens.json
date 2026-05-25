@@ -1,0 +1,54 @@
+{
+  "schema": 2,
+  "id": "tfchotornot:leather_knapping/mittens",
+  "scale": 2,
+  "panel": {
+    "width": 155,
+    "height": 82,
+    "margin": 4,
+    "frameWidth": 163,
+    "frameHeight": 90
+  },
+  "emiId": "toomanyrecipeviewers:/tfchotornot/leather_knapping/mittens",
+  "category": "tfc:leather_knapping",
+  "widgets": [
+    {
+      "x": 0,
+      "y": 0,
+      "w": 155,
+      "h": 82,
+      "type": "root_chrome",
+      "chrome": "chrome/sh/5a/5adfa39916946b5797278af8803c84a2e17eab00786a6f3544e9313fcdf608a7.png",
+      "javaClass": "dev.nolij.toomanyrecipeviewers.impl.recipe.TMRVRecipe$RootWidget"
+    },
+    {
+      "x": -1,
+      "y": 32,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "input",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": "#item:forge:leather",
+      "tagDisplayItem": "minecraft:leather"
+    },
+    {
+      "x": 136,
+      "y": 32,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "output",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": "item:tfchotornot:mittens{Damage:0}",
+      "tagDisplayItem": "tfchotornot:mittens@c6782f6a3a7dee47"
+    }
+  ],
+  "referencePng": "generated/recipes/tfchotornot_leather_knapping_mittens.png"
+}

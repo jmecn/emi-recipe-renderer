@@ -36,12 +36,16 @@ npm install emi-recipe-renderer
 - **`baseUrl`** — root of the static export (layouts, icons, textures). Script and data URLs are independent (CDN + export host is fine).
 - **HTML** — only `class="emi-recipe"` and `data-recipe-id`; layout paths stay in the export index.
 
-## Export layout (under `baseUrl`)
+## Export layout (`baseUrl` = `emi/` bundle root)
 
-- `generated/recipes/layouts-index.json` + `generated/recipes/layouts/*.json`
-- `generated/recipe-textures/`, `generated/recipe-chrome/sh/`
-- `generated/icons/icons.css` (or item / block-item / fluid CSS splits)
-- `index/tag-members.json` (optional)
+- `bundle.json` — languages list, default `en_us`
+- `recipes/index.json` + `recipes/layouts/*.json`
+- `textures/manifest.json`, `chrome/sh/`
+- `icons/icons.css` + `icons/index.json` (single atlas)
+- `tags/members.json` (optional)
+- `lang/<locale>.json` — item/fluid/tag names; missing keys fall back to `en_us`
+
+Options: `locale`, `lang` (inline tables per locale), `translations` (flat key overrides).
 
 Cross-origin export needs CORS on `fetch`.
 
@@ -59,4 +63,22 @@ npm run build    # dist/emi.js + dist/emi.css
 npm run watch    # rebuild on src changes
 ```
 
-Point `demo/index.html` at a local export folder (symlink `demo/export` → your export root), then serve the repo root, e.g. `python3 -m http.server 8765`.
+### Interactive demo
+
+**Live:** [https://jmecn.github.io/emi-recipe-renderer/](https://jmecn.github.io/emi-recipe-renderer/) (GitHub Pages deploys the `demo/` folder).
+
+Local:
+
+```bash
+npm run demo
+```
+
+Copies `dist/` into `demo/lib/` (no `../dist` in HTML) and serves `demo/` at `http://127.0.0.1:8766/`.
+
+To refresh the bundled sample under `demo/emi/`:
+
+```bash
+python3 scripts/migrate-guide-export-to-emi-bundle.py /path/to/guide-export demo/emi
+```
+
+The demo includes **Recipes** (lazy-mounted grid + filter), **Items** (icon + translated name + id, filter), item detail (recipes as output / as input), and **language** switching from `bundle.json`.

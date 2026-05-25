@@ -1,0 +1,63 @@
+{
+  "schema": 2,
+  "id": "tfg:rock_knapping/stone_hoe_head_1",
+  "scale": 2,
+  "panel": {
+    "width": 155,
+    "height": 82,
+    "margin": 4,
+    "frameWidth": 163,
+    "frameHeight": 90
+  },
+  "emiId": "toomanyrecipeviewers:/tfg/rock_knapping/stone_hoe_head_1",
+  "category": "tfc:rock_knapping",
+  "widgets": [
+    {
+      "x": 0,
+      "y": 0,
+      "w": 155,
+      "h": 82,
+      "type": "root_chrome",
+      "chrome": "chrome/sh/38/38931d496db5b39d67fef8210cbe6e6c235eab568887f62083786044fda6eb65.png",
+      "javaClass": "dev.nolij.toomanyrecipeviewers.impl.recipe.TMRVRecipe$RootWidget"
+    },
+    {
+      "x": -1,
+      "y": 32,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "input",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": {
+        "type": "tag",
+        "registry": "minecraft:item",
+        "id": "tfc:rock_knapping",
+        "amount": 2
+      },
+      "tagDisplayItem": "tfc:rock/loose/granite"
+    },
+    {
+      "x": 136,
+      "y": 32,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "output",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": {
+        "type": "item",
+        "id": "gtceu:stone_hoe_head",
+        "amount": 2
+      },
+      "tagDisplayItem": "gtceu:stone_hoe_head"
+    }
+  ],
+  "referencePng": "generated/recipes/tfg_rock_knapping_stone_hoe_head_1.png"
+}

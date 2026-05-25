@@ -1,0 +1,85 @@
+{
+  "schema": 2,
+  "id": "tfc:barrel/dye/red_leather",
+  "scale": 2,
+  "panel": {
+    "width": 148,
+    "height": 32,
+    "margin": 4,
+    "frameWidth": 156,
+    "frameHeight": 40
+  },
+  "emiId": "toomanyrecipeviewers:/tfc/barrel/dye/red_leather",
+  "category": "tfc:sealed_barrel",
+  "widgets": [
+    {
+      "x": 0,
+      "y": 0,
+      "w": 148,
+      "h": 32,
+      "type": "root_chrome",
+      "chrome": "chrome/sh/40/40978c1933a9cea17aec4417e50915698efbe4a5b71d11c4ef1572eeaeb71395.png",
+      "javaClass": "dev.nolij.toomanyrecipeviewers.impl.recipe.TMRVRecipe$RootWidget"
+    },
+    {
+      "x": 20,
+      "y": 4,
+      "w": 18,
+      "h": 18,
+      "type": "tank",
+      "role": "input",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "capacity": 1,
+      "ingredient": {
+        "type": "fluid",
+        "id": "tfc:red_dye",
+        "amount": 25
+      },
+      "tagDisplayItem": "tfc:red_dye"
+    },
+    {
+      "x": 40,
+      "y": 4,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "output",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": [
+        "item:minecraft:leather_chestplate{Damage:0}",
+        "item:minecraft:leather_leggings{Damage:0}",
+        "item:minecraft:leather_boots{Damage:0}",
+        "item:minecraft:leather_helmet{Damage:0}",
+        "item:minecraft:leather_horse_armor"
+      ],
+      "tagDisplayItem": "minecraft:leather_chestplate@c6782f6a3a7dee47"
+    },
+    {
+      "x": 90,
+      "y": 4,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "output",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": [
+        "item:minecraft:leather_chestplate{Damage:0,display:{color:11546150}}",
+        "item:minecraft:leather_leggings{Damage:0,display:{color:11546150}}",
+        "item:minecraft:leather_boots{Damage:0,display:{color:11546150}}",
+        "item:minecraft:leather_helmet{Damage:0,display:{color:11546150}}",
+        "item:minecraft:leather_horse_armor{display:{color:11546150}}"
+      ],
+      "tagDisplayItem": "minecraft:leather_chestplate@f6b5e509e9210f27"
+    }
+  ],
+  "referencePng": "generated/recipes/tfc_barrel_dye_red_leather.png"
+}

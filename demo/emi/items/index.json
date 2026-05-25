@@ -1,0 +1,3620 @@
+{
+  "schema": 1,
+  "itemCount": 519,
+  "items": {
+    "ad_astra:glacian_log": {
+      "inputs": [
+        "tfc:crafting/wattle"
+      ],
+      "outputs": []
+    },
+    "afc:wood/stripped_log/baobab": {
+      "inputs": [
+        "tfg:crafting/strip_hardwood"
+      ],
+      "outputs": []
+    },
+    "alekiships:oar": {
+      "inputs": [],
+      "outputs": [
+        "alekiships:crafting/oar"
+      ]
+    },
+    "beneath:blackstone_aqueduct": {
+      "inputs": [],
+      "outputs": [
+        "beneath:crafting/blackstone_aqueduct"
+      ]
+    },
+    "beneath:blackstone_brick": {
+      "inputs": [],
+      "outputs": [
+        "beneath:crafting/blackstone_brick"
+      ]
+    },
+    "beneath:blackstone_pebble": {
+      "inputs": [
+        "beneath:crafting/blackstone_brick"
+      ],
+      "outputs": []
+    },
+    "beneath:cursed_hide": {
+      "inputs": [
+        "tfg:create/shaped/netherite_backtank",
+        "tfg:create/shaped/netherite_backtank_upgrade",
+        "tfg:create/shaped/netherite_diving_boots",
+        "tfg:create/shaped/netherite_diving_boots_upgrade",
+        "tfg:create/shaped/netherite_diving_helmet",
+        "tfg:create/shaped/netherite_diving_helmet_upgrade",
+        "tfg:minecraft/shaped/netherite_leggings"
+      ],
+      "outputs": []
+    },
+    "beneath:hellbricks": {
+      "inputs": [],
+      "outputs": [
+        "tfg:shapeless/hellbricks_from_soot"
+      ]
+    },
+    "beneath:juicer": {
+      "inputs": [],
+      "outputs": [
+        "beneath:crafting/juicer"
+      ]
+    },
+    "beneath:unposter": {
+      "inputs": [],
+      "outputs": [
+        "beneath:crafting/unposter"
+      ]
+    },
+    "create:brass_sheet": {
+      "inputs": [
+        "tfc:welding/jacks"
+      ],
+      "outputs": []
+    },
+    "create:copper_backtank": {
+      "inputs": [
+        "tfg:create/shaped/netherite_backtank_upgrade"
+      ],
+      "outputs": []
+    },
+    "create:copper_diving_boots": {
+      "inputs": [
+        "tfg:create/shaped/netherite_diving_boots_upgrade"
+      ],
+      "outputs": []
+    },
+    "create:copper_diving_helmet": {
+      "inputs": [
+        "tfg:create/shaped/netherite_diving_helmet_upgrade"
+      ],
+      "outputs": []
+    },
+    "create:copper_sheet": {
+      "inputs": [
+        "firmalife:anvil/sprinkler"
+      ],
+      "outputs": []
+    },
+    "create:netherite_backtank": {
+      "inputs": [],
+      "outputs": [
+        "tfg:create/shaped/netherite_backtank",
+        "tfg:create/shaped/netherite_backtank_upgrade"
+      ]
+    },
+    "create:netherite_diving_boots": {
+      "inputs": [],
+      "outputs": [
+        "tfg:create/shaped/netherite_diving_boots",
+        "tfg:create/shaped/netherite_diving_boots_upgrade"
+      ]
+    },
+    "create:netherite_diving_helmet": {
+      "inputs": [],
+      "outputs": [
+        "tfg:create/shaped/netherite_diving_helmet",
+        "tfg:create/shaped/netherite_diving_helmet_upgrade"
+      ]
+    },
+    "etched:blank_music_disc": {
+      "inputs": [
+        "tfc:barrel/dye/disc_chirp"
+      ],
+      "outputs": []
+    },
+    "firmaciv:barometer": {
+      "inputs": [],
+      "outputs": [
+        "firmaciv:crafting/barometer"
+      ]
+    },
+    "firmaciv:cannon": {
+      "inputs": [],
+      "outputs": [
+        "firmaciv:crafting/cannon"
+      ]
+    },
+    "firmaciv:cannon_barrel": {
+      "inputs": [
+        "firmaciv:crafting/cannon"
+      ],
+      "outputs": []
+    },
+    "firmaciv:canoe_paddle": {
+      "inputs": [],
+      "outputs": [
+        "firmaciv:crafting/canoe_paddle"
+      ]
+    },
+    "firmaciv:kayak": {
+      "inputs": [],
+      "outputs": [
+        "firmaciv:crafting/kayak"
+      ]
+    },
+    "firmaciv:kayak_paddle": {
+      "inputs": [],
+      "outputs": [
+        "firmaciv:crafting/kayak_paddle"
+      ]
+    },
+    "firmaciv:large_waterproof_hide": {
+      "inputs": [
+        "firmaciv:crafting/kayak"
+      ],
+      "outputs": [
+        "firmaciv:barrel/large_waterproof_hide_olive"
+      ]
+    },
+    "firmaciv:medium_triangular_sail": {
+      "inputs": [],
+      "outputs": [
+        "firmaciv:crafting/medium_triangular_sail"
+      ]
+    },
+    "firmaciv:nav_clock": {
+      "inputs": [],
+      "outputs": [
+        "firmaciv:crafting/nav_clock"
+      ]
+    },
+    "firmaciv:rope_coil": {
+      "inputs": [],
+      "outputs": [
+        "firmaciv:crafting/rope_coil"
+      ]
+    },
+    "firmaciv:sextant": {
+      "inputs": [],
+      "outputs": [
+        "firmaciv:crafting/sextant"
+      ]
+    },
+    "firmaciv:small_triangular_sail": {
+      "inputs": [
+        "firmaciv:crafting/medium_triangular_sail"
+      ],
+      "outputs": [
+        "firmaciv:crafting/small_triangular_sail"
+      ]
+    },
+    "firmaciv:unfinished_barometer": {
+      "inputs": [
+        "firmaciv:crafting/barometer"
+      ],
+      "outputs": []
+    },
+    "firmaciv:unfinished_nav_clock": {
+      "inputs": [
+        "firmaciv:crafting/nav_clock"
+      ],
+      "outputs": []
+    },
+    "firmaciv:unfinished_sextant": {
+      "inputs": [
+        "firmaciv:crafting/sextant"
+      ],
+      "outputs": []
+    },
+    "firmaciv:watercraft_frame_angled": {
+      "inputs": [
+        "firmaciv:crafting/watercraft_frame_flat"
+      ],
+      "outputs": [
+        "firmaciv:crafting/watercraft_frame_angled"
+      ]
+    },
+    "firmaciv:watercraft_frame_flat": {
+      "inputs": [],
+      "outputs": [
+        "firmaciv:crafting/watercraft_frame_flat"
+      ]
+    },
+    "firmalife:ashtray": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/ashtray"
+      ]
+    },
+    "firmalife:barrel_stave": {
+      "inputs": [
+        "firmalife:crafting/wood/pine_keg"
+      ],
+      "outputs": []
+    },
+    "firmalife:beehive": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/beehive"
+      ]
+    },
+    "firmalife:beehive_frame": {
+      "inputs": [
+        "firmalife:crafting/beehive"
+      ],
+      "outputs": [
+        "firmalife:crafting/beehive_frame"
+      ]
+    },
+    "firmalife:beeswax": {
+      "inputs": [
+        "firmalife:crafting/bottle_label"
+      ],
+      "outputs": []
+    },
+    "firmalife:bonsai_planter": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/bonsai_planter"
+      ]
+    },
+    "firmalife:bottle_label": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/bottle_label"
+      ]
+    },
+    "firmalife:brick_countertop": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/brick_countertop"
+      ]
+    },
+    "firmalife:cheddar_wheel": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/cheddar_wheel"
+      ]
+    },
+    "firmalife:cheesecloth": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/cheesecloth"
+      ]
+    },
+    "firmalife:chevre_wheel": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/chevre_wheel"
+      ]
+    },
+    "firmalife:climate_station": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/climate_station"
+      ]
+    },
+    "firmalife:drying_mat": {
+      "inputs": [
+        "firmalife:crafting/solar_drier"
+      ],
+      "outputs": [
+        "firmalife:crafting/drying_mat"
+      ]
+    },
+    "firmalife:empty_olivine_wine_bottle": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:glassworking/olivine_wine_bottle"
+      ]
+    },
+    "firmalife:food/barley_dough": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/barley_dough"
+      ]
+    },
+    "firmalife:food/barley_slice": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/barley_slice"
+      ]
+    },
+    "firmalife:food/burrito": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/burrito"
+      ]
+    },
+    "firmalife:food/butter": {
+      "inputs": [
+        "firmalife:crafting/toast_with_butter"
+      ],
+      "outputs": []
+    },
+    "firmalife:food/cooked_pasta": {
+      "inputs": [
+        "firmalife:crafting/tomato_pasta"
+      ],
+      "outputs": []
+    },
+    "firmalife:food/corn_tortilla": {
+      "inputs": [
+        "firmalife:crafting/burrito"
+      ],
+      "outputs": []
+    },
+    "firmalife:food/dark_chocolate": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:drying/dark_chocolate"
+      ]
+    },
+    "firmalife:food/dark_chocolate_blend": {
+      "inputs": [
+        "firmalife:drying/dark_chocolate"
+      ],
+      "outputs": []
+    },
+    "firmalife:food/filled_pie": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/filled_pie"
+      ]
+    },
+    "firmalife:food/gouda": {
+      "inputs": [
+        "firmalife:crafting/shredded_cheese"
+      ],
+      "outputs": []
+    },
+    "firmalife:food/nachos": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/nachos"
+      ]
+    },
+    "firmalife:food/pasta_with_tomato_sauce": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/tomato_pasta"
+      ]
+    },
+    "firmalife:food/pie_dough": {
+      "inputs": [
+        "firmalife:crafting/filled_pie"
+      ],
+      "outputs": []
+    },
+    "firmalife:food/pineapple": {
+      "inputs": [
+        "firmalife:crafting/pineapple_fiber"
+      ],
+      "outputs": []
+    },
+    "firmalife:food/pumpkin_pie_dough": {
+      "inputs": [
+        "firmalife:crafting/raw_pumpkin_pie"
+      ],
+      "outputs": []
+    },
+    "firmalife:food/raw_egg_noodles": {
+      "inputs": [
+        "firmalife:crafting/lasagna"
+      ],
+      "outputs": []
+    },
+    "firmalife:food/raw_lasagna": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/lasagna"
+      ]
+    },
+    "firmalife:food/raw_pumpkin_pie": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/raw_pumpkin_pie"
+      ]
+    },
+    "firmalife:food/salsa": {
+      "inputs": [
+        "firmalife:crafting/burrito",
+        "firmalife:crafting/nachos",
+        "firmalife:crafting/taco"
+      ],
+      "outputs": [
+        "firmalife:crafting/salsa"
+      ]
+    },
+    "firmalife:food/shredded_cheese": {
+      "inputs": [
+        "firmalife:crafting/burrito",
+        "firmalife:crafting/nachos",
+        "firmalife:crafting/taco"
+      ],
+      "outputs": [
+        "firmalife:crafting/shredded_cheese"
+      ]
+    },
+    "firmalife:food/soy_mixture": {
+      "inputs": [
+        "firmalife:drying/tofu"
+      ],
+      "outputs": []
+    },
+    "firmalife:food/taco": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/taco"
+      ]
+    },
+    "firmalife:food/taco_shell": {
+      "inputs": [
+        "firmalife:crafting/taco",
+        "firmalife:crafting/tortilla_chips"
+      ],
+      "outputs": []
+    },
+    "firmalife:food/toast": {
+      "inputs": [
+        "firmalife:crafting/toast_with_butter",
+        "firmalife:crafting/toast_with_jam"
+      ],
+      "outputs": []
+    },
+    "firmalife:food/toast_with_butter": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/toast_with_butter"
+      ]
+    },
+    "firmalife:food/toast_with_jam": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/toast_with_jam"
+      ]
+    },
+    "firmalife:food/tofu": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:drying/tofu"
+      ]
+    },
+    "firmalife:food/tomato_sauce": {
+      "inputs": [
+        "firmalife:crafting/lasagna",
+        "firmalife:crafting/tomato_pasta"
+      ],
+      "outputs": []
+    },
+    "firmalife:food/tortilla_chips": {
+      "inputs": [
+        "firmalife:crafting/nachos"
+      ],
+      "outputs": [
+        "firmalife:crafting/tortilla_chips"
+      ]
+    },
+    "firmalife:fruit_leaf": {
+      "inputs": [
+        "firmalife:crafting/drying_mat"
+      ],
+      "outputs": []
+    },
+    "firmalife:grape_trellis_post": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/grape_trellis_post"
+      ]
+    },
+    "firmalife:hanging_planter": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/hanging_planter"
+      ]
+    },
+    "firmalife:hydroponic_planter": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/hydroponic_planter"
+      ]
+    },
+    "firmalife:iron_greenhouse_door": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/greenhouse/iron_greenhouse_door"
+      ]
+    },
+    "firmalife:iron_greenhouse_panel_roof": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/greenhouse/iron_greenhouse_panel_roof"
+      ]
+    },
+    "firmalife:iron_greenhouse_panel_wall": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/greenhouse/iron_greenhouse_panel_wall"
+      ]
+    },
+    "firmalife:iron_greenhouse_port": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/greenhouse/iron_greenhouse_port"
+      ]
+    },
+    "firmalife:iron_greenhouse_roof": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/greenhouse/iron_greenhouse_roof"
+      ]
+    },
+    "firmalife:iron_greenhouse_roof_top": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/greenhouse/iron_greenhouse_roof_top"
+      ]
+    },
+    "firmalife:iron_greenhouse_trapdoor": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/greenhouse/iron_greenhouse_trapdoor"
+      ]
+    },
+    "firmalife:iron_greenhouse_wall": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/greenhouse/iron_greenhouse_wall"
+      ]
+    },
+    "firmalife:jar/honey": {
+      "inputs": [
+        "firmalife:crafting/honey_jar_open"
+      ],
+      "outputs": []
+    },
+    "firmalife:jarring_station": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/jarring_station"
+      ]
+    },
+    "firmalife:large_planter": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/large_planter"
+      ]
+    },
+    "firmalife:mixing_bowl": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/mixing_bowl"
+      ]
+    },
+    "firmalife:oven_bottom": {
+      "inputs": [
+        "firmalife:crafting/oven_hopper"
+      ],
+      "outputs": [
+        "firmalife:clay_knapping/oven_bottom"
+      ]
+    },
+    "firmalife:oven_chimney": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:clay_knapping/oven_chimney"
+      ]
+    },
+    "firmalife:oven_hopper": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/oven_hopper"
+      ]
+    },
+    "firmalife:oven_insulation": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/oven_insulation"
+      ]
+    },
+    "firmalife:oven_top": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:clay_knapping/oven_top"
+      ]
+    },
+    "firmalife:peel": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/peel"
+      ]
+    },
+    "firmalife:picker": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/picker"
+      ]
+    },
+    "firmalife:pie_pan": {
+      "inputs": [
+        "firmalife:crafting/filled_pie",
+        "firmalife:crafting/raw_pumpkin_pie"
+      ],
+      "outputs": []
+    },
+    "firmalife:pineapple_fiber": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/pineapple_fiber"
+      ]
+    },
+    "firmalife:pineapple_leather": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:loom/pineapple_leather"
+      ]
+    },
+    "firmalife:pineapple_yarn": {
+      "inputs": [
+        "firmalife:loom/pineapple_leather"
+      ],
+      "outputs": [
+        "firmalife:crafting/pineapple_yarn"
+      ]
+    },
+    "firmalife:quad_planter": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/quad_planter"
+      ]
+    },
+    "firmalife:rajya_metok_wheel": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/rajya_metok_wheel"
+      ]
+    },
+    "firmalife:raw_honey": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/honey_jar_open"
+      ]
+    },
+    "firmalife:reinforced_glass": {
+      "inputs": [
+        "firmalife:crafting/greenhouse/iron_greenhouse_door",
+        "firmalife:crafting/greenhouse/iron_greenhouse_panel_roof",
+        "firmalife:crafting/greenhouse/iron_greenhouse_panel_wall",
+        "firmalife:crafting/greenhouse/iron_greenhouse_roof",
+        "firmalife:crafting/greenhouse/iron_greenhouse_roof_top",
+        "firmalife:crafting/greenhouse/iron_greenhouse_trapdoor",
+        "firmalife:crafting/greenhouse/iron_greenhouse_wall",
+        "tfg:create/shaped/netherite_diving_helmet",
+        "tfg:create/shaped/netherite_diving_helmet_upgrade"
+      ],
+      "outputs": []
+    },
+    "firmalife:rustic_finish": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/rustic_finish"
+      ]
+    },
+    "firmalife:sealed_bricks": {
+      "inputs": [
+        "firmalife:crafting/ashtray",
+        "firmalife:crafting/sealed_door",
+        "firmalife:crafting/stone_finish"
+      ],
+      "outputs": [
+        "firmalife:crafting/sealed_bricks"
+      ]
+    },
+    "firmalife:sealed_door": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/sealed_door"
+      ]
+    },
+    "firmalife:seed_ball": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/seed_ball"
+      ]
+    },
+    "firmalife:solar_drier": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/solar_drier"
+      ]
+    },
+    "firmalife:spice/cinnamon": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:drying/cinnamon"
+      ]
+    },
+    "firmalife:sprinkler": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:anvil/sprinkler"
+      ]
+    },
+    "firmalife:stone_finish": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/stone_finish"
+      ]
+    },
+    "firmalife:sweeper": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/sweeper"
+      ]
+    },
+    "firmalife:tile_finish": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/tile_finish"
+      ]
+    },
+    "firmalife:treated_lumber": {
+      "inputs": [
+        "firmalife:crafting/grape_trellis_post",
+        "firmalife:crafting/hydroponic_planter",
+        "firmalife:crafting/jarring_station",
+        "firmalife:crafting/mixing_bowl",
+        "firmalife:crafting/solar_drier",
+        "firmalife:crafting/wood/hickory_wine_shelf"
+      ],
+      "outputs": [
+        "firmalife:crafting/treated_lumber"
+      ]
+    },
+    "firmalife:trellis_planter": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/trellis_planter"
+      ]
+    },
+    "firmalife:vat": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/vat"
+      ]
+    },
+    "firmalife:watering_can": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/watering_can"
+      ]
+    },
+    "firmalife:wood/barrel_press/acacia": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/wood/acacia_barrel_press"
+      ]
+    },
+    "firmalife:wood/big_barrel/pine": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/wood/pine_keg"
+      ]
+    },
+    "firmalife:wood/food_shelf/acacia": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/wood/acacia_shelf"
+      ]
+    },
+    "firmalife:wood/hanger/acacia": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/wood/acacia_hanger"
+      ]
+    },
+    "firmalife:wood/jarbnet/acacia": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/wood/acacia_jarbnet"
+      ]
+    },
+    "firmalife:wood/stomping_barrel/acacia": {
+      "inputs": [
+        "firmalife:crafting/wood/acacia_barrel_press"
+      ],
+      "outputs": [
+        "firmalife:crafting/wood/acacia_stomping_barrel"
+      ]
+    },
+    "firmalife:wood/wine_shelf/hickory": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:crafting/wood/hickory_wine_shelf"
+      ]
+    },
+    "greate:steel_shaft": {
+      "inputs": [
+        "tfg:create/shaped/netherite_backtank"
+      ],
+      "outputs": []
+    },
+    "gtceu:annealed_copper_screw": {
+      "inputs": [
+        "tfg:shaped/trowel"
+      ],
+      "outputs": []
+    },
+    "gtceu:bismuth_bronze_ingot": {
+      "inputs": [
+        "tfc:anvil/bismuth_bronze_fish_hook"
+      ],
+      "outputs": []
+    },
+    "gtceu:bismuth_bronze_plate": {
+      "inputs": [
+        "tfc:welding/bismuth_bronze_greaves"
+      ],
+      "outputs": []
+    },
+    "gtceu:black_steel_plate": {
+      "inputs": [
+        "sns:crafting/black_steel_toe_hiking_boots"
+      ],
+      "outputs": []
+    },
+    "gtceu:black_steel_rod": {
+      "inputs": [
+        "sns:anvil/metal/horseshoe/black_steel"
+      ],
+      "outputs": []
+    },
+    "gtceu:blue_steel_plate": {
+      "inputs": [
+        "sns:crafting/blue_steel_toe_hiking_boots",
+        "tfg:create/shaped/netherite_backtank",
+        "tfg:create/shaped/netherite_backtank_upgrade",
+        "tfg:create/shaped/netherite_diving_boots",
+        "tfg:create/shaped/netherite_diving_boots_upgrade",
+        "tfg:create/shaped/netherite_diving_helmet",
+        "tfg:create/shaped/netherite_diving_helmet_upgrade",
+        "tfg:minecraft/shaped/netherite_leggings"
+      ],
+      "outputs": []
+    },
+    "gtceu:blue_steel_rod": {
+      "inputs": [
+        "sns:anvil/metal/horseshoe/blue_steel"
+      ],
+      "outputs": []
+    },
+    "gtceu:blue_steel_screw": {
+      "inputs": [
+        "tfg:create/shaped/netherite_backtank",
+        "tfg:create/shaped/netherite_backtank_upgrade",
+        "tfg:create/shaped/netherite_diving_boots",
+        "tfg:create/shaped/netherite_diving_boots_upgrade",
+        "tfg:minecraft/shaped/netherite_leggings"
+      ],
+      "outputs": []
+    },
+    "gtceu:brass_rod": {
+      "inputs": [
+        "firmalife:crafting/sealed_door",
+        "firmalife:crafting/wood/acacia_jarbnet",
+        "tfc:anvil/blowpipe",
+        "tfc:crafting/gem_saw",
+        "tfc:welding/jacks"
+      ],
+      "outputs": []
+    },
+    "gtceu:bronze_crate": {
+      "inputs": [],
+      "outputs": [
+        "gtceu:shaped/bronze_crate"
+      ]
+    },
+    "gtceu:bronze_drum": {
+      "inputs": [],
+      "outputs": [
+        "gtceu:shaped/bronze_drum"
+      ]
+    },
+    "gtceu:bronze_plate": {
+      "inputs": [
+        "gtceu:shaped/bronze_crate",
+        "gtceu:shaped/bronze_drum"
+      ],
+      "outputs": []
+    },
+    "gtceu:copper_double_ingot": {
+      "inputs": [
+        "tfc:crafting/metal/anvil/copper"
+      ],
+      "outputs": []
+    },
+    "gtceu:copper_mining_hammer": {
+      "inputs": [],
+      "outputs": [
+        "gtceu:shaped/mining_hammer_copper"
+      ]
+    },
+    "gtceu:copper_mining_hammer_head": {
+      "inputs": [
+        "gtceu:shaped/mining_hammer_copper"
+      ],
+      "outputs": []
+    },
+    "gtceu:copper_pickaxe": {
+      "inputs": [],
+      "outputs": [
+        "gtceu:shaped/pickaxe_copper"
+      ]
+    },
+    "gtceu:copper_pickaxe_head": {
+      "inputs": [
+        "gtceu:shaped/pickaxe_copper"
+      ],
+      "outputs": []
+    },
+    "gtceu:copper_tiny_fluid_pipe": {
+      "inputs": [
+        "firmalife:crafting/greenhouse/iron_greenhouse_port"
+      ],
+      "outputs": []
+    },
+    "gtceu:crushed_copper_ore": {
+      "inputs": [
+        "gtceu:shapeless/crushed_ore_to_dust_copper"
+      ],
+      "outputs": [
+        "tfg:quern/copper_crushed_ore_from_normal_raw_ore"
+      ]
+    },
+    "gtceu:double_bismuth_bronze_plate": {
+      "inputs": [
+        "tfc:crafting/bloomery"
+      ],
+      "outputs": []
+    },
+    "gtceu:double_copper_plate": {
+      "inputs": [
+        "tfc:anvil/copper_unfinished_helmet"
+      ],
+      "outputs": []
+    },
+    "gtceu:double_wrought_iron_plate": {
+      "inputs": [
+        "tfc:anvil/wrought_iron_grill",
+        "tfc:crafting/blast_furnace"
+      ],
+      "outputs": []
+    },
+    "gtceu:face_mask": {
+      "inputs": [],
+      "outputs": [
+        "gtceu:shaped/face_mask"
+      ]
+    },
+    "gtceu:hardwood_dust": {
+      "inputs": [],
+      "outputs": [
+        "gtceu:shaped/small_dust_assembling_hardwood"
+      ]
+    },
+    "gtceu:impure_copper_dust": {
+      "inputs": [],
+      "outputs": [
+        "gtceu:shapeless/crushed_ore_to_dust_copper"
+      ]
+    },
+    "gtceu:iron_screw": {
+      "inputs": [
+        "gtceu:shaped/wooden_crate"
+      ],
+      "outputs": []
+    },
+    "gtceu:lead_ingot": {
+      "inputs": [
+        "tfg:create/shaped/netherite_diving_boots"
+      ],
+      "outputs": []
+    },
+    "gtceu:long_bronze_rod": {
+      "inputs": [
+        "gtceu:shaped/bronze_crate",
+        "gtceu:shaped/bronze_drum"
+      ],
+      "outputs": []
+    },
+    "gtceu:long_treated_wood_rod": {
+      "inputs": [
+        "tfg:shaped/harvest_basket_from_papyrus"
+      ],
+      "outputs": []
+    },
+    "gtceu:long_wood_rod": {
+      "inputs": [
+        "tfc:kjs/damage/shaped/fishing_net/wood"
+      ],
+      "outputs": []
+    },
+    "gtceu:red_steel_plate": {
+      "inputs": [
+        "sns:crafting/red_steel_toe_hiking_boots"
+      ],
+      "outputs": []
+    },
+    "gtceu:red_steel_rod": {
+      "inputs": [
+        "sns:anvil/metal/horseshoe/red_steel"
+      ],
+      "outputs": []
+    },
+    "gtceu:silver_rod": {
+      "inputs": [
+        "firmalife:crafting/solar_drier"
+      ],
+      "outputs": []
+    },
+    "gtceu:small_brass_gear": {
+      "inputs": [
+        "firmaciv:crafting/barometer",
+        "firmaciv:crafting/nav_clock",
+        "firmaciv:crafting/sextant",
+        "firmalife:crafting/climate_station",
+        "firmalife:crafting/wood/acacia_barrel_press"
+      ],
+      "outputs": []
+    },
+    "gtceu:small_hardwood_dust": {
+      "inputs": [
+        "gtceu:shaped/small_dust_assembling_hardwood"
+      ],
+      "outputs": [
+        "tfg:quern/soaked_hardwood_strip"
+      ]
+    },
+    "gtceu:small_red_alloy_gear": {
+      "inputs": [
+        "firmalife:crafting/picker",
+        "firmalife:crafting/sweeper"
+      ],
+      "outputs": []
+    },
+    "gtceu:steel_drum": {
+      "inputs": [
+        "tfg:create/shaped/netherite_backtank"
+      ],
+      "outputs": []
+    },
+    "gtceu:steel_plate": {
+      "inputs": [
+        "sns:crafting/steel_toe_hiking_boots"
+      ],
+      "outputs": []
+    },
+    "gtceu:steel_rod": {
+      "inputs": [
+        "sns:anvil/metal/horseshoe/steel"
+      ],
+      "outputs": []
+    },
+    "gtceu:sterling_silver_bolt": {
+      "inputs": [
+        "tfg:shaped/harvest_basket_from_papyrus"
+      ],
+      "outputs": []
+    },
+    "gtceu:stone_axe_head": {
+      "inputs": [],
+      "outputs": [
+        "tfg:rock_knapping/stone_axe_head"
+      ]
+    },
+    "gtceu:stone_hammer_head": {
+      "inputs": [],
+      "outputs": [
+        "tfg:rock_knapping/stone_hammer_head"
+      ]
+    },
+    "gtceu:stone_hoe_head": {
+      "inputs": [],
+      "outputs": [
+        "tfg:rock_knapping/stone_hoe_head",
+        "tfg:rock_knapping/stone_hoe_head_1",
+        "tfg:rock_knapping/stone_hoe_head_2"
+      ]
+    },
+    "gtceu:stone_knife": {
+      "inputs": [],
+      "outputs": [
+        "gtceu:shaped/knife_stone"
+      ]
+    },
+    "gtceu:stone_knife_head": {
+      "inputs": [
+        "gtceu:shaped/knife_stone"
+      ],
+      "outputs": [
+        "tfg:rock_knapping/stone_knife_head",
+        "tfg:rock_knapping/stone_knife_head_1",
+        "tfg:rock_knapping/stone_knife_head_2",
+        "tfg:rock_knapping/stone_knife_head_3"
+      ]
+    },
+    "gtceu:stone_shovel_head": {
+      "inputs": [],
+      "outputs": [
+        "tfg:rock_knapping/stone_shovel_head"
+      ]
+    },
+    "gtceu:thermochemically_treated_hardwood_dust": {
+      "inputs": [
+        "tfg:anvil/soaked_unrefined_paper"
+      ],
+      "outputs": []
+    },
+    "gtceu:wax_dust": {
+      "inputs": [
+        "firmalife:crafting/oven_insulation",
+        "firmalife:crafting/sealed_bricks",
+        "firmalife:crafting/treated_lumber",
+        "firmalife:crafting/vat"
+      ],
+      "outputs": []
+    },
+    "gtceu:wood_bolt": {
+      "inputs": [
+        "tfc:kjs/damage/shaped/fishing_net/wood"
+      ],
+      "outputs": []
+    },
+    "gtceu:wood_crate": {
+      "inputs": [],
+      "outputs": [
+        "gtceu:shaped/wooden_crate"
+      ]
+    },
+    "gtceu:wrought_iron_hoe_head": {
+      "inputs": [
+        "firmalife:crafting/picker"
+      ],
+      "outputs": []
+    },
+    "gtceu:wrought_iron_ingot": {
+      "inputs": [
+        "firmalife:crafting/hydroponic_planter"
+      ],
+      "outputs": [
+        "tfc:anvil/wrought_iron_from_bloom"
+      ]
+    },
+    "gtceu:wrought_iron_plate": {
+      "inputs": [
+        "firmalife:crafting/ashtray",
+        "firmalife:crafting/jarring_station",
+        "firmalife:crafting/oven_insulation",
+        "firmalife:crafting/picker",
+        "firmalife:crafting/vat",
+        "firmalife:crafting/wood/acacia_barrel_press",
+        "tfcbetterbf:crafting/insulation"
+      ],
+      "outputs": []
+    },
+    "gtceu:wrought_iron_rod": {
+      "inputs": [
+        "firmaciv:crafting/cannon",
+        "firmalife:crafting/greenhouse/iron_greenhouse_door",
+        "firmalife:crafting/greenhouse/iron_greenhouse_panel_roof",
+        "firmalife:crafting/greenhouse/iron_greenhouse_panel_wall",
+        "firmalife:crafting/greenhouse/iron_greenhouse_roof",
+        "firmalife:crafting/greenhouse/iron_greenhouse_roof_top",
+        "firmalife:crafting/greenhouse/iron_greenhouse_trapdoor",
+        "firmalife:crafting/greenhouse/iron_greenhouse_wall",
+        "firmalife:crafting/picker",
+        "firmalife:crafting/sweeper",
+        "firmalife:crafting/wood/acacia_barrel_press"
+      ],
+      "outputs": []
+    },
+    "gtceu:wrought_iron_saw_head": {
+      "inputs": [
+        "firmalife:crafting/sweeper"
+      ],
+      "outputs": []
+    },
+    "minecraft:bamboo_planks": {
+      "inputs": [
+        "firmalife:crafting/climate_station",
+        "gtceu:shaped/wooden_crate",
+        "tfc:crafting/vanilla/loom"
+      ],
+      "outputs": []
+    },
+    "minecraft:black_dye": {
+      "inputs": [
+        "minecraft:writable_book",
+        "tfc:crafting/wood/birch_scribing_table"
+      ],
+      "outputs": []
+    },
+    "minecraft:blue_stained_glass": {
+      "inputs": [
+        "firmalife:crafting/climate_station"
+      ],
+      "outputs": []
+    },
+    "minecraft:bone": {
+      "inputs": [
+        "tfc:crafting/bone_needle"
+      ],
+      "outputs": []
+    },
+    "minecraft:bone_meal": {
+      "inputs": [
+        "tfc:barrel/glue"
+      ],
+      "outputs": []
+    },
+    "minecraft:book": {
+      "inputs": [
+        "minecraft:writable_book"
+      ],
+      "outputs": [
+        "minecraft:book"
+      ]
+    },
+    "minecraft:bowl": {
+      "inputs": [],
+      "outputs": [
+        "tfc:crafting/vanilla/bowl"
+      ]
+    },
+    "minecraft:brick": {
+      "inputs": [
+        "firmalife:crafting/bonsai_planter",
+        "firmalife:crafting/hanging_planter",
+        "firmalife:crafting/large_planter",
+        "firmalife:crafting/quad_planter",
+        "firmalife:crafting/rustic_finish",
+        "firmalife:crafting/stone_finish",
+        "firmalife:crafting/tile_finish",
+        "firmalife:crafting/trellis_planter",
+        "tfc:crafting/bricks"
+      ],
+      "outputs": []
+    },
+    "minecraft:bricks": {
+      "inputs": [
+        "firmalife:crafting/brick_countertop"
+      ],
+      "outputs": [
+        "tfc:crafting/bricks"
+      ]
+    },
+    "minecraft:clay_ball": {
+      "inputs": [
+        "firmalife:clay_knapping/oven_bottom",
+        "firmalife:clay_knapping/oven_chimney",
+        "firmalife:clay_knapping/oven_top",
+        "firmalife:crafting/tile_finish",
+        "rnr:crafting/hoggin_mix",
+        "tfc:clay_knapping/axe_head_mold",
+        "tfc:clay_knapping/blowpipe",
+        "tfc:clay_knapping/bowl_4",
+        "tfc:clay_knapping/chisel_head_mold",
+        "tfc:clay_knapping/hammer_head_mold",
+        "tfc:clay_knapping/hoe_head_mold",
+        "tfc:clay_knapping/ingot_mold",
+        "tfc:clay_knapping/jug",
+        "tfc:clay_knapping/knife_blade_mold",
+        "tfc:clay_knapping/pan",
+        "tfc:clay_knapping/pickaxe_head_mold",
+        "tfc:clay_knapping/pot",
+        "tfc:clay_knapping/propick_head_mold",
+        "tfc:clay_knapping/saw_blade_mold",
+        "tfc:clay_knapping/scythe_blade_mold",
+        "tfc:clay_knapping/shovel_head_mold",
+        "tfc:clay_knapping/spindle_head",
+        "tfc:clay_knapping/vessel",
+        "tfc:crafting/daub",
+        "tfc:crafting/daub_from_mud",
+        "tfc:crafting/fire_clay",
+        "tfcchannelcasting:clay_knapping/unfired_heart_mold"
+      ],
+      "outputs": []
+    },
+    "minecraft:cobblestone": {
+      "inputs": [
+        "firmalife:crafting/tile_finish"
+      ],
+      "outputs": []
+    },
+    "minecraft:copper_ingot": {
+      "inputs": [
+        "tfc:anvil/copper_propick_head"
+      ],
+      "outputs": []
+    },
+    "minecraft:egg": {
+      "inputs": [
+        "tfc:crafting/parchment",
+        "tfc:heating/cooked_egg"
+      ],
+      "outputs": []
+    },
+    "minecraft:feather": {
+      "inputs": [
+        "minecraft:writable_book",
+        "tfc:crafting/wood/birch_scribing_table"
+      ],
+      "outputs": []
+    },
+    "minecraft:glass": {
+      "inputs": [
+        "firmalife:crafting/solar_drier"
+      ],
+      "outputs": []
+    },
+    "minecraft:gunpowder": {
+      "inputs": [],
+      "outputs": [
+        "tfc:crafting/gunpowder",
+        "tfc:crafting/gunpowder_graphite"
+      ]
+    },
+    "minecraft:hopper": {
+      "inputs": [
+        "firmalife:crafting/oven_hopper"
+      ],
+      "outputs": []
+    },
+    "minecraft:leather": {
+      "inputs": [
+        "sns:crafting/ore_sack",
+        "sns:leather_knapping/quiver",
+        "tfc:crafting/bellows",
+        "tfc:crafting/vanilla/map",
+        "tfc:crafting/wood/oak_sewing_table",
+        "tfc:leather_knapping/chestplate",
+        "tfc:leather_knapping/saddle",
+        "tfchotornot:leather_knapping/mittens",
+        "waterflasks:leather_knapping/leather_side"
+      ],
+      "outputs": [
+        "tfc:barrel/medium_leather"
+      ]
+    },
+    "minecraft:leather_boots": {
+      "inputs": [
+        "sns:crafting/black_steel_toe_hiking_boots",
+        "sns:crafting/blue_steel_toe_hiking_boots",
+        "sns:crafting/hiking_boots",
+        "sns:crafting/red_steel_toe_hiking_boots",
+        "sns:crafting/steel_toe_hiking_boots"
+      ],
+      "outputs": [
+        "tfc:barrel/dye/red_leather"
+      ]
+    },
+    "minecraft:leather_chestplate": {
+      "inputs": [],
+      "outputs": [
+        "tfc:barrel/dye/red_leather",
+        "tfc:leather_knapping/chestplate"
+      ]
+    },
+    "minecraft:leather_helmet": {
+      "inputs": [],
+      "outputs": [
+        "tfc:barrel/dye/red_leather"
+      ]
+    },
+    "minecraft:leather_horse_armor": {
+      "inputs": [],
+      "outputs": [
+        "tfc:barrel/dye/red_leather"
+      ]
+    },
+    "minecraft:leather_leggings": {
+      "inputs": [],
+      "outputs": [
+        "tfc:barrel/dye/red_leather"
+      ]
+    },
+    "minecraft:light_blue_bed": {
+      "inputs": [],
+      "outputs": [
+        "tfc:crafting/vanilla/color/light_blue_bed"
+      ]
+    },
+    "minecraft:light_blue_dye": {
+      "inputs": [
+        "tfc:crafting/vanilla/color/light_blue_bed"
+      ],
+      "outputs": []
+    },
+    "minecraft:loom": {
+      "inputs": [],
+      "outputs": [
+        "tfc:crafting/vanilla/loom"
+      ]
+    },
+    "minecraft:magma_cream": {
+      "inputs": [
+        "tfg:shapeless/hellbricks_from_soot"
+      ],
+      "outputs": []
+    },
+    "minecraft:map": {
+      "inputs": [],
+      "outputs": [
+        "tfc:crafting/vanilla/map"
+      ]
+    },
+    "minecraft:moss_block": {
+      "inputs": [
+        "tfc:crafting/composter",
+        "tfc:crafting/daub"
+      ],
+      "outputs": []
+    },
+    "minecraft:music_disc_chirp": {
+      "inputs": [],
+      "outputs": [
+        "tfc:barrel/dye/disc_chirp"
+      ]
+    },
+    "minecraft:name_tag": {
+      "inputs": [
+        "sns:crafting/frame_pack",
+        "sns:crafting/ore_sack",
+        "tfg:sophisticated_backpacks/shaped/backpack"
+      ],
+      "outputs": [
+        "tfc:crafting/vanilla/name_tag"
+      ]
+    },
+    "minecraft:nether_bricks": {
+      "inputs": [
+        "tfg:shapeless/hellbricks_from_soot"
+      ],
+      "outputs": []
+    },
+    "minecraft:netherite_leggings": {
+      "inputs": [],
+      "outputs": [
+        "tfg:minecraft/shaped/netherite_leggings"
+      ]
+    },
+    "minecraft:painting": {
+      "inputs": [],
+      "outputs": [
+        "tfc:crafting/vanilla/painting"
+      ]
+    },
+    "minecraft:paper": {
+      "inputs": [
+        "firmalife:crafting/bottle_label",
+        "gtceu:shaped/face_mask",
+        "tfc:crafting/vanilla/map",
+        "tfc:crafting/vanilla/name_tag"
+      ],
+      "outputs": [
+        "tfc:crafting/parchment"
+      ]
+    },
+    "minecraft:red_concrete_powder": {
+      "inputs": [],
+      "outputs": [
+        "tfc:barrel/dye/red_concrete_powder"
+      ]
+    },
+    "minecraft:red_dye": {
+      "inputs": [
+        "tfc:crafting/powderkeg"
+      ],
+      "outputs": [
+        "tfc:quern/red_dye"
+      ]
+    },
+    "minecraft:red_sand": {
+      "inputs": [
+        "rnr:crafting/hoggin_mix"
+      ],
+      "outputs": []
+    },
+    "minecraft:redstone": {
+      "inputs": [
+        "firmalife:crafting/climate_station"
+      ],
+      "outputs": []
+    },
+    "minecraft:saddle": {
+      "inputs": [],
+      "outputs": [
+        "tfc:leather_knapping/saddle"
+      ]
+    },
+    "minecraft:scaffolding": {
+      "inputs": [
+        "tfc:crafting/barrel_rack"
+      ],
+      "outputs": []
+    },
+    "minecraft:smithing_table": {
+      "inputs": [],
+      "outputs": [
+        "tfc:crafting/vanilla/smithing_table"
+      ]
+    },
+    "minecraft:stick": {
+      "inputs": [
+        "alekiships:crafting/oar",
+        "beneath:crafting/juicer",
+        "firmaciv:crafting/canoe_paddle",
+        "firmaciv:crafting/kayak_paddle",
+        "gtceu:shaped/knife_stone",
+        "gtceu:shaped/mining_hammer_copper",
+        "gtceu:shaped/pickaxe_copper",
+        "rnr:crafting/roof_framing",
+        "tfc:crafting/firestarter",
+        "tfc:crafting/handstone",
+        "tfc:crafting/metal/fishing_rod/bismuth_bronze",
+        "tfc:crafting/paddle",
+        "tfc:crafting/vanilla/painting",
+        "tfc:crafting/wood/acacia_loom",
+        "tfc:crafting/wood/kapok_bookshelf",
+        "tfc:crafting/wood/oak_shelf",
+        "tfc:crafting/wood/sequoia_sluice",
+        "tfc:heating/torch_from_stick",
+        "tfc:kjs/damage/shaped/fishing_net/wood",
+        "tfchotornot:crafting/tongs/wood"
+      ],
+      "outputs": []
+    },
+    "minecraft:stone": {
+      "inputs": [
+        "tfc:crafting/handstone",
+        "tfc:crafting/quern"
+      ],
+      "outputs": []
+    },
+    "minecraft:string": {
+      "inputs": [
+        "firmaciv:crafting/kayak",
+        "firmaciv:crafting/medium_triangular_sail",
+        "firmaciv:crafting/small_triangular_sail",
+        "firmalife:crafting/wood/acacia_hanger",
+        "gtceu:shaped/face_mask",
+        "tfc:barrel/candle",
+        "tfc:crafting/metal/fishing_rod/bismuth_bronze",
+        "tfc:crafting/powderkeg",
+        "tfc:crafting/vanilla/loom",
+        "tfc:crafting/vanilla/name_tag",
+        "tfc:loom/silk_cloth",
+        "waterflasks:crafting/leather_flask"
+      ],
+      "outputs": []
+    },
+    "minecraft:water": {
+      "inputs": [
+        "tfc:barrel/limewater",
+        "tfc:barrel/medium_prepared_hide",
+        "tfc:barrel/soaked_papyrus_strip",
+        "tfc:barrel/tannin",
+        "tfg:barrel/soak_hardwood_strip"
+      ],
+      "outputs": []
+    },
+    "minecraft:water_bucket": {
+      "inputs": [
+        "firmaciv:crafting/barometer",
+        "firmalife:crafting/watering_can"
+      ],
+      "outputs": []
+    },
+    "minecraft:white_concrete_powder": {
+      "inputs": [
+        "tfc:barrel/dye/bleach_concrete_powder"
+      ],
+      "outputs": []
+    },
+    "minecraft:white_wool": {
+      "inputs": [],
+      "outputs": [
+        "tfc:loom/wool_block"
+      ]
+    },
+    "minecraft:writable_book": {
+      "inputs": [],
+      "outputs": [
+        "minecraft:writable_book"
+      ]
+    },
+    "rnr:flagstone/gneiss": {
+      "inputs": [],
+      "outputs": [
+        "rnr:crafting/flagstone/gneiss"
+      ]
+    },
+    "rnr:flagstone/pink_sandstone": {
+      "inputs": [],
+      "outputs": [
+        "rnr:crafting/flagstone/pink_sandstone"
+      ]
+    },
+    "rnr:gravel_fill/chert": {
+      "inputs": [],
+      "outputs": [
+        "rnr:crafting/gravel_fill/chert"
+      ]
+    },
+    "rnr:hoggin_mix": {
+      "inputs": [],
+      "outputs": [
+        "rnr:crafting/hoggin_mix"
+      ]
+    },
+    "rnr:roof_frame": {
+      "inputs": [],
+      "outputs": [
+        "rnr:crafting/roof_framing"
+      ]
+    },
+    "sns:black_steel_toe_hiking_boots": {
+      "inputs": [],
+      "outputs": [
+        "sns:crafting/black_steel_toe_hiking_boots"
+      ]
+    },
+    "sns:blue_steel_toe_hiking_boots": {
+      "inputs": [],
+      "outputs": [
+        "sns:crafting/blue_steel_toe_hiking_boots"
+      ]
+    },
+    "sns:bound_leather_strip": {
+      "inputs": [
+        "sns:crafting/black_steel_toe_hiking_boots",
+        "sns:crafting/blue_steel_toe_hiking_boots",
+        "sns:crafting/frame_pack",
+        "sns:crafting/hiking_boots",
+        "sns:crafting/red_steel_toe_hiking_boots",
+        "sns:crafting/steel_toe_hiking_boots",
+        "tfg:sophisticated_backpacks/shaped/backpack"
+      ],
+      "outputs": []
+    },
+    "sns:buckle": {
+      "inputs": [
+        "sns:crafting/black_steel_toe_hiking_boots",
+        "sns:crafting/blue_steel_toe_hiking_boots",
+        "sns:crafting/hiking_boots",
+        "sns:crafting/red_steel_toe_hiking_boots",
+        "sns:crafting/steel_toe_hiking_boots"
+      ],
+      "outputs": []
+    },
+    "sns:burlap_sack": {
+      "inputs": [],
+      "outputs": [
+        "sns:crafting/burlap_sack"
+      ]
+    },
+    "sns:frame_pack": {
+      "inputs": [],
+      "outputs": [
+        "sns:crafting/frame_pack"
+      ]
+    },
+    "sns:hiking_boots": {
+      "inputs": [],
+      "outputs": [
+        "sns:crafting/hiking_boots"
+      ]
+    },
+    "sns:leather_sack": {
+      "inputs": [],
+      "outputs": [
+        "sns:crafting/leather_sack"
+      ]
+    },
+    "sns:leather_strip": {
+      "inputs": [
+        "sns:crafting/leather_sack"
+      ],
+      "outputs": []
+    },
+    "sns:metal/horseshoe/black_steel": {
+      "inputs": [
+        "sns:crafting/metal/horseshoes/black_steel"
+      ],
+      "outputs": [
+        "sns:anvil/metal/horseshoe/black_steel"
+      ]
+    },
+    "sns:metal/horseshoe/blue_steel": {
+      "inputs": [
+        "sns:crafting/metal/horseshoes/blue_steel"
+      ],
+      "outputs": [
+        "sns:anvil/metal/horseshoe/blue_steel"
+      ]
+    },
+    "sns:metal/horseshoe/red_steel": {
+      "inputs": [
+        "sns:crafting/metal/horseshoes/red_steel"
+      ],
+      "outputs": [
+        "sns:anvil/metal/horseshoe/red_steel"
+      ]
+    },
+    "sns:metal/horseshoe/steel": {
+      "inputs": [
+        "sns:crafting/metal/horseshoes/steel"
+      ],
+      "outputs": [
+        "sns:anvil/metal/horseshoe/steel"
+      ]
+    },
+    "sns:metal/horseshoes/black_steel": {
+      "inputs": [],
+      "outputs": [
+        "sns:crafting/metal/horseshoes/black_steel"
+      ]
+    },
+    "sns:metal/horseshoes/blue_steel": {
+      "inputs": [],
+      "outputs": [
+        "sns:crafting/metal/horseshoes/blue_steel"
+      ]
+    },
+    "sns:metal/horseshoes/red_steel": {
+      "inputs": [],
+      "outputs": [
+        "sns:crafting/metal/horseshoes/red_steel"
+      ]
+    },
+    "sns:metal/horseshoes/steel": {
+      "inputs": [],
+      "outputs": [
+        "sns:crafting/metal/horseshoes/steel"
+      ]
+    },
+    "sns:ore_sack": {
+      "inputs": [],
+      "outputs": [
+        "sns:crafting/ore_sack"
+      ]
+    },
+    "sns:pack_frame": {
+      "inputs": [
+        "sns:crafting/frame_pack",
+        "tfg:sophisticated_backpacks/shaped/backpack"
+      ],
+      "outputs": []
+    },
+    "sns:quiver": {
+      "inputs": [],
+      "outputs": [
+        "sns:leather_knapping/quiver"
+      ]
+    },
+    "sns:red_steel_toe_hiking_boots": {
+      "inputs": [],
+      "outputs": [
+        "sns:crafting/red_steel_toe_hiking_boots"
+      ]
+    },
+    "sns:reinforced_fabric": {
+      "inputs": [
+        "sns:crafting/frame_pack",
+        "tfg:sophisticated_backpacks/shaped/backpack"
+      ],
+      "outputs": []
+    },
+    "sns:reinforced_fiber": {
+      "inputs": [
+        "sns:crafting/black_steel_toe_hiking_boots",
+        "sns:crafting/blue_steel_toe_hiking_boots",
+        "sns:crafting/hiking_boots",
+        "sns:crafting/ore_sack",
+        "sns:crafting/red_steel_toe_hiking_boots",
+        "sns:crafting/steel_toe_hiking_boots",
+        "tfg:sophisticated_backpacks/shaped/backpack"
+      ],
+      "outputs": []
+    },
+    "sns:seed_pouch": {
+      "inputs": [],
+      "outputs": [
+        "sns:crafting/seed_pouch"
+      ]
+    },
+    "sns:steel_toe_hiking_boots": {
+      "inputs": [],
+      "outputs": [
+        "sns:crafting/steel_toe_hiking_boots"
+      ]
+    },
+    "sns:straw_basket": {
+      "inputs": [],
+      "outputs": [
+        "sns:crafting/straw_basket"
+      ]
+    },
+    "sns:unfinished_leather_sack": {
+      "inputs": [
+        "sns:crafting/leather_sack",
+        "sns:crafting/ore_sack"
+      ],
+      "outputs": []
+    },
+    "sophisticatedbackpacks:backpack": {
+      "inputs": [],
+      "outputs": [
+        "tfg:sophisticated_backpacks/shaped/backpack"
+      ]
+    },
+    "tfc:aggregate": {
+      "inputs": [
+        "tfc:barrel/dye/red_concrete_powder"
+      ],
+      "outputs": [
+        "tfc:barrel/dye/bleach_concrete_powder"
+      ]
+    },
+    "tfc:alabaster/bricks": {
+      "inputs": [],
+      "outputs": [
+        "tfc:crafting/alabaster_bricks"
+      ]
+    },
+    "tfc:alabaster/bricks/magenta": {
+      "inputs": [
+        "tfc:crafting/alabaster/magenta_bricks_stairs"
+      ],
+      "outputs": []
+    },
+    "tfc:alabaster/bricks/magenta_stairs": {
+      "inputs": [],
+      "outputs": [
+        "tfc:crafting/alabaster/magenta_bricks_stairs"
+      ]
+    },
+    "tfc:alabaster/polished/magenta": {
+      "inputs": [
+        "tfc:crafting/alabaster/magenta_polished_slab"
+      ],
+      "outputs": []
+    },
+    "tfc:alabaster/polished/magenta_slab": {
+      "inputs": [],
+      "outputs": [
+        "tfc:crafting/alabaster/magenta_polished_slab"
+      ]
+    },
+    "tfc:alabaster_brick": {
+      "inputs": [
+        "tfc:crafting/alabaster_bricks"
+      ],
+      "outputs": [
+        "tfc:crafting/alabaster_brick"
+      ]
+    },
+    "tfc:barrel_rack": {
+      "inputs": [],
+      "outputs": [
+        "tfc:crafting/barrel_rack"
+      ]
+    },
+    "tfc:bellows": {
+      "inputs": [],
+      "outputs": [
+        "tfc:crafting/bellows"
+      ]
+    },
+    "tfc:blast_furnace": {
+      "inputs": [],
+      "outputs": [
+        "tfc:crafting/blast_furnace"
+      ]
+    },
+    "tfc:bloomery": {
+      "inputs": [],
+      "outputs": [
+        "tfc:crafting/bloomery"
+      ]
+    },
+    "tfc:blowpipe": {
+      "inputs": [],
+      "outputs": [
+        "tfc:anvil/blowpipe"
+      ]
+    },
+    "tfc:blowpipe_with_glass": {
+      "inputs": [
+        "firmalife:glassworking/olivine_wine_bottle",
+        "tfc:glassworking/jar",
+        "tfc:glassworking/lens",
+        "tfc:glassworking/silica_bottle"
+      ],
+      "outputs": []
+    },
+    "tfc:bone_needle": {
+      "inputs": [
+        "gtceu:shaped/face_mask",
+        "sns:crafting/frame_pack",
+        "sns:crafting/leather_sack",
+        "sns:crafting/ore_sack",
+        "tfc:kjs/damage/shaped/fishing_net/wood"
+      ],
+      "outputs": [
+        "tfc:crafting/bone_needle"
+      ]
+    },
+    "tfc:brick/gneiss": {
+      "inputs": [
+        "tfc:crafting/rock/gneiss_bricks"
+      ],
+      "outputs": [
+        "tfc:crafting/rock/gneiss_brick"
+      ]
+    },
+    "tfc:brick/shale": {
+      "inputs": [
+        "tfc:crafting/rock/shale_aqueduct"
+      ],
+      "outputs": []
+    },
+    "tfc:bucket/tannin": {
+      "inputs": [
+        "firmalife:crafting/rustic_finish"
+      ],
+      "outputs": []
+    },
+    "tfc:burlap_cloth": {
+      "inputs": [],
+      "outputs": [
+        "tfc:loom/burlap_cloth"
+      ]
+    },
+    "tfc:candle": {
+      "inputs": [],
+      "outputs": [
+        "tfc:barrel/candle"
+      ]
+    },
+    "tfc:ceramic/ingot_mold": {
+      "inputs": [],
+      "outputs": [
+        "tfc:heating/ingot_mold"
+      ]
+    },
+    "tfc:ceramic/jug": {
+      "inputs": [
+        "firmaciv:crafting/barometer",
+        "firmalife:crafting/rustic_finish"
+      ],
+      "outputs": []
+    },
+    "tfc:ceramic/pot": {
+      "inputs": [],
+      "outputs": [
+        "tfc:heating/fired_pot"
+      ]
+    },
+    "tfc:ceramic/propick_head_mold": {
+      "inputs": [],
+      "outputs": [
+        "tfc:heating/propick_head_mold"
+      ]
+    },
+    "tfc:ceramic/unfired_axe_head_mold": {
+      "inputs": [],
+      "outputs": [
+        "tfc:clay_knapping/axe_head_mold"
+      ]
+    },
+    "tfc:ceramic/unfired_blowpipe": {
+      "inputs": [],
+      "outputs": [
+        "tfc:clay_knapping/blowpipe"
+      ]
+    },
+    "tfc:ceramic/unfired_bowl": {
+      "inputs": [],
+      "outputs": [
+        "tfc:clay_knapping/bowl_4"
+      ]
+    },
+    "tfc:ceramic/unfired_chisel_head_mold": {
+      "inputs": [],
+      "outputs": [
+        "tfc:clay_knapping/chisel_head_mold"
+      ]
+    },
+    "tfc:ceramic/unfired_crucible": {
+      "inputs": [
+        "tfc:heating/crucible"
+      ],
+      "outputs": [
+        "tfc:fire_clay_knapping/crucible"
+      ]
+    },
+    "tfc:ceramic/unfired_fire_brick": {
+      "inputs": [],
+      "outputs": [
+        "tfc:fire_clay_knapping/brick"
+      ]
+    },
+    "tfc:ceramic/unfired_fire_ingot_mold": {
+      "inputs": [],
+      "outputs": [
+        "tfc:fire_clay_knapping/fire_ingot_mold"
+      ]
+    },
+    "tfc:ceramic/unfired_hammer_head_mold": {
+      "inputs": [],
+      "outputs": [
+        "tfc:clay_knapping/hammer_head_mold"
+      ]
+    },
+    "tfc:ceramic/unfired_hoe_head_mold": {
+      "inputs": [],
+      "outputs": [
+        "tfc:clay_knapping/hoe_head_mold"
+      ]
+    },
+    "tfc:ceramic/unfired_ingot_mold": {
+      "inputs": [
+        "tfc:heating/ingot_mold"
+      ],
+      "outputs": [
+        "tfc:clay_knapping/ingot_mold"
+      ]
+    },
+    "tfc:ceramic/unfired_jug": {
+      "inputs": [],
+      "outputs": [
+        "tfc:clay_knapping/jug"
+      ]
+    },
+    "tfc:ceramic/unfired_knife_blade_mold": {
+      "inputs": [],
+      "outputs": [
+        "tfc:clay_knapping/knife_blade_mold"
+      ]
+    },
+    "tfc:ceramic/unfired_pan": {
+      "inputs": [
+        "tfc:heating/ceramic_pan"
+      ],
+      "outputs": [
+        "tfc:clay_knapping/pan"
+      ]
+    },
+    "tfc:ceramic/unfired_pickaxe_head_mold": {
+      "inputs": [],
+      "outputs": [
+        "tfc:clay_knapping/pickaxe_head_mold"
+      ]
+    },
+    "tfc:ceramic/unfired_pot": {
+      "inputs": [
+        "tfc:heating/fired_pot"
+      ],
+      "outputs": [
+        "tfc:clay_knapping/pot"
+      ]
+    },
+    "tfc:ceramic/unfired_propick_head_mold": {
+      "inputs": [
+        "tfc:heating/propick_head_mold"
+      ],
+      "outputs": [
+        "tfc:clay_knapping/propick_head_mold"
+      ]
+    },
+    "tfc:ceramic/unfired_saw_blade_mold": {
+      "inputs": [],
+      "outputs": [
+        "tfc:clay_knapping/saw_blade_mold"
+      ]
+    },
+    "tfc:ceramic/unfired_scythe_blade_mold": {
+      "inputs": [],
+      "outputs": [
+        "tfc:clay_knapping/scythe_blade_mold"
+      ]
+    },
+    "tfc:ceramic/unfired_shovel_head_mold": {
+      "inputs": [],
+      "outputs": [
+        "tfc:clay_knapping/shovel_head_mold"
+      ]
+    },
+    "tfc:ceramic/unfired_spindle_head": {
+      "inputs": [],
+      "outputs": [
+        "tfc:clay_knapping/spindle_head"
+      ]
+    },
+    "tfc:ceramic/unfired_vessel": {
+      "inputs": [],
+      "outputs": [
+        "tfc:clay_knapping/vessel"
+      ]
+    },
+    "tfc:cider": {
+      "inputs": [
+        "tfcchannelcasting:barrel/fill_with_sweet_liquor"
+      ],
+      "outputs": []
+    },
+    "tfc:compost": {
+      "inputs": [
+        "firmalife:crafting/bonsai_planter",
+        "firmalife:crafting/hanging_planter",
+        "firmalife:crafting/hydroponic_planter",
+        "firmalife:crafting/large_planter",
+        "firmalife:crafting/quad_planter",
+        "firmalife:crafting/seed_ball",
+        "firmalife:crafting/trellis_planter"
+      ],
+      "outputs": []
+    },
+    "tfc:composter": {
+      "inputs": [
+        "beneath:crafting/unposter"
+      ],
+      "outputs": [
+        "tfc:crafting/composter"
+      ]
+    },
+    "tfc:crucible": {
+      "inputs": [
+        "tfc:crafting/blast_furnace"
+      ],
+      "outputs": [
+        "tfc:heating/crucible"
+      ]
+    },
+    "tfc:cut_sandstone/pink": {
+      "inputs": [
+        "rnr:crafting/flagstone/pink_sandstone"
+      ],
+      "outputs": []
+    },
+    "tfc:daub": {
+      "inputs": [],
+      "outputs": [
+        "tfc:crafting/daub",
+        "tfc:crafting/daub_from_mud"
+      ]
+    },
+    "tfc:drying_bricks/loam": {
+      "inputs": [],
+      "outputs": [
+        "tfc:crafting/soil/loam_drying_bricks"
+      ]
+    },
+    "tfc:empty_jar": {
+      "inputs": [],
+      "outputs": [
+        "tfc:glassworking/jar"
+      ]
+    },
+    "tfc:fire_clay": {
+      "inputs": [
+        "tfc:fire_clay_knapping/brick",
+        "tfc:fire_clay_knapping/crucible",
+        "tfc:fire_clay_knapping/fire_ingot_mold",
+        "tfcchannelcasting:fire_clay_knapping/unfired_channel_4",
+        "tfcchannelcasting:fire_clay_knapping/unfired_mold_table"
+      ],
+      "outputs": [
+        "tfc:crafting/fire_clay"
+      ]
+    },
+    "tfc:firestarter": {
+      "inputs": [],
+      "outputs": [
+        "tfc:crafting/firestarter"
+      ]
+    },
+    "tfc:food/banana": {
+      "inputs": [],
+      "outputs": [
+        "firmalife:drying/drying_fruit"
+      ]
+    },
+    "tfc:food/barley_bread": {
+      "inputs": [
+        "tfc:crafting/barley_sandwich_with_jam_1"
+      ],
+      "outputs": []
+    },
+    "tfc:food/barley_bread_jam_sandwich": {
+      "inputs": [],
+      "outputs": [
+        "tfc:crafting/barley_sandwich_with_jam_1"
+      ]
+    },
+    "tfc:food/barley_flour": {
+      "inputs": [
+        "tfc:crafting/parchment"
+      ],
+      "outputs": []
+    },
+    "tfc:food/beet": {
+      "inputs": [
+        "firmalife:crafting/burrito",
+        "firmalife:crafting/taco",
+        "tfc:crafting/wheat_sandwich"
+      ],
+      "outputs": []
+    },
+    "tfc:food/cheese": {
+      "inputs": [
+        "tfc:crafting/barley_sandwich_with_jam_1"
+      ],
+      "outputs": []
+    },
+    "tfc:food/cod": {
+      "inputs": [
+        "tfc:heating/cod"
+      ],
+      "outputs": []
+    },
+    "tfc:food/cooked_beef": {
+      "inputs": [
+        "firmalife:crafting/burrito",
+        "firmalife:crafting/lasagna",
+        "firmalife:crafting/nachos",
+        "firmalife:crafting/taco"
+      ],
+      "outputs": []
+    },
+    "tfc:food/cooked_cod": {
+      "inputs": [],
+      "outputs": [
+        "tfc:heating/cod"
+      ]
+    },
+    "tfc:food/cooked_egg": {
+      "inputs": [],
+      "outputs": [
+        "tfc:heating/cooked_egg"
+      ]
+    },
+    "tfc:food/cooked_mutton": {
+      "inputs": [],
+      "outputs": [
+        "tfc:heating/mutton"
+      ]
+    },
+    "tfc:food/dried_kelp": {
+      "inputs": [
+        "tfg:smelting/dried_kelp_to_soda"
+      ],
+      "outputs": []
+    },
+    "tfc:food/dried_seaweed": {
+      "inputs": [
+        "tfg:smelting/dried_seaweed_to_soda"
+      ],
+      "outputs": []
+    },
+    "tfc:food/mutton": {
+      "inputs": [
+        "tfc:heating/mutton"
+      ],
+      "outputs": []
+    },
+    "tfc:food/olive": {
+      "inputs": [
+        "tfc:quern/olive"
+      ],
+      "outputs": []
+    },
+    "tfc:food/shellfish": {
+      "inputs": [
+        "tfc:quern/fluxstone"
+      ],
+      "outputs": []
+    },
+    "tfc:food/wheat_bread": {
+      "inputs": [
+        "tfc:crafting/wheat_sandwich"
+      ],
+      "outputs": []
+    },
+    "tfc:food/wheat_bread_sandwich": {
+      "inputs": [],
+      "outputs": [
+        "tfc:crafting/wheat_sandwich"
+      ]
+    },
+    "tfc:gem_saw": {
+      "inputs": [
+        "firmalife:glassworking/olivine_wine_bottle",
+        "tfc:glassworking/jar",
+        "tfc:glassworking/lens",
+        "tfc:glassworking/silica_bottle"
+      ],
+      "outputs": [
+        "tfc:crafting/gem_saw"
+      ]
+    },
+    "tfc:glue": {
+      "inputs": [
+        "firmalife:crafting/mixing_bowl",
+        "firmalife:crafting/wood/acacia_stomping_barrel",
+        "firmalife:crafting/wood/pine_keg",
+        "tfc:crafting/vanilla/bowl",
+        "tfc:kjs/damage/shaped/fishing_net/wood",
+        "tfg:shaped/harvest_basket_from_papyrus"
+      ],
+      "outputs": [
+        "tfc:barrel/glue"
+      ]
+    },
+    "tfc:groundcover/pumice": {
+      "inputs": [
+        "tfc:crafting/large_treated_hide"
+      ],
+      "outputs": []
+    },
+    "tfc:handstone": {
+      "inputs": [
+        "tfc:quern/fluxstone",
+        "tfc:quern/olive",
+        "tfc:quern/red_dye",
+        "tfg:quern/copper_crushed_ore_from_normal_raw_ore",
+        "tfg:quern/soaked_hardwood_strip"
+      ],
+      "outputs": [
+        "tfc:crafting/handstone"
+      ]
+    },
+    "tfc:hematitic_glass_bottle": {
+      "inputs": [
+        "firmaciv:crafting/barometer",
+        "firmalife:crafting/rustic_finish"
+      ],
+      "outputs": []
+    },
+    "tfc:jacks": {
+      "inputs": [
+        "firmalife:glassworking/olivine_wine_bottle",
+        "tfc:glassworking/jar",
+        "tfc:glassworking/silica_bottle"
+      ],
+      "outputs": [
+        "tfc:welding/jacks"
+      ]
+    },
+    "tfc:jar/blackberry_unsealed": {
+      "inputs": [
+        "firmalife:crafting/filled_pie",
+        "firmalife:crafting/toast_with_jam",
+        "tfc:crafting/barley_sandwich_with_jam_1"
+      ],
+      "outputs": []
+    },
+    "tfc:jar/plum": {
+      "inputs": [
+        "tfc:crafting/unseal_plum_jar"
+      ],
+      "outputs": []
+    },
+    "tfc:jar/plum_unsealed": {
+      "inputs": [],
+      "outputs": [
+        "tfc:crafting/unseal_plum_jar"
+      ]
+    },
+    "tfc:jute_fiber": {
+      "inputs": [
+        "tfc:loom/burlap_cloth"
+      ],
+      "outputs": []
+    },
+    "tfc:jute_net": {
+      "inputs": [
+        "tfc:kjs/damage/shaped/fishing_net/wood"
+      ],
+      "outputs": [
+        "tfc:crafting/jute_net"
+      ]
+    },
+    "tfc:kaolin_clay": {
+      "inputs": [
+        "tfc:crafting/white_kaolin_clay",
+        "tfc:heating/kaolin_clay"
+      ],
+      "outputs": []
+    },
+    "tfc:lamp_glass": {
+      "inputs": [
+        "tfc:crafting/metal/lamp/bronze"
+      ],
+      "outputs": [
+        "tfc:glassworking/lamp_glass"
+      ]
+    },
+    "tfc:large_prepared_hide": {
+      "inputs": [
+        "firmaciv:barrel/large_waterproof_hide_olive"
+      ],
+      "outputs": []
+    },
+    "tfc:large_scraped_hide": {
+      "inputs": [
+        "tfc:crafting/large_treated_hide"
+      ],
+      "outputs": []
+    },
+    "tfc:lens": {
+      "inputs": [
+        "firmaciv:crafting/nav_clock",
+        "firmaciv:crafting/sextant"
+      ],
+      "outputs": [
+        "tfc:glassworking/lens"
+      ]
+    },
+    "tfc:limewater": {
+      "inputs": [
+        "tfc:barrel/glue",
+        "tfc:barrel/medium_soaked_hide"
+      ],
+      "outputs": [
+        "tfc:barrel/limewater"
+      ]
+    },
+    "tfc:lye": {
+      "inputs": [
+        "tfc:barrel/dye/bleach_concrete_powder"
+      ],
+      "outputs": []
+    },
+    "tfc:medium_prepared_hide": {
+      "inputs": [
+        "tfc:barrel/medium_leather"
+      ],
+      "outputs": [
+        "tfc:barrel/medium_prepared_hide"
+      ]
+    },
+    "tfc:medium_raw_hide": {
+      "inputs": [
+        "tfc:barrel/medium_soaked_hide"
+      ],
+      "outputs": []
+    },
+    "tfc:medium_scraped_hide": {
+      "inputs": [
+        "tfc:barrel/medium_prepared_hide"
+      ],
+      "outputs": []
+    },
+    "tfc:medium_soaked_hide": {
+      "inputs": [],
+      "outputs": [
+        "tfc:barrel/medium_soaked_hide"
+      ]
+    },
+    "tfc:metal/anvil/copper": {
+      "inputs": [],
+      "outputs": [
+        "tfc:crafting/metal/anvil/copper"
+      ]
+    },
+    "tfc:metal/boots/blue_steel": {
+      "inputs": [
+        "tfg:create/shaped/netherite_diving_boots"
+      ],
+      "outputs": []
+    },
+    "tfc:metal/bucket/blue_steel": {
+      "inputs": [
+        "firmaciv:crafting/barometer",
+        "firmalife:crafting/rustic_finish",
+        "firmalife:crafting/watering_can"
+      ],
+      "outputs": []
+    },
+    "tfc:metal/bucket/red_steel": {
+      "inputs": [
+        "firmaciv:crafting/barometer",
+        "firmalife:crafting/rustic_finish",
+        "firmalife:crafting/watering_can"
+      ],
+      "outputs": []
+    },
+    "tfc:metal/chain/black_steel": {
+      "inputs": [],
+      "outputs": [
+        "tfc:anvil/black_steel_chain"
+      ]
+    },
+    "tfc:metal/chestplate/blue_steel": {
+      "inputs": [
+        "tfg:create/shaped/netherite_backtank"
+      ],
+      "outputs": []
+    },
+    "tfc:metal/chisel/bismuth_bronze": {
+      "inputs": [
+        "beneath:crafting/blackstone_brick",
+        "firmalife:crafting/brick_countertop",
+        "rnr:crafting/flagstone/gneiss",
+        "rnr:crafting/flagstone/pink_sandstone",
+        "tfc:crafting/rock/gneiss_brick",
+        "tfc:crafting/rock/gneiss_chiseled",
+        "tfc:crafting/rock/marble_smooth"
+      ],
+      "outputs": []
+    },
+    "tfc:metal/fish_hook/bismuth_bronze": {
+      "inputs": [
+        "tfc:crafting/metal/fishing_rod/bismuth_bronze"
+      ],
+      "outputs": [
+        "tfc:anvil/bismuth_bronze_fish_hook"
+      ]
+    },
+    "tfc:metal/fishing_rod/bismuth_bronze": {
+      "inputs": [],
+      "outputs": [
+        "tfc:crafting/metal/fishing_rod/bismuth_bronze"
+      ]
+    },
+    "tfc:metal/greaves/bismuth_bronze": {
+      "inputs": [],
+      "outputs": [
+        "tfc:welding/bismuth_bronze_greaves"
+      ]
+    },
+    "tfc:metal/greaves/blue_steel": {
+      "inputs": [
+        "tfg:minecraft/shaped/netherite_leggings"
+      ],
+      "outputs": []
+    },
+    "tfc:metal/helmet/blue_steel": {
+      "inputs": [
+        "tfg:create/shaped/netherite_diving_helmet"
+      ],
+      "outputs": []
+    },
+    "tfc:metal/ingot/black_steel": {
+      "inputs": [
+        "tfc:anvil/black_steel_chain"
+      ],
+      "outputs": []
+    },
+    "tfc:metal/ingot/high_carbon_black_steel": {
+      "inputs": [],
+      "outputs": [
+        "tfc:welding/high_carbon_black_steel_ingot"
+      ]
+    },
+    "tfc:metal/ingot/high_carbon_blue_steel": {
+      "inputs": [],
+      "outputs": [
+        "tfc:welding/high_carbon_blue_steel_ingot"
+      ]
+    },
+    "tfc:metal/ingot/high_carbon_red_steel": {
+      "inputs": [],
+      "outputs": [
+        "tfc:welding/high_carbon_red_steel_ingot"
+      ]
+    },
+    "tfc:metal/ingot/high_carbon_steel": {
+      "inputs": [],
+      "outputs": [
+        "tfc:anvil/high_carbon_steel_ingot"
+      ]
+    },
+    "tfc:metal/ingot/pig_iron": {
+      "inputs": [
+        "tfc:anvil/high_carbon_steel_ingot"
+      ],
+      "outputs": []
+    },
+    "tfc:metal/ingot/wrought_iron": {
+      "inputs": [],
+      "outputs": [
+        "tfc:anvil/wrought_iron_from_bloom"
+      ]
+    },
+    "tfc:metal/lamp/bronze": {
+      "inputs": [],
+      "outputs": [
+        "tfc:crafting/metal/lamp/bronze"
+      ]
+    },
+    "tfc:metal/propick_head/copper": {
+      "inputs": [],
+      "outputs": [
+        "tfc:anvil/copper_propick_head"
+      ]
+    },
+    "tfc:metal/unfinished_greaves/bismuth_bronze": {
+      "inputs": [
+        "tfc:welding/bismuth_bronze_greaves"
+      ],
+      "outputs": []
+    },
+    "tfc:metal/unfinished_helmet/copper": {
+      "inputs": [],
+      "outputs": [
+        "tfc:anvil/copper_unfinished_helmet"
+      ]
+    },
+    "tfc:metal/unfinished_lamp/bronze": {
+      "inputs": [
+        "tfc:crafting/metal/lamp/bronze"
+      ],
+      "outputs": []
+    },
+    "tfc:mortar": {
+      "inputs": [
+        "tfc:crafting/alabaster_bricks",
+        "tfc:crafting/bricks",
+        "tfc:crafting/rock/gneiss_bricks",
+        "tfc:crafting/rock/shale_aqueduct"
+      ],
+      "outputs": []
+    },
+    "tfc:mud/loam": {
+      "inputs": [
+        "tfc:crafting/soil/loam_drying_bricks"
+      ],
+      "outputs": []
+    },
+    "tfc:mud/silt": {
+      "inputs": [
+        "beneath:crafting/unposter",
+        "tfc:crafting/daub_from_mud"
+      ],
+      "outputs": []
+    },
+    "tfc:mud_brick/loam": {
+      "inputs": [
+        "tfc:crafting/soil/loam_mud_bricks"
+      ],
+      "outputs": []
+    },
+    "tfc:mud_bricks/loam": {
+      "inputs": [],
+      "outputs": [
+        "tfc:crafting/soil/loam_mud_bricks"
+      ]
+    },
+    "tfc:nest_box": {
+      "inputs": [],
+      "outputs": [
+        "tfc:crafting/nest_box"
+      ]
+    },
+    "tfc:olive_oil": {
+      "inputs": [
+        "firmaciv:barrel/large_waterproof_hide_olive"
+      ],
+      "outputs": []
+    },
+    "tfc:olive_paste": {
+      "inputs": [],
+      "outputs": [
+        "tfc:quern/olive"
+      ]
+    },
+    "tfc:olivine_glass_batch": {
+      "inputs": [
+        "firmalife:glassworking/olivine_wine_bottle"
+      ],
+      "outputs": []
+    },
+    "tfc:olivine_glass_bottle": {
+      "inputs": [
+        "firmaciv:crafting/barometer",
+        "firmalife:crafting/rustic_finish"
+      ],
+      "outputs": []
+    },
+    "tfc:ore/normal_native_copper": {
+      "inputs": [
+        "tfg:quern/copper_crushed_ore_from_normal_raw_ore"
+      ],
+      "outputs": []
+    },
+    "tfc:paddle": {
+      "inputs": [],
+      "outputs": [
+        "tfc:crafting/paddle"
+      ]
+    },
+    "tfc:pan/empty": {
+      "inputs": [],
+      "outputs": [
+        "tfc:heating/ceramic_pan"
+      ]
+    },
+    "tfc:papyrus": {
+      "inputs": [
+        "tfc:crafting/papyrus_strips"
+      ],
+      "outputs": []
+    },
+    "tfc:papyrus_strip": {
+      "inputs": [
+        "tfc:barrel/soaked_papyrus_strip"
+      ],
+      "outputs": [
+        "tfc:crafting/papyrus_strips"
+      ]
+    },
+    "tfc:plant/guzmania": {
+      "inputs": [
+        "tfc:quern/red_dye"
+      ],
+      "outputs": []
+    },
+    "tfc:powder/amethyst": {
+      "inputs": [
+        "tfc:crafting/gem_saw"
+      ],
+      "outputs": []
+    },
+    "tfc:powder/flux": {
+      "inputs": [
+        "firmalife:crafting/oven_insulation",
+        "tfc:barrel/limewater",
+        "tfc:welding/bismuth_bronze_greaves",
+        "tfc:welding/jacks",
+        "tfcbetterbf:crafting/insulation",
+        "tfg:smelting/lime"
+      ],
+      "outputs": [
+        "tfc:quern/fluxstone"
+      ]
+    },
+    "tfc:powder/graphite": {
+      "inputs": [
+        "tfc:crafting/fire_clay"
+      ],
+      "outputs": []
+    },
+    "tfc:powder/kaolinite": {
+      "inputs": [
+        "tfc:crafting/fire_clay"
+      ],
+      "outputs": [
+        "tfc:heating/kaolin_clay"
+      ]
+    },
+    "tfc:powder/lime": {
+      "inputs": [
+        "tfc:crafting/parchment",
+        "tfc:crafting/silica_glass_batch"
+      ],
+      "outputs": [
+        "tfg:smelting/lime"
+      ]
+    },
+    "tfc:powder/salt": {
+      "inputs": [
+        "firmalife:crafting/ashtray",
+        "firmalife:crafting/tortilla_chips"
+      ],
+      "outputs": [
+        "tfc:quern/salt"
+      ]
+    },
+    "tfc:powder/soda_ash": {
+      "inputs": [
+        "tfc:crafting/silica_glass_batch"
+      ],
+      "outputs": [
+        "tfg:smelting/dried_kelp_to_soda",
+        "tfg:smelting/dried_seaweed_to_soda"
+      ]
+    },
+    "tfc:powder/sulfur": {
+      "inputs": [
+        "tfg:shapeless/hellbricks_from_soot"
+      ],
+      "outputs": []
+    },
+    "tfc:powderkeg": {
+      "inputs": [],
+      "outputs": [
+        "tfc:crafting/powderkeg"
+      ]
+    },
+    "tfc:quern": {
+      "inputs": [],
+      "outputs": [
+        "tfc:crafting/quern"
+      ]
+    },
+    "tfc:raw_iron_bloom": {
+      "inputs": [
+        "tfc:anvil/refined_iron_bloom"
+      ],
+      "outputs": []
+    },
+    "tfc:red_dye": {
+      "inputs": [
+        "tfc:barrel/dye/disc_chirp",
+        "tfc:barrel/dye/red_concrete_powder",
+        "tfc:barrel/dye/red_leather"
+      ],
+      "outputs": []
+    },
+    "tfc:refined_iron_bloom": {
+      "inputs": [
+        "tfc:anvil/wrought_iron_from_bloom"
+      ],
+      "outputs": [
+        "tfc:anvil/refined_iron_bloom"
+      ]
+    },
+    "tfc:rock/aqueduct/shale": {
+      "inputs": [],
+      "outputs": [
+        "tfc:crafting/rock/shale_aqueduct"
+      ]
+    },
+    "tfc:rock/bricks/gneiss": {
+      "inputs": [
+        "tfc:crafting/rock/gneiss_chiseled",
+        "tfc:crafting/rock/gneiss_cracked"
+      ],
+      "outputs": [
+        "tfc:crafting/rock/gneiss_bricks"
+      ]
+    },
+    "tfc:rock/bricks/granite": {
+      "inputs": [
+        "firmalife:crafting/sealed_bricks"
+      ],
+      "outputs": []
+    },
+    "tfc:rock/chiseled/gneiss": {
+      "inputs": [],
+      "outputs": [
+        "tfc:crafting/rock/gneiss_chiseled"
+      ]
+    },
+    "tfc:rock/cracked_bricks/gneiss": {
+      "inputs": [],
+      "outputs": [
+        "tfc:crafting/rock/gneiss_cracked"
+      ]
+    },
+    "tfc:rock/gravel/chert": {
+      "inputs": [
+        "rnr:crafting/gravel_fill/chert"
+      ],
+      "outputs": []
+    },
+    "tfc:rock/gravel/granite": {
+      "inputs": [
+        "rnr:crafting/hoggin_mix"
+      ],
+      "outputs": []
+    },
+    "tfc:rock/loose/gneiss": {
+      "inputs": [
+        "tfc:crafting/rock/gneiss_brick"
+      ],
+      "outputs": []
+    },
+    "tfc:rock/loose/granite": {
+      "inputs": [
+        "tfc:rock_knapping/javelin_head_igneous_intrusive",
+        "tfg:rock_knapping/stone_axe_head",
+        "tfg:rock_knapping/stone_hammer_head",
+        "tfg:rock_knapping/stone_hoe_head",
+        "tfg:rock_knapping/stone_hoe_head_1",
+        "tfg:rock_knapping/stone_hoe_head_2",
+        "tfg:rock_knapping/stone_knife_head",
+        "tfg:rock_knapping/stone_knife_head_1",
+        "tfg:rock_knapping/stone_knife_head_2",
+        "tfg:rock_knapping/stone_knife_head_3",
+        "tfg:rock_knapping/stone_shovel_head"
+      ],
+      "outputs": []
+    },
+    "tfc:rock/loose/quartzite": {
+      "inputs": [
+        "tfc:rock_knapping/javelin_head_metamorphic"
+      ],
+      "outputs": []
+    },
+    "tfc:rock/loose/rhyolite": {
+      "inputs": [
+        "tfc:rock_knapping/javelin_head_igneous_extrusive"
+      ],
+      "outputs": []
+    },
+    "tfc:rock/loose/shale": {
+      "inputs": [
+        "tfc:rock_knapping/javelin_head_sedimentary"
+      ],
+      "outputs": []
+    },
+    "tfc:rock/raw/marble": {
+      "inputs": [
+        "tfc:crafting/rock/marble_smooth"
+      ],
+      "outputs": []
+    },
+    "tfc:rock/smooth/gneiss": {
+      "inputs": [
+        "rnr:crafting/flagstone/gneiss"
+      ],
+      "outputs": []
+    },
+    "tfc:rock/smooth/granite": {
+      "inputs": [
+        "tfc:crafting/quern"
+      ],
+      "outputs": []
+    },
+    "tfc:rock/smooth/marble": {
+      "inputs": [],
+      "outputs": [
+        "tfc:crafting/rock/marble_smooth"
+      ]
+    },
+    "tfc:sake": {
+      "inputs": [
+        "tfcchannelcasting:barrel/fill_with_strong_liquor"
+      ],
+      "outputs": []
+    },
+    "tfc:sand/white": {
+      "inputs": [
+        "tfc:crafting/silica_glass_batch"
+      ],
+      "outputs": []
+    },
+    "tfc:seeds/barley": {
+      "inputs": [
+        "firmalife:crafting/seed_ball"
+      ],
+      "outputs": []
+    },
+    "tfc:silica_glass_batch": {
+      "inputs": [
+        "tfc:glassworking/jar",
+        "tfc:glassworking/lens",
+        "tfc:glassworking/silica_bottle"
+      ],
+      "outputs": [
+        "tfc:crafting/silica_glass_batch"
+      ]
+    },
+    "tfc:silica_glass_bottle": {
+      "inputs": [
+        "firmaciv:crafting/barometer",
+        "firmalife:crafting/rustic_finish"
+      ],
+      "outputs": [
+        "tfc:glassworking/silica_bottle"
+      ]
+    },
+    "tfc:silk_cloth": {
+      "inputs": [
+        "firmalife:crafting/cheesecloth",
+        "tfc:crafting/vanilla/color/light_blue_bed",
+        "tfc:crafting/vanilla/painting"
+      ],
+      "outputs": [
+        "tfc:loom/silk_cloth"
+      ]
+    },
+    "tfc:soaked_papyrus_strip": {
+      "inputs": [
+        "tfc:loom/unrefined_paper",
+        "tfg:shaped/harvest_basket_from_papyrus"
+      ],
+      "outputs": [
+        "tfc:barrel/soaked_papyrus_strip"
+      ]
+    },
+    "tfc:soot": {
+      "inputs": [
+        "tfg:shapeless/hellbricks_from_soot"
+      ],
+      "outputs": []
+    },
+    "tfc:stone/hoe/sedimentary": {
+      "inputs": [],
+      "outputs": [
+        "tfc:crafting/stone/hoe_sedimentary"
+      ]
+    },
+    "tfc:stone/javelin_head/igneous_extrusive": {
+      "inputs": [],
+      "outputs": [
+        "tfc:rock_knapping/javelin_head_igneous_extrusive"
+      ]
+    },
+    "tfc:stone/javelin_head/igneous_intrusive": {
+      "inputs": [],
+      "outputs": [
+        "tfc:rock_knapping/javelin_head_igneous_intrusive"
+      ]
+    },
+    "tfc:stone/javelin_head/metamorphic": {
+      "inputs": [],
+      "outputs": [
+        "tfc:rock_knapping/javelin_head_metamorphic"
+      ]
+    },
+    "tfc:stone/javelin_head/sedimentary": {
+      "inputs": [],
+      "outputs": [
+        "tfc:rock_knapping/javelin_head_sedimentary"
+      ]
+    },
+    "tfc:straw": {
+      "inputs": [
+        "tfc:crafting/daub",
+        "tfc:crafting/nest_box",
+        "tfc:crafting/soil/loam_drying_bricks",
+        "tfc:crafting/thatch"
+      ],
+      "outputs": [
+        "tfc:crafting/straw"
+      ]
+    },
+    "tfc:tallow": {
+      "inputs": [
+        "tfc:barrel/candle"
+      ],
+      "outputs": []
+    },
+    "tfc:tannin": {
+      "inputs": [
+        "tfc:barrel/medium_leather"
+      ],
+      "outputs": [
+        "tfc:barrel/tannin"
+      ]
+    },
+    "tfc:thatch": {
+      "inputs": [
+        "firmalife:crafting/beehive",
+        "tfc:crafting/straw"
+      ],
+      "outputs": [
+        "tfc:crafting/thatch"
+      ]
+    },
+    "tfc:torch": {
+      "inputs": [],
+      "outputs": [
+        "tfc:heating/torch_from_stick"
+      ]
+    },
+    "tfc:treated_hide": {
+      "inputs": [
+        "tfc:crafting/parchment"
+      ],
+      "outputs": [
+        "tfc:crafting/large_treated_hide"
+      ]
+    },
+    "tfc:unrefined_paper": {
+      "inputs": [],
+      "outputs": [
+        "tfc:loom/unrefined_paper",
+        "tfg:drying/unrefined_paper"
+      ]
+    },
+    "tfc:vinegar": {
+      "inputs": [
+        "tfg:sealed_barrel/prepared_leather_gloves"
+      ],
+      "outputs": []
+    },
+    "tfc:volcanic_glass_bottle": {
+      "inputs": [
+        "firmaciv:crafting/barometer",
+        "firmalife:crafting/rustic_finish"
+      ],
+      "outputs": []
+    },
+    "tfc:wattle": {
+      "inputs": [],
+      "outputs": [
+        "tfc:crafting/wattle"
+      ]
+    },
+    "tfc:whiskey": {
+      "inputs": [
+        "tfcchannelcasting:barrel/fill_with_whiskey"
+      ],
+      "outputs": []
+    },
+    "tfc:white_kaolin_clay": {
+      "inputs": [],
+      "outputs": [
+        "tfc:crafting/white_kaolin_clay"
+      ]
+    },
+    "tfc:wood/jar_shelf/oak": {
+      "inputs": [],
+      "outputs": [
+        "tfc:crafting/wood/oak_shelf"
+      ]
+    },
+    "tfc:wood/lectern/pine": {
+      "inputs": [],
+      "outputs": [
+        "tfc:crafting/wood/pine_lectern"
+      ]
+    },
+    "tfc:wood/log/acacia": {
+      "inputs": [
+        "firmalife:crafting/wood/acacia_jarbnet"
+      ],
+      "outputs": []
+    },
+    "tfc:wood/log/birch": {
+      "inputs": [
+        "tfc:barrel/tannin"
+      ],
+      "outputs": []
+    },
+    "tfc:wood/log/hickory": {
+      "inputs": [
+        "firmalife:crafting/wood/hickory_wine_shelf"
+      ],
+      "outputs": []
+    },
+    "tfc:wood/log/oak": {
+      "inputs": [
+        "tfc:crafting/wood/oak_sewing_table",
+        "tfc:crafting/wood/oak_support"
+      ],
+      "outputs": []
+    },
+    "tfc:wood/log/pine": {
+      "inputs": [
+        "firmalife:crafting/wood/pine_keg"
+      ],
+      "outputs": []
+    },
+    "tfc:wood/lumber/acacia": {
+      "inputs": [
+        "alekiships:crafting/oar",
+        "beneath:crafting/unposter",
+        "firmaciv:crafting/cannon",
+        "firmaciv:crafting/canoe_paddle",
+        "firmaciv:crafting/kayak",
+        "firmaciv:crafting/kayak_paddle",
+        "firmaciv:crafting/watercraft_frame_angled",
+        "firmalife:crafting/beehive",
+        "firmalife:crafting/beehive_frame",
+        "firmalife:crafting/treated_lumber",
+        "firmalife:crafting/watering_can",
+        "firmalife:crafting/wood/acacia_jarbnet",
+        "firmalife:crafting/wood/acacia_shelf",
+        "firmalife:crafting/wood/acacia_stomping_barrel",
+        "rnr:crafting/roof_framing",
+        "tfc:crafting/barrel_rack",
+        "tfc:crafting/bellows",
+        "tfc:crafting/composter",
+        "tfc:crafting/nest_box",
+        "tfc:crafting/paddle",
+        "tfc:crafting/powderkeg",
+        "tfc:crafting/vanilla/bowl",
+        "tfc:crafting/vanilla/color/light_blue_bed",
+        "tfc:crafting/wood/acacia_loom",
+        "tfc:crafting/wooden_bucket",
+        "tfg:shaped/trowel"
+      ],
+      "outputs": []
+    },
+    "tfc:wood/lumber/kapok": {
+      "inputs": [
+        "tfc:crafting/wood/kapok_bookshelf"
+      ],
+      "outputs": []
+    },
+    "tfc:wood/lumber/oak": {
+      "inputs": [
+        "tfc:crafting/wood/oak_shelf"
+      ],
+      "outputs": []
+    },
+    "tfc:wood/lumber/pine": {
+      "inputs": [
+        "tfc:crafting/wood/pine_lectern"
+      ],
+      "outputs": []
+    },
+    "tfc:wood/lumber/sequoia": {
+      "inputs": [
+        "tfc:crafting/wood/sequoia_sluice"
+      ],
+      "outputs": []
+    },
+    "tfc:wood/planks/acacia": {
+      "inputs": [
+        "firmalife:crafting/wood/acacia_hanger",
+        "firmalife:crafting/wood/acacia_shelf"
+      ],
+      "outputs": []
+    },
+    "tfc:wood/planks/acacia_loom": {
+      "inputs": [],
+      "outputs": [
+        "tfc:crafting/wood/acacia_loom"
+      ]
+    },
+    "tfc:wood/planks/birch": {
+      "inputs": [
+        "tfc:crafting/wood/birch_scribing_table"
+      ],
+      "outputs": []
+    },
+    "tfc:wood/planks/birch_slab": {
+      "inputs": [
+        "tfc:crafting/wood/birch_scribing_table"
+      ],
+      "outputs": []
+    },
+    "tfc:wood/planks/kapok_bookshelf": {
+      "inputs": [],
+      "outputs": [
+        "tfc:crafting/wood/kapok_bookshelf"
+      ]
+    },
+    "tfc:wood/planks/oak": {
+      "inputs": [
+        "tfc:crafting/wood/oak_sewing_table",
+        "tfc:crafting/wood/oak_shelf"
+      ],
+      "outputs": []
+    },
+    "tfc:wood/planks/pine_bookshelf": {
+      "inputs": [
+        "tfc:crafting/wood/pine_lectern"
+      ],
+      "outputs": []
+    },
+    "tfc:wood/scribing_table/birch": {
+      "inputs": [],
+      "outputs": [
+        "tfc:crafting/wood/birch_scribing_table"
+      ]
+    },
+    "tfc:wood/sewing_table/oak": {
+      "inputs": [],
+      "outputs": [
+        "tfc:crafting/wood/oak_sewing_table"
+      ]
+    },
+    "tfc:wood/sluice/sequoia": {
+      "inputs": [],
+      "outputs": [
+        "tfc:crafting/wood/sequoia_sluice"
+      ]
+    },
+    "tfc:wood/support/oak": {
+      "inputs": [],
+      "outputs": [
+        "tfc:crafting/wood/oak_support"
+      ]
+    },
+    "tfc:wooden_bucket": {
+      "inputs": [
+        "firmaciv:crafting/barometer",
+        "firmalife:crafting/rustic_finish",
+        "firmalife:crafting/watering_can"
+      ],
+      "outputs": [
+        "tfc:crafting/wooden_bucket"
+      ]
+    },
+    "tfc:wool_cloth": {
+      "inputs": [
+        "tfc:glassworking/jar",
+        "tfc:glassworking/lens",
+        "tfc:loom/wool_block"
+      ],
+      "outputs": [
+        "tfc:loom/wool_cloth"
+      ]
+    },
+    "tfc:wool_yarn": {
+      "inputs": [
+        "tfc:loom/wool_cloth"
+      ],
+      "outputs": [
+        "tfc:crafting/wool_yarn"
+      ]
+    },
+    "tfc:wrought_iron_grill": {
+      "inputs": [],
+      "outputs": [
+        "tfc:anvil/wrought_iron_grill"
+      ]
+    },
+    "tfcbetterbf:insulation": {
+      "inputs": [],
+      "outputs": [
+        "tfcbetterbf:crafting/insulation"
+      ]
+    },
+    "tfcchannelcasting:channel": {
+      "inputs": [],
+      "outputs": [
+        "tfcchannelcasting:heating/channel"
+      ]
+    },
+    "tfcchannelcasting:food/dark_chocolate_heart": {
+      "inputs": [],
+      "outputs": [
+        "tfcchannelcasting:barrel/fill_with_strong_liquor",
+        "tfcchannelcasting:barrel/fill_with_sweet_liquor",
+        "tfcchannelcasting:barrel/fill_with_whiskey"
+      ]
+    },
+    "tfcchannelcasting:unfired_channel": {
+      "inputs": [
+        "tfcchannelcasting:heating/channel"
+      ],
+      "outputs": [
+        "tfcchannelcasting:fire_clay_knapping/unfired_channel_4"
+      ]
+    },
+    "tfcchannelcasting:unfired_heart_mold": {
+      "inputs": [],
+      "outputs": [
+        "tfcchannelcasting:clay_knapping/unfired_heart_mold"
+      ]
+    },
+    "tfcchannelcasting:unfired_mold_table": {
+      "inputs": [],
+      "outputs": [
+        "tfcchannelcasting:fire_clay_knapping/unfired_mold_table"
+      ]
+    },
+    "tfchotornot:mittens": {
+      "inputs": [
+        "tfg:sealed_barrel/prepared_leather_gloves"
+      ],
+      "outputs": [
+        "tfchotornot:leather_knapping/mittens"
+      ]
+    },
+    "tfchotornot:tongs/wood": {
+      "inputs": [],
+      "outputs": [
+        "tfchotornot:crafting/tongs/wood"
+      ]
+    },
+    "tfg:arsenic_bronze_axe": {
+      "inputs": [
+        "tfg:crafting/strip_hardwood"
+      ],
+      "outputs": []
+    },
+    "tfg:beaker": {
+      "inputs": [
+        "firmaciv:crafting/barometer",
+        "firmalife:crafting/rustic_finish",
+        "firmalife:crafting/watering_can"
+      ],
+      "outputs": []
+    },
+    "tfg:boron_carbide_hammer": {
+      "inputs": [
+        "firmalife:crafting/tortilla_chips",
+        "gtceu:shaped/bronze_crate",
+        "gtceu:shaped/bronze_drum",
+        "gtceu:shapeless/crushed_ore_to_dust_copper",
+        "tfc:crafting/large_treated_hide",
+        "tfc:crafting/rock/gneiss_cracked"
+      ],
+      "outputs": []
+    },
+    "tfg:boron_carbide_knife": {
+      "inputs": [
+        "beneath:crafting/juicer",
+        "firmalife:crafting/bottle_label",
+        "firmalife:crafting/pineapple_fiber",
+        "firmalife:crafting/shredded_cheese",
+        "tfc:crafting/barley_sandwich_with_jam_1",
+        "tfc:crafting/bone_needle",
+        "tfc:crafting/papyrus_strips",
+        "tfc:crafting/wheat_sandwich",
+        "tfc:crafting/wood/oak_sewing_table",
+        "tfc:kjs/damage/shaped/fishing_net/wood",
+        "tfchotornot:crafting/tongs/wood",
+        "waterflasks:crafting/leather_flask"
+      ],
+      "outputs": []
+    },
+    "tfg:casings/greenhouse/iron_greenhouse_casing_0": {
+      "inputs": [
+        "firmalife:crafting/greenhouse/iron_greenhouse_port"
+      ],
+      "outputs": []
+    },
+    "tfg:fishing_net/wood": {
+      "inputs": [],
+      "outputs": [
+        "tfc:kjs/damage/shaped/fishing_net/wood"
+      ]
+    },
+    "tfg:flask": {
+      "inputs": [
+        "firmaciv:crafting/barometer",
+        "firmalife:crafting/rustic_finish"
+      ],
+      "outputs": []
+    },
+    "tfg:flax_tow": {
+      "inputs": [
+        "firmaciv:crafting/rope_coil",
+        "sns:crafting/leather_sack",
+        "tfc:crafting/jute_net"
+      ],
+      "outputs": []
+    },
+    "tfg:hardwood_strip": {
+      "inputs": [
+        "tfg:barrel/soak_hardwood_strip"
+      ],
+      "outputs": [
+        "tfg:crafting/strip_hardwood"
+      ]
+    },
+    "tfg:harvest_basket": {
+      "inputs": [],
+      "outputs": [
+        "tfg:shaped/harvest_basket_from_papyrus"
+      ]
+    },
+    "tfg:hv_boron_carbide_buzzsaw": {
+      "inputs": [
+        "gtceu:shaped/wooden_crate",
+        "tfc:crafting/wood/oak_support"
+      ],
+      "outputs": []
+    },
+    "tfg:hv_boron_carbide_screwdriver": {
+      "inputs": [
+        "tfg:shaped/trowel"
+      ],
+      "outputs": []
+    },
+    "tfg:hv_boron_carbide_wrench": {
+      "inputs": [
+        "firmalife:crafting/picker",
+        "firmalife:crafting/sweeper"
+      ],
+      "outputs": []
+    },
+    "tfg:linen_cloth": {
+      "inputs": [
+        "firmaciv:crafting/small_triangular_sail",
+        "gtceu:shaped/face_mask"
+      ],
+      "outputs": []
+    },
+    "tfg:prepared_leather_gloves": {
+      "inputs": [],
+      "outputs": [
+        "tfg:sealed_barrel/prepared_leather_gloves"
+      ]
+    },
+    "tfg:soaked_hardwood_strip": {
+      "inputs": [
+        "tfg:quern/soaked_hardwood_strip"
+      ],
+      "outputs": [
+        "tfg:barrel/soak_hardwood_strip"
+      ]
+    },
+    "tfg:soaked_unrefined_paper": {
+      "inputs": [
+        "tfg:drying/unrefined_paper"
+      ],
+      "outputs": [
+        "tfg:anvil/soaked_unrefined_paper"
+      ]
+    },
+    "tfg:spice/oregano_leaves": {
+      "inputs": [
+        "firmalife:crafting/lasagna"
+      ],
+      "outputs": []
+    },
+    "tfg:trowel": {
+      "inputs": [],
+      "outputs": [
+        "tfg:shaped/trowel"
+      ]
+    },
+    "vintageimprovements:invar_sheet": {
+      "inputs": [
+        "tfg:shaped/trowel"
+      ],
+      "outputs": []
+    },
+    "waterflasks:bladder": {
+      "inputs": [
+        "waterflasks:crafting/leather_flask",
+        "waterflasks:crafting/repair_broken_leather",
+        "waterflasks:crafting/repair_leather"
+      ],
+      "outputs": []
+    },
+    "waterflasks:broken_leather_flask": {
+      "inputs": [
+        "waterflasks:crafting/repair_broken_leather"
+      ],
+      "outputs": []
+    },
+    "waterflasks:iron_flask": {
+      "inputs": [],
+      "outputs": [
+        "waterflasks:crafting/iron_flask",
+        "waterflasks:crafting/repair_broken_iron",
+        "waterflasks:crafting/repair_iron"
+      ]
+    },
+    "waterflasks:leather_flask": {
+      "inputs": [],
+      "outputs": [
+        "waterflasks:crafting/leather_flask",
+        "waterflasks:crafting/repair_broken_leather",
+        "waterflasks:crafting/repair_leather"
+      ]
+    },
+    "waterflasks:leather_side": {
+      "inputs": [
+        "beneath:crafting/juicer",
+        "waterflasks:crafting/leather_flask"
+      ],
+      "outputs": [
+        "waterflasks:leather_knapping/leather_side"
+      ]
+    },
+    "waterflasks:red_steel_flask": {
+      "inputs": [],
+      "outputs": [
+        "waterflasks:crafting/red_steel_flask"
+      ]
+    }
+  }
+}

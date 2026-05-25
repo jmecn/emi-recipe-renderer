@@ -1,0 +1,54 @@
+{
+  "schema": 2,
+  "id": "tfc:leather_knapping/saddle",
+  "scale": 2,
+  "panel": {
+    "width": 155,
+    "height": 82,
+    "margin": 4,
+    "frameWidth": 163,
+    "frameHeight": 90
+  },
+  "emiId": "toomanyrecipeviewers:/tfc/leather_knapping/saddle",
+  "category": "tfc:leather_knapping",
+  "widgets": [
+    {
+      "x": 0,
+      "y": 0,
+      "w": 155,
+      "h": 82,
+      "type": "root_chrome",
+      "chrome": "chrome/sh/28/28c9af80c938eb5f55baec74fbbd6a971e801e08061c3e6393b2b00f6a09d6d4.png",
+      "javaClass": "dev.nolij.toomanyrecipeviewers.impl.recipe.TMRVRecipe$RootWidget"
+    },
+    {
+      "x": -1,
+      "y": 32,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "input",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": "#item:forge:leather",
+      "tagDisplayItem": "minecraft:leather"
+    },
+    {
+      "x": 136,
+      "y": 32,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "output",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": "item:minecraft:saddle",
+      "tagDisplayItem": "minecraft:saddle"
+    }
+  ],
+  "referencePng": "generated/recipes/tfc_leather_knapping_saddle.png"
+}

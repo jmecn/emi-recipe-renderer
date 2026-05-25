@@ -1,0 +1,54 @@
+{
+  "schema": 2,
+  "id": "tfg:anvil/soaked_unrefined_paper",
+  "scale": 2,
+  "panel": {
+    "width": 98,
+    "height": 26,
+    "margin": 4,
+    "frameWidth": 106,
+    "frameHeight": 34
+  },
+  "emiId": "toomanyrecipeviewers:/tfg/anvil/soaked_unrefined_paper",
+  "category": "tfc:anvil",
+  "widgets": [
+    {
+      "x": 0,
+      "y": 0,
+      "w": 98,
+      "h": 26,
+      "type": "root_chrome",
+      "chrome": "chrome/sh/cf/cf9fd72c732422ae708f7b067bf74a7853e806f5689b21b3aa8d2b36b5f1a48b.png",
+      "javaClass": "dev.nolij.toomanyrecipeviewers.impl.recipe.TMRVRecipe$RootWidget"
+    },
+    {
+      "x": 5,
+      "y": 4,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "input",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": "item:gtceu:thermochemically_treated_hardwood_dust",
+      "tagDisplayItem": "gtceu:thermochemically_treated_hardwood_dust"
+    },
+    {
+      "x": 75,
+      "y": 4,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "output",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": "item:tfg:soaked_unrefined_paper",
+      "tagDisplayItem": "tfg:soaked_unrefined_paper"
+    }
+  ],
+  "referencePng": "generated/recipes/tfg_anvil_soaked_unrefined_paper.png"
+}

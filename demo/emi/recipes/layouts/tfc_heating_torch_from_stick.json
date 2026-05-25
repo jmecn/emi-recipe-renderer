@@ -1,0 +1,58 @@
+{
+  "schema": 2,
+  "id": "tfc:heating/torch_from_stick",
+  "scale": 2,
+  "panel": {
+    "width": 120,
+    "height": 38,
+    "margin": 4,
+    "frameWidth": 128,
+    "frameHeight": 46
+  },
+  "emiId": "toomanyrecipeviewers:/tfc/heating/torch_from_stick",
+  "category": "tfc:heating",
+  "widgets": [
+    {
+      "x": 0,
+      "y": 0,
+      "w": 120,
+      "h": 38,
+      "type": "root_chrome",
+      "chrome": "chrome/sh/7d/7dadf7d70364ef24fd82d84818d4bd4eb0bc655c88e36d4e3a320f8d663543a7.png",
+      "javaClass": "dev.nolij.toomanyrecipeviewers.impl.recipe.TMRVRecipe$RootWidget"
+    },
+    {
+      "x": 20,
+      "y": 16,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "input",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": "#item:forge:rods/wooden",
+      "tagDisplayItem": "minecraft:stick"
+    },
+    {
+      "x": 84,
+      "y": 16,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "output",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": {
+        "type": "item",
+        "id": "tfc:torch",
+        "amount": 2
+      },
+      "tagDisplayItem": "tfc:torch"
+    }
+  ],
+  "referencePng": "generated/recipes/tfc_heating_torch_from_stick.png"
+}

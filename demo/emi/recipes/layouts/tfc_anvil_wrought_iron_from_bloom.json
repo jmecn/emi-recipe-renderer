@@ -1,0 +1,54 @@
+{
+  "schema": 2,
+  "id": "tfc:anvil/wrought_iron_from_bloom",
+  "scale": 2,
+  "panel": {
+    "width": 98,
+    "height": 26,
+    "margin": 4,
+    "frameWidth": 106,
+    "frameHeight": 34
+  },
+  "emiId": "toomanyrecipeviewers:/tfc/anvil/wrought_iron_from_bloom",
+  "category": "tfc:anvil",
+  "widgets": [
+    {
+      "x": 0,
+      "y": 0,
+      "w": 98,
+      "h": 26,
+      "type": "root_chrome",
+      "chrome": "chrome/sh/30/30ce20f52098699222582fc275ea948f501654e9677c17e8b8d508eb68f2d59c.png",
+      "javaClass": "dev.nolij.toomanyrecipeviewers.impl.recipe.TMRVRecipe$RootWidget"
+    },
+    {
+      "x": 5,
+      "y": 4,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "input",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": "item:tfc:refined_iron_bloom",
+      "tagDisplayItem": "tfc:refined_iron_bloom"
+    },
+    {
+      "x": 75,
+      "y": 4,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "output",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": "item:gtceu:wrought_iron_ingot",
+      "tagDisplayItem": "gtceu:wrought_iron_ingot"
+    }
+  ],
+  "referencePng": "generated/recipes/tfc_anvil_wrought_iron_from_bloom.png"
+}

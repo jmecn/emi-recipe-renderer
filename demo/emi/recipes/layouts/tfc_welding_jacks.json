@@ -1,0 +1,82 @@
+{
+  "schema": 2,
+  "id": "tfc:welding/jacks",
+  "scale": 2,
+  "panel": {
+    "width": 118,
+    "height": 26,
+    "margin": 4,
+    "frameWidth": 126,
+    "frameHeight": 34
+  },
+  "emiId": "toomanyrecipeviewers:/tfc/welding/jacks",
+  "category": "tfc:welding",
+  "widgets": [
+    {
+      "x": 0,
+      "y": 0,
+      "w": 118,
+      "h": 26,
+      "type": "root_chrome",
+      "chrome": "chrome/sh/47/47a3b5d09806697f8947e32d2642fe74ad9a59e10d3d8691466491ce20f2372d.png",
+      "javaClass": "dev.nolij.toomanyrecipeviewers.impl.recipe.TMRVRecipe$RootWidget"
+    },
+    {
+      "x": 5,
+      "y": 4,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "input",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": "item:gtceu:brass_rod",
+      "tagDisplayItem": "gtceu:brass_rod"
+    },
+    {
+      "x": 25,
+      "y": 4,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "input",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": "item:create:brass_sheet",
+      "tagDisplayItem": "create:brass_sheet"
+    },
+    {
+      "x": 45,
+      "y": 4,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "input",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": "item:tfc:powder/flux",
+      "tagDisplayItem": "tfc:powder/flux"
+    },
+    {
+      "x": 95,
+      "y": 4,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "output",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": "item:tfc:jacks",
+      "tagDisplayItem": "tfc:jacks"
+    }
+  ],
+  "referencePng": "generated/recipes/tfc_welding_jacks.png"
+}

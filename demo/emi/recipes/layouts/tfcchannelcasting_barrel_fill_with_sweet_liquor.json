@@ -1,0 +1,74 @@
+{
+  "schema": 2,
+  "id": "tfcchannelcasting:barrel/fill_with_sweet_liquor",
+  "scale": 2,
+  "panel": {
+    "width": 148,
+    "height": 32,
+    "margin": 4,
+    "frameWidth": 156,
+    "frameHeight": 40
+  },
+  "emiId": "toomanyrecipeviewers:/tfcchannelcasting/barrel/fill_with_sweet_liquor",
+  "category": "tfc:sealed_barrel",
+  "widgets": [
+    {
+      "x": 0,
+      "y": 0,
+      "w": 148,
+      "h": 32,
+      "type": "root_chrome",
+      "chrome": "chrome/sh/2b/2b915f5f18010614fca8bed1fb4ffc9f6d7ea0aeb17df66250d50dbebb1630b5.png",
+      "javaClass": "dev.nolij.toomanyrecipeviewers.impl.recipe.TMRVRecipe$RootWidget"
+    },
+    {
+      "x": 20,
+      "y": 4,
+      "w": 18,
+      "h": 18,
+      "type": "tank",
+      "role": "input",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "capacity": 1,
+      "ingredient": {
+        "type": "tag",
+        "registry": "minecraft:fluid",
+        "id": "tfcchannelcasting:sweet_liquor",
+        "amount": 250
+      },
+      "tagDisplayItem": "tfc:cider"
+    },
+    {
+      "x": 40,
+      "y": 4,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "output",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": "#item:tfcchannelcasting:foods/chocolate_sweet",
+      "tagDisplayItem": "tfcchannelcasting:food/dark_chocolate_heart"
+    },
+    {
+      "x": 90,
+      "y": 4,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "output",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": "#item:tfcchannelcasting:foods/chocolate_sweet",
+      "tagDisplayItem": "tfcchannelcasting:food/dark_chocolate_heart"
+    }
+  ],
+  "referencePng": "generated/recipes/tfcchannelcasting_barrel_fill_with_sweet_liquor.png"
+}

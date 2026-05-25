@@ -1,0 +1,110 @@
+{
+  "schema": 2,
+  "id": "tfc:glassworking/lens",
+  "scale": 2,
+  "panel": {
+    "width": 175,
+    "height": 110,
+    "margin": 4,
+    "frameWidth": 183,
+    "frameHeight": 118
+  },
+  "emiId": "toomanyrecipeviewers:/tfc/glassworking/lens",
+  "category": "tfc:glassworking",
+  "widgets": [
+    {
+      "x": 0,
+      "y": 0,
+      "w": 175,
+      "h": 110,
+      "type": "root_chrome",
+      "chrome": "chrome/sh/78/78c606c5428f146935da4cab557295ff3431a039332e8f12d13b12b0cb8ae27d.png",
+      "javaClass": "dev.nolij.toomanyrecipeviewers.impl.recipe.TMRVRecipe$RootWidget"
+    },
+    {
+      "x": 5,
+      "y": 4,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "input",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": "item:tfc:silica_glass_batch",
+      "tagDisplayItem": "tfc:silica_glass_batch"
+    },
+    {
+      "x": 119,
+      "y": 4,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "output",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": "item:tfc:lens",
+      "tagDisplayItem": "tfc:lens"
+    },
+    {
+      "x": 5,
+      "y": 24,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "catalyst",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": "#item:tfc:glass_blowpipes",
+      "tagDisplayItem": "tfc:blowpipe_with_glass"
+    },
+    {
+      "x": 5,
+      "y": 49,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "catalyst",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": "#item:tfc:glass_blowpipes",
+      "tagDisplayItem": "tfc:blowpipe_with_glass"
+    },
+    {
+      "x": 5,
+      "y": 74,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "catalyst",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": "item:tfc:wool_cloth",
+      "tagDisplayItem": "tfc:wool_cloth"
+    },
+    {
+      "x": 89,
+      "y": 24,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "catalyst",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": "item:tfc:gem_saw{Damage:0}",
+      "tagDisplayItem": "tfc:gem_saw@c6782f6a3a7dee47"
+    }
+  ],
+  "referencePng": "generated/recipes/tfc_glassworking_lens.png"
+}

@@ -1,0 +1,78 @@
+{
+  "schema": 2,
+  "id": "tfc:barrel/limewater",
+  "scale": 2,
+  "panel": {
+    "width": 118,
+    "height": 26,
+    "margin": 4,
+    "frameWidth": 126,
+    "frameHeight": 34
+  },
+  "emiId": "toomanyrecipeviewers:/tfc/barrel/limewater",
+  "category": "tfc:instant_barrel",
+  "widgets": [
+    {
+      "x": 0,
+      "y": 0,
+      "w": 118,
+      "h": 26,
+      "type": "root_chrome",
+      "chrome": "chrome/sh/4d/4d12f128a238f660b1aac2d3294af4ef98d8f2e57b1744652b31d9f36db99111.png",
+      "javaClass": "dev.nolij.toomanyrecipeviewers.impl.recipe.TMRVRecipe$RootWidget"
+    },
+    {
+      "x": 5,
+      "y": 4,
+      "w": 18,
+      "h": 18,
+      "type": "tank",
+      "role": "input",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "capacity": 1,
+      "ingredient": {
+        "type": "fluid",
+        "id": "minecraft:water",
+        "amount": 500
+      },
+      "tagDisplayItem": "minecraft:water"
+    },
+    {
+      "x": 25,
+      "y": 4,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "input",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": "item:tfc:powder/flux",
+      "tagDisplayItem": "tfc:powder/flux"
+    },
+    {
+      "x": 75,
+      "y": 4,
+      "w": 18,
+      "h": 18,
+      "type": "tank",
+      "role": "output",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "capacity": 1,
+      "ingredient": {
+        "type": "fluid",
+        "id": "tfc:limewater",
+        "amount": 500
+      },
+      "tagDisplayItem": "tfc:limewater"
+    }
+  ],
+  "referencePng": "generated/recipes/tfc_barrel_limewater.png"
+}

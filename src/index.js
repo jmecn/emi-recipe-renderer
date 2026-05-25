@@ -8,9 +8,43 @@
  */
 'use strict';
 
-  const TEXTURE_MANIFEST = 'generated/recipe-textures/manifest.json';
-  const INDEX_PATH = 'generated/recipes/layouts-index.json';
+  const PATHS = {
+    bundle: 'bundle.json',
+    recipeIndex: 'recipes/index.json',
+    textureManifest: 'textures/manifest.json',
+    texturesDir: 'textures',
+    tagMembers: 'tags/members.json',
+    iconsDir: 'icons',
+    langDir: 'lang',
+  };
+  const FALLBACK_LOCALE = 'en_us';
   const MISSING_ICON_ID = 'fieldguide:missing_icon';
+
+  function normalizeLocale(locale) {
+    return String(locale || FALLBACK_LOCALE).trim().toLowerCase().replace('-', '_');
+  }
+
+  /** Lang key order aligned with Forge {@code LangKeyCollector#addRegistryKeys}. */
+  function registryLangKeyCandidates(kind, registryId) {
+    const id = stripRegistryId(registryId);
+    if (!id) return [];
+    const dotted = id.replace(/\//g, '.').replace(/:/g, '.');
+    let prefixes;
+    if (kind === 'fluid') {
+      prefixes = ['fluid', 'item', 'block'];
+    } else if (kind === 'block') {
+      prefixes = ['block', 'item'];
+    } else {
+      prefixes = ['item', 'block', 'fluid'];
+    }
+    return prefixes.map((p) => `${p}.${dotted}`);
+  }
+
+  function tagToLangKey(tag) {
+    if (!tag) return '';
+    const dotted = String(tag).replace(/\//g, '.').replace(/:/g, '.');
+    return `tag.item.${dotted}`;
+  }
 
   function joinBase(base, path) {
     const b = base.replace(/\/+$/, '');
@@ -18,10 +52,15 @@
     return `${b}/${p}`;
   }
 
+  /** Plain registry id: strip SNBT `{...}` and export NBT hash suffix `id@hex`. */
   function stripRegistryId(id) {
     if (!id) return id;
-    const brace = id.indexOf('{');
-    return brace >= 0 ? id.slice(0, brace) : id;
+    let s = String(id);
+    const brace = s.indexOf('{');
+    if (brace >= 0) s = s.slice(0, brace);
+    const at = s.indexOf('@');
+    if (at >= 0) s = s.slice(0, at);
+    return s;
   }
 
   function fluidAmount(amount) {
@@ -174,62 +213,78 @@
     return parsed.entries[0];
   }
 
-  function formatPopoverEntryTooltip(entry) {
-    if (!entry || entry.kind !== 'item') return '';
-    if (entry.fluid?.id) return entry.ids?.[0] || entry.fluid.id;
-    const count = formatItemCount(entry.amount);
-    return count ? `${entry.ids[0]} x${count}` : String(entry.ids[0]);
-  }
-
-  function formatItemEntryTooltip(entry) {
+  function formatPopoverEntryTooltip(entry, renderer) {
     if (!entry || entry.kind !== 'item') return '';
     if (entry.fluid?.id) {
-      return `${entry.fluid.id} (${formatFluidMb(entry.fluid.amount)})`;
+      const fid = entry.ids?.[0] || entry.fluid.id;
+      const label = renderer ? renderer.translateRegistry(fid, 'fluid') : fid;
+      return `${label} (${formatFluidMb(entry.fluid.amount)})`;
     }
-    return formatPopoverEntryTooltip(entry);
+    const id = entry.ids?.[0];
+    if (!id) return '';
+    const label = renderer ? renderer.translateRegistry(id, 'item') : id;
+    const count = formatItemCount(entry.amount);
+    return count ? `${label} x${count}` : label;
   }
 
-  function formatListPopoverTitle(entry) {
+  function formatItemEntryTooltip(entry, renderer) {
+    if (!entry || entry.kind !== 'item') return '';
+    if (entry.fluid?.id) {
+      const label = renderer ? renderer.translateRegistry(entry.fluid.id, 'fluid') : entry.fluid.id;
+      return `${label} (${formatFluidMb(entry.fluid.amount)})`;
+    }
+    return formatPopoverEntryTooltip(entry, renderer);
+  }
+
+  function formatListPopoverTitle(entry, renderer) {
     if (!entry) return '';
-    if (entry.fluid?.id) return entry.fluid.id;
-    return formatPopoverEntryTooltip(entry);
+    if (entry.fluid?.id) {
+      return renderer ? renderer.translateRegistry(entry.fluid.id, 'fluid') : entry.fluid.id;
+    }
+    return formatPopoverEntryTooltip(entry, renderer);
   }
 
-  function formatListSlotTooltip(parsed, widget) {
+  function formatListSlotTooltip(parsed, widget, renderer) {
     const display = resolveListDisplayEntry(parsed, widget);
-    return formatItemEntryTooltip(display);
+    return formatItemEntryTooltip(display, renderer);
   }
 
-  function formatParsedTooltip(parsed, widget) {
+  function formatParsedTooltip(parsed, widget, renderer) {
     if (!parsed) return '';
     if (parsed.kind === 'list') {
-      return formatListSlotTooltip(parsed, widget);
+      return formatListSlotTooltip(parsed, widget, renderer);
     }
     if (parsed.kind === 'fluid' && parsed.id) {
-      return `${parsed.id} (${formatFluidMb(parsed.amount)})`;
+      const label = renderer ? renderer.translateRegistry(parsed.id, 'fluid') : parsed.id;
+      return `${label} (${formatFluidMb(parsed.amount)})`;
     }
     if (parsed.kind === 'item') {
       if (parsed.fluid?.id) {
-        return `${parsed.fluid.id} (${formatFluidMb(parsed.fluid.amount)})`;
+        const label = renderer ? renderer.translateRegistry(parsed.fluid.id, 'fluid') : parsed.fluid.id;
+        return `${label} (${formatFluidMb(parsed.fluid.amount)})`;
       }
+      const id = parsed.ids?.[0];
+      if (!id) return '';
+      const label = renderer ? renderer.translateRegistry(id, 'item') : id;
       const count = formatItemCount(parsed.amount);
-      return count ? `${parsed.ids[0]} x${count}` : String(parsed.ids[0]);
+      return count ? `${label} x${count}` : label;
     }
     if (parsed.kind === 'tag' && parsed.tag) {
-      return `Tag: ${parsed.tag}`;
+      const tagLabel = renderer ? renderer.translateTag(parsed.tag) : parsed.tag;
+      return `Tag: ${tagLabel}`;
     }
     return '';
   }
 
-  function slotTooltip(ingredient, w, parsed) {
+  function slotTooltip(ingredient, w, parsed, renderer) {
     if (parsed) {
-      const fromParsed = formatParsedTooltip(parsed, w);
+      const fromParsed = formatParsedTooltip(parsed, w, renderer);
       if (fromParsed) return fromParsed;
     }
     if (ingredient == null) return '';
     if (Array.isArray(ingredient)) {
       const listParsed = parseIngredient(ingredient);
-      const fromList = formatParsedTooltip(listParsed, w);
+      const fromList = formatParsedTooltip(listParsed, w, renderer);
       return fromList || `${ingredient.length} ingredient options`;
     }
     if (typeof ingredient === 'string') {
@@ -241,19 +296,23 @@
     }
     if (typeof ingredient === 'object') {
       if (ingredient.type === 'fluid') {
-        return `${ingredient.id} (${formatFluidMb(ingredient.amount)})`;
+        const label = renderer ? renderer.translateRegistry(ingredient.id, 'fluid') : ingredient.id;
+        return `${label} (${formatFluidMb(ingredient.amount)})`;
       }
       if (ingredient.type === 'item' && ingredient.id) {
         const fluid = parseFluidFromItemNbt(ingredient.nbt);
         if (fluid) {
-          return `${fluid.id} (${formatFluidMb(fluid.amount)})`;
+          const label = renderer ? renderer.translateRegistry(fluid.id, 'fluid') : fluid.id;
+          return `${label} (${formatFluidMb(fluid.amount)})`;
         }
+        const label = renderer ? renderer.translateRegistry(ingredient.id, 'item') : ingredient.id;
         const count = formatItemCount(ingredient.amount);
-        return count ? `${ingredient.id} x${count}` : String(ingredient.id);
+        return count ? `${label} x${count}` : label;
       }
       if (ingredient.id) {
+        const label = renderer ? renderer.translateRegistry(ingredient.id, 'item') : ingredient.id;
         const count = formatItemCount(ingredient.amount);
-        return count ? `${ingredient.id} x${count}` : String(ingredient.id);
+        return count ? `${label} x${count}` : label;
       }
     }
     return `${w.type} (${w.role || '?'})`;
@@ -297,6 +356,14 @@
       this.baseUrl = options.baseUrl || 'export';
       this.missingIconId = options.missingIconId || MISSING_ICON_ID;
       this.injectIconStylesheets = options.injectIconStylesheets === true;
+      this.locale = normalizeLocale(options.locale);
+      this._langCache = new Map();
+      this._langByLocale = options.lang && typeof options.lang === 'object' ? options.lang : null;
+      this._langOverrides = options.translations && typeof options.translations === 'object'
+        ? options.translations
+        : {};
+      this._bundle = null;
+      this._activeLang = { fallback: {}, current: {} };
       this._tooltipEl = options.tooltipElement
         || (typeof options.tooltipElementId === 'string'
           ? document.getElementById(options.tooltipElementId)
@@ -311,11 +378,9 @@
       this.textureManifestPromise = null;
       this.tagMembers = null;
       this.tagMembersPromise = null;
-      this.itemIconIds = null;
-      this.blockItemIconIds = null;
+      this.iconIds = null;
       this.iconIndexPromise = null;
       this.iconStylesPromise = null;
-      this.usesUnifiedIcons = null;
     }
 
     setBaseUrl(url) {
@@ -324,16 +389,97 @@
       this.textureManifestPromise = null;
       this.tagMembers = null;
       this.tagMembersPromise = null;
-      this.itemIconIds = null;
-      this.blockItemIconIds = null;
+      this.iconIds = null;
       this.iconIndexPromise = null;
       this.iconStylesPromise = null;
-      this.usesUnifiedIcons = null;
       document.querySelectorAll('link[data-emi-icon]').forEach((el) => el.remove());
+      this._bundle = null;
+    }
+
+    translateKey(key) {
+      if (!key) return '';
+      const k = String(key);
+      if (this._langOverrides[k] != null) return this._langOverrides[k];
+      if (this._activeLang.current[k] != null) return this._activeLang.current[k];
+      if (this._activeLang.fallback[k] != null) return this._activeLang.fallback[k];
+      return k;
+    }
+
+    translateRegistry(registryId, kind = 'item') {
+      const bare = stripRegistryId(registryId);
+      for (const key of registryLangKeyCandidates(kind, registryId)) {
+        const label = this.translateKey(key);
+        if (label !== key) return label;
+      }
+      return bare || String(registryId || '');
+    }
+
+    translateTag(tag) {
+      const key = tagToLangKey(tag);
+      const label = this.translateKey(key);
+      return label !== key ? label : tag;
+    }
+
+    async ensureLang(locale) {
+      const code = normalizeLocale(locale);
+      if (this._langCache.has(code)) {
+        return this._langCache.get(code);
+      }
+      if (this._langByLocale?.[code]) {
+        const table = { ...this._langByLocale[code] };
+        this._langCache.set(code, table);
+        return table;
+      }
+      const res = await fetch(joinBase(this.baseUrl, `${PATHS.langDir}/${code}.json`));
+      if (!res.ok) {
+        this._langCache.set(code, {});
+        return {};
+      }
+      const table = await res.json();
+      this._langCache.set(code, table);
+      return table;
+    }
+
+    async _refreshActiveLang() {
+      const fallbackTable = await this.ensureLang(FALLBACK_LOCALE);
+      const locale = this.locale;
+      const currentTable = locale === FALLBACK_LOCALE
+        ? fallbackTable
+        : await this.ensureLang(locale);
+      this._activeLang = {
+        fallback: fallbackTable,
+        current: currentTable,
+      };
+    }
+
+    async setLocale(locale) {
+      this.locale = normalizeLocale(locale);
+      await this._refreshActiveLang();
+    }
+
+    mergeTranslations(overrides) {
+      if (!overrides || typeof overrides !== 'object') return;
+      Object.assign(this._langOverrides, overrides);
+    }
+
+    async ensureBundle() {
+      if (this._bundle) return this._bundle;
+      try {
+        const res = await fetch(joinBase(this.baseUrl, PATHS.bundle));
+        if (res.ok) {
+          this._bundle = await res.json();
+        }
+      } catch {
+        this._bundle = {};
+      }
+      if (!this._bundle) this._bundle = {};
+      return this._bundle;
     }
 
     async loadIndex() {
-      const res = await fetch(joinBase(this.baseUrl, INDEX_PATH));
+      await this.ensureBundle();
+      await this._refreshActiveLang();
+      const res = await fetch(joinBase(this.baseUrl, PATHS.recipeIndex));
       if (!res.ok) throw new Error(`index HTTP ${res.status}`);
       return res.json();
     }
@@ -353,7 +499,7 @@
     async ensureTextureManifest() {
       if (this.textureManifest) return this.textureManifest;
       if (!this.textureManifestPromise) {
-        this.textureManifestPromise = fetch(joinBase(this.baseUrl, TEXTURE_MANIFEST))
+        this.textureManifestPromise = fetch(joinBase(this.baseUrl, PATHS.textureManifest))
           .then((r) => (r.ok ? r.json() : { textures: {} }))
           .then((j) => {
             this.textureManifest = j.textures || {};
@@ -370,7 +516,7 @@
     async ensureTagMembers() {
       if (this.tagMembers) return this.tagMembers;
       if (!this.tagMembersPromise) {
-        this.tagMembersPromise = fetch(joinBase(this.baseUrl, 'index/tag-members.json'))
+        this.tagMembersPromise = fetch(joinBase(this.baseUrl, PATHS.tagMembers))
           .then((r) => (r.ok ? r.json() : { items: {} }))
           .then((j) => {
             this.tagMembers = j.items || {};
@@ -389,27 +535,19 @@
       if (this.iconStylesPromise) return this.iconStylesPromise;
       this.iconStylesPromise = (async () => {
         await this.ensureIconIndices();
-        const sheets = this.usesUnifiedIcons
-          ? [['icons', 'generated/icons/icons.css']]
-          : [
-              ['items', 'generated/items/item-icons.css'],
-              ['block-items', 'generated/block-items/block-item-icons.css'],
-              ['fluids', 'generated/fluids/fluid-icons.css'],
-            ];
-        await Promise.all(sheets.map(([kind, rel]) => {
-          if (document.querySelector(`link[data-emi-icon="${kind}"]`)) {
-            return Promise.resolve();
-          }
-          return new Promise((resolve) => {
-            const link = document.createElement('link');
-            link.rel = 'stylesheet';
-            link.href = joinBase(this.baseUrl, rel);
-            link.dataset.emiIcon = kind;
-            link.onload = () => resolve();
-            link.onerror = () => resolve();
-            document.head.appendChild(link);
-          });
-        }));
+        const rel = `${PATHS.iconsDir}/icons.css`;
+        if (document.querySelector('link[data-emi-icon="icons"]')) {
+          return;
+        }
+        await new Promise((resolve) => {
+          const link = document.createElement('link');
+          link.rel = 'stylesheet';
+          link.href = joinBase(this.baseUrl, rel);
+          link.dataset.emiIcon = 'icons';
+          link.onload = () => resolve();
+          link.onerror = () => resolve();
+          document.head.appendChild(link);
+        });
       })();
       return this.iconStylesPromise;
     }
@@ -418,28 +556,13 @@
       if (this.iconIds) return;
       if (!this.iconIndexPromise) {
         this.iconIndexPromise = (async () => {
-          const unified = await fetch(joinBase(this.baseUrl, 'generated/icons/index.json'))
+          const index = await fetch(joinBase(this.baseUrl, `${PATHS.iconsDir}/index.json`))
             .then((r) => (r.ok ? r.json() : null));
-          if (unified?.items) {
-            this.usesUnifiedIcons = true;
-            this.iconIds = new Set(Object.keys(unified.items));
-            this.iconIds.add(MISSING_ICON_ID);
-            return;
-          }
-          this.usesUnifiedIcons = false;
-          const [items, blocks] = await Promise.all([
-            fetch(joinBase(this.baseUrl, 'generated/items/index.json'))
-              .then((r) => (r.ok ? r.json() : { items: {} })),
-            fetch(joinBase(this.baseUrl, 'generated/block-items/index.json'))
-              .then((r) => (r.ok ? r.json() : { items: {} })),
-          ]);
-          this.iconIds = new Set([
-            ...Object.keys(items.items || {}),
-            ...Object.keys(blocks.items || {}),
-          ]);
+          const items = index?.items || {};
+          this.iconIds = new Set(Object.keys(items));
+          this.iconIds.add(MISSING_ICON_ID);
         })().catch(() => {
-          this.usesUnifiedIcons = false;
-          this.iconIds = new Set();
+          this.iconIds = new Set([MISSING_ICON_ID]);
         });
       }
       return this.iconIndexPromise;
@@ -447,8 +570,11 @@
 
     /** Atlas sprite id for an item/fluid, falling back to {@link MISSING_ICON_ID}. */
     resolveAtlasId(registryId) {
-      if (registryId && this.iconIds?.has(registryId)) {
-        return registryId;
+      if (!registryId) return this.missingIconId;
+      const bare = stripRegistryId(registryId);
+      const candidates = bare === registryId ? [registryId] : [bare, registryId];
+      for (const id of candidates) {
+        if (this.iconIds?.has(id)) return id;
       }
       return this.missingIconId;
     }
@@ -558,7 +684,7 @@
     resolveTexture(id) {
       if (!id || !this.textureManifest) return null;
       const rel = this.textureManifest[id];
-      return rel ? joinBase(this.baseUrl, `generated/recipe-textures/${rel}`) : null;
+      return rel ? joinBase(this.baseUrl, `${PATHS.texturesDir}/${rel}`) : null;
     }
 
     /** EMI recipe panel nine-patch: BACKGROUND @ u=27,v=0 corner=4 center=1 */
@@ -599,6 +725,7 @@
 
     async render(container, layout) {
       await Promise.all([
+        this._refreshActiveLang(),
         this.ensureTextureManifest(),
         this.ensureTagMembers(),
         this.ensureIconIndices(),
@@ -727,7 +854,11 @@
       if (w.color != null) {
         el.style.color = `#${(w.color & 0xffffff).toString(16).padStart(6, '0')}`;
       }
-      el.textContent = w.text || '';
+      if (w.translationKey) {
+        el.textContent = this.translateKey(w.translationKey);
+      } else {
+        el.textContent = w.text || '';
+      }
       return el;
     }
 
@@ -789,12 +920,13 @@
       el.tabIndex = 0;
       const tooltipFor = () => {
         if (parsed?.kind === 'tag' && parsed.tag) {
-          return `#item:${parsed.tag}`;
+          const tagLabel = this.translateTag(parsed.tag);
+          return `Tag: ${tagLabel}`;
         }
         if (parsed?.kind === 'list') {
-          return formatListSlotTooltip(parsed, w);
+          return formatListSlotTooltip(parsed, w, this);
         }
-        return slotTooltip(ingredient, w, parsed);
+        return slotTooltip(ingredient, w, parsed, this);
       };
       el.addEventListener('mouseenter', () => showTooltip(tooltipFor(), el, this._tooltipEl));
       el.addEventListener('mouseleave', () => hideTooltip(this._tooltipEl));
@@ -803,7 +935,7 @@
 
       if (parsed?.kind === 'tag' && parsed.tag) {
         el.classList.add('emi-slot-tag-input');
-        el.title = `Click to view tag: #item:${parsed.tag}`;
+        el.title = `Click to view tag: ${this.translateTag(parsed.tag)}`;
         el.addEventListener('click', (e) => {
           e.stopPropagation();
           showTagPopover(parsed.tag, el, this);
@@ -901,6 +1033,9 @@
       return {
         injectIconStylesheets: options.injectIconStylesheets,
         missingIconId: options.missingIconId,
+        locale: options.locale,
+        lang: options.lang,
+        translations: options.translations,
         tooltipElement: options.tooltipElement,
         tagPopoverElement: options.tagPopoverElement,
         tooltipElementId: options.tooltipElementId,
@@ -1265,10 +1400,10 @@
     });
   }
 
-  function listPopoverItems(parsed) {
+  function listPopoverItems(parsed, renderer) {
     return parsed.entries.map((entry) => ({
       lookupKey: lookupIconKey(entry) || entry.ids?.[0] || MISSING_ICON_ID,
-      tooltip: formatPopoverEntryTooltip(entry),
+      tooltip: formatPopoverEntryTooltip(entry, renderer),
       remainderIcon: entry.remainderIcon || null,
       quantity: entry.fluid ? null : entry,
     }));
@@ -1304,7 +1439,7 @@
   function createTagPopoverSlot(renderer, itemId, showTagMark) {
     return createPopoverSlot(renderer, {
       lookupKey: itemId,
-      tooltip: itemId,
+      tooltip: renderer.translateRegistry(itemId, 'item'),
       remainderIcon: null,
       quantity: null,
     }, showTagMark);
@@ -1329,6 +1464,7 @@
     }
 
     await Promise.all([
+      renderer._refreshActiveLang(),
       renderer.ensureTagMembers(),
       renderer.ensureIconStylesheets(),
       renderer.ensureIconIndices(),
@@ -1454,12 +1590,12 @@
     const ids = resolveTagPopoverIds(renderer, tag);
     const items = ids.map((id) => ({
       lookupKey: id,
-      tooltip: id,
+      tooltip: renderer.translateRegistry(id, 'item'),
       remainderIcon: null,
       quantity: null,
     }));
     await showIngredientPopover({
-      title: `#item:${tag}`,
+      title: renderer.translateTag(tag),
       subtitle: tagEmiRecipeId(tag),
       items,
       anchorEl,
@@ -1480,3 +1616,4 @@ globalThis.EmiRecipeRenderer = EmiRecipeRenderer;
 globalThis.initEmiSlotCarousels = initEmiSlotCarousels;
 globalThis.hideEmiTagPopover = hideEmiTagPopover;
 globalThis.EmiMissingIconId = MISSING_ICON_ID;
+globalThis.stripEmiRegistryId = stripRegistryId;

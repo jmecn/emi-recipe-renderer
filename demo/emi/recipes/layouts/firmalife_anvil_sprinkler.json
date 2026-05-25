@@ -1,0 +1,54 @@
+{
+  "schema": 2,
+  "id": "firmalife:anvil/sprinkler",
+  "scale": 2,
+  "panel": {
+    "width": 98,
+    "height": 26,
+    "margin": 4,
+    "frameWidth": 106,
+    "frameHeight": 34
+  },
+  "emiId": "toomanyrecipeviewers:/firmalife/anvil/sprinkler",
+  "category": "tfc:anvil",
+  "widgets": [
+    {
+      "x": 0,
+      "y": 0,
+      "w": 98,
+      "h": 26,
+      "type": "root_chrome",
+      "chrome": "chrome/sh/4f/4f23124cbc5f5a4dc7d11773d523447ff797a44531ef6b8b583127463b45ef1d.png",
+      "javaClass": "dev.nolij.toomanyrecipeviewers.impl.recipe.TMRVRecipe$RootWidget"
+    },
+    {
+      "x": 5,
+      "y": 4,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "input",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": "item:create:copper_sheet",
+      "tagDisplayItem": "create:copper_sheet"
+    },
+    {
+      "x": 75,
+      "y": 4,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "output",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": "item:firmalife:sprinkler",
+      "tagDisplayItem": "firmalife:sprinkler"
+    }
+  ],
+  "referencePng": "generated/recipes/firmalife_anvil_sprinkler.png"
+}

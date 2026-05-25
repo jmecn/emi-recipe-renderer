@@ -1,0 +1,54 @@
+{
+  "schema": 2,
+  "id": "tfc:heating/kaolin_clay",
+  "scale": 2,
+  "panel": {
+    "width": 120,
+    "height": 38,
+    "margin": 4,
+    "frameWidth": 128,
+    "frameHeight": 46
+  },
+  "emiId": "toomanyrecipeviewers:/tfc/heating/kaolin_clay",
+  "category": "tfc:heating",
+  "widgets": [
+    {
+      "x": 0,
+      "y": 0,
+      "w": 120,
+      "h": 38,
+      "type": "root_chrome",
+      "chrome": "chrome/sh/2b/2b37071553c5c1b87676a788df689ae7c25fae353c725d86804de438d2aef62e.png",
+      "javaClass": "dev.nolij.toomanyrecipeviewers.impl.recipe.TMRVRecipe$RootWidget"
+    },
+    {
+      "x": 20,
+      "y": 16,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "input",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": "item:tfc:kaolin_clay",
+      "tagDisplayItem": "tfc:kaolin_clay"
+    },
+    {
+      "x": 84,
+      "y": 16,
+      "w": 18,
+      "h": 18,
+      "type": "slot",
+      "role": "output",
+      "large": false,
+      "catalyst": false,
+      "drawBack": false,
+      "custom": false,
+      "ingredient": "item:tfc:powder/kaolinite",
+      "tagDisplayItem": "tfc:powder/kaolinite"
+    }
+  ],
+  "referencePng": "generated/recipes/tfc_heating_kaolin_clay.png"
+}
