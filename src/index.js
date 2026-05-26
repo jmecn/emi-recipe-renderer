@@ -128,6 +128,83 @@
     });
   }
 
+  function inferIconSourceType(file) {
+    const value = String(file || '').toLowerCase();
+    if (value.endsWith('.webp')) return 'image/webp';
+    if (value.endsWith('.png')) return 'image/png';
+    if (value.endsWith('.avif')) return 'image/avif';
+    return '';
+  }
+
+  function hasInlineIconAtlas(index) {
+    return Object.values(index?.items || {}).some((entry) => (
+      entry
+      && typeof entry === 'object'
+      && Number.isInteger(entry.page)
+      && Number.isFinite(entry.x)
+      && Number.isFinite(entry.y)
+    ));
+  }
+
+  function buildIconPagePriority(index, pageCount) {
+    const usage = Array.from({ length: pageCount }, () => 0);
+    for (const entry of Object.values(index?.items || {})) {
+      if (!entry || typeof entry !== 'object') continue;
+      if (!Number.isInteger(entry.page) || entry.page < 0 || entry.page >= pageCount) continue;
+      usage[entry.page] += Number.isFinite(entry.usage) ? entry.usage : 0;
+    }
+    return usage
+      .map((total, pageIndex) => ({ pageIndex, total }))
+      .sort((a, b) => (b.total - a.total) || (a.pageIndex - b.pageIndex))
+      .reduce((map, entry, priority) => {
+        map[entry.pageIndex] = priority;
+        return map;
+      }, {});
+  }
+
+  function normalizeIconAtlas(index, resolvePageUrl) {
+    if (!hasInlineIconAtlas(index)) return null;
+    const pages = Array.isArray(index?.pages) ? index.pages : [];
+    const priorities = buildIconPagePriority(index, pages.length);
+    return {
+      cellSize: Number.isFinite(index?.cellSize) ? index.cellSize : 32,
+      items: index?.items || {},
+      pages: pages.map((page, pageIndex) => {
+        const rawSources = Array.isArray(page?.sources) && page.sources.length
+          ? page.sources
+          : ((page?.file || page?.src) ? [{ file: page.file || page.src }] : []);
+        const sources = rawSources
+          .map((source) => {
+            const file = source?.file || source?.src || '';
+            if (!file) return null;
+            return {
+              type: source?.type || inferIconSourceType(file),
+              file,
+              url: resolvePageUrl(file),
+            };
+          })
+          .filter(Boolean);
+        return {
+          width: Number.isFinite(page?.width) ? page.width : 0,
+          height: Number.isFinite(page?.height) ? page.height : 0,
+          preload: page?.preload === true || priorities[pageIndex] === 0,
+          priority: Number.isFinite(page?.priority) ? page.priority : priorities[pageIndex],
+          sources,
+        };
+      }),
+    };
+  }
+
+  function buildAtlasBackgroundImage(sources) {
+    if (!Array.isArray(sources) || sources.length === 0) return '';
+    if (sources.length === 1) return `url("${sources[0].url}")`;
+    const parts = sources.map((source) => {
+      const type = source.type ? ` type("${source.type}")` : '';
+      return `url("${source.url}")${type}`;
+    });
+    return `image-set(${parts.join(', ')})`;
+  }
+
   /** Plain registry id: strip SNBT `{...}` and export NBT hash suffix `id@hex`. */
   function stripRegistryId(id) {
     if (!id) return id;
@@ -456,8 +533,11 @@
       this.tagMembers = null;
       this.tagMembersPromise = null;
       this.iconIds = null;
+      this.iconAtlas = null;
       this.iconIndexPromise = null;
       this.iconStylesPromise = null;
+      this.iconPreloadUrls = new Set();
+      this.iconIdlePreloadScheduled = false;
     }
 
     _resetLoadedResources() {
@@ -469,8 +549,11 @@
       this.tagMembers = null;
       this.tagMembersPromise = null;
       this.iconIds = null;
+      this.iconAtlas = null;
       this.iconIndexPromise = null;
       this.iconStylesPromise = null;
+      this.iconPreloadUrls = new Set();
+      this.iconIdlePreloadScheduled = false;
       document.querySelectorAll('[data-emi-icon]').forEach((el) => el.remove());
     }
 
@@ -629,6 +712,11 @@
       if (this.iconStylesPromise) return this.iconStylesPromise;
       this.iconStylesPromise = (async () => {
         await this.ensureIconIndices();
+        if (this.iconAtlas) {
+          this.preloadPriorityIconPages();
+          this.scheduleDeferredIconPagePreloads();
+          return;
+        }
         const rel = `${PATHS.iconsDir}/icons.css`;
         const resourceUrl = this.resolveResourceUrl(rel);
         if (this.resourceVersion) {
@@ -667,6 +755,7 @@
             const items = index?.items || {};
             const ids = new Set(Object.keys(items));
             ids.add(MISSING_ICON_ID);
+            this.iconAtlas = normalizeIconAtlas(index, (file) => this.resolveResourceUrl(`${PATHS.iconsDir}/${file}`));
             return ids;
           })
           .then((ids) => {
@@ -677,6 +766,43 @@
           });
       }
       return this.iconIndexPromise;
+    }
+
+    preloadIconPage(pageIndex) {
+      const page = this.iconAtlas?.pages?.[pageIndex];
+      const primary = page?.sources?.[0];
+      if (!primary?.url || this.iconPreloadUrls.has(primary.url)) return;
+      const link = document.createElement('link');
+      link.rel = 'preload';
+      link.as = 'image';
+      link.href = primary.url;
+      if (primary.type) link.type = primary.type;
+      link.dataset.emiIcon = `atlas-preload-${pageIndex}`;
+      document.head.appendChild(link);
+      this.iconPreloadUrls.add(primary.url);
+    }
+
+    preloadPriorityIconPages() {
+      (this.iconAtlas?.pages || []).forEach((page, pageIndex) => {
+        if (page?.preload) this.preloadIconPage(pageIndex);
+      });
+    }
+
+    scheduleDeferredIconPagePreloads() {
+      if (!this.iconAtlas || this.iconIdlePreloadScheduled) return;
+      const coldPages = (this.iconAtlas.pages || [])
+        .map((page, pageIndex) => ({ page, pageIndex }))
+        .filter(({ page }) => !page?.preload);
+      if (!coldPages.length) return;
+      this.iconIdlePreloadScheduled = true;
+      const schedule = globalThis.requestIdleCallback
+        ? globalThis.requestIdleCallback.bind(globalThis)
+        : (cb) => setTimeout(cb, 0);
+      schedule(() => {
+        coldPages
+          .sort((a, b) => (a.page.priority - b.page.priority) || (a.pageIndex - b.pageIndex))
+          .forEach(({ pageIndex }) => this.preloadIconPage(pageIndex));
+      });
     }
 
     /** Atlas sprite id for an item/fluid, falling back to {@link MISSING_ICON_ID}. */
@@ -697,6 +823,19 @@
     createAtlasSpanForIconKey(lookupKey) {
       const id = this.resolveAtlasId(lookupKey);
       const span = createAtlasSpan('icon-atlas', id);
+      const entry = this.iconAtlas?.items?.[id];
+      const page = Number.isInteger(entry?.page) ? this.iconAtlas?.pages?.[entry.page] : null;
+      const bgImage = buildAtlasBackgroundImage(page?.sources);
+      if (entry && page && bgImage) {
+        span.style.width = `${this.iconAtlas.cellSize}px`;
+        span.style.height = `${this.iconAtlas.cellSize}px`;
+        span.style.backgroundImage = bgImage;
+        span.style.backgroundRepeat = 'no-repeat';
+        span.style.backgroundPosition = `-${entry.x}px -${entry.y}px`;
+        if (page.width && page.height) {
+          span.style.backgroundSize = `${page.width}px ${page.height}px`;
+        }
+      }
       if (id === this.missingIconId && lookupKey) {
         span.title = lookupKey;
         span.dataset.missingFor = lookupKey;
@@ -986,7 +1125,7 @@
     createTankFluidFill(parsed) {
       const wrap = document.createElement('div');
       wrap.className = 'emi-tank-fluid';
-      const tile = createAtlasSpan('icon-atlas', this.resolveAtlasId(parsed.id));
+      const tile = this.createAtlasSpanForIconKey(parsed.id);
       tile.classList.add('emi-tank-fluid-tile');
       wrap.appendChild(tile);
       return wrap;

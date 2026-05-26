@@ -38,6 +38,16 @@ export function createStubElement(overrides = {}) {
   return Object.assign(element, overrides);
 }
 
+function createStubFragment() {
+  return {
+    childNodes: [],
+    appendChild(child) {
+      this.childNodes.push(child);
+      return child;
+    },
+  };
+}
+
 function createRendererNode(tagName, appendedNodes) {
   const node = createStubElement({
     tagName: String(tagName).toUpperCase(),
@@ -158,6 +168,9 @@ export async function loadDemoAppTestContext() {
     },
     createElement() {
       return createStubElement();
+    },
+    createDocumentFragment() {
+      return createStubFragment();
     },
     addEventListener() {},
   };

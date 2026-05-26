@@ -124,6 +124,12 @@ body {
   padding: 8px 10px 10px;
 }
 
+.recipe-card,
+.item-card {
+  content-visibility: auto;
+  contain-intrinsic-size: 160px 120px;
+}
+
 .recipe-card-id {
   margin: 0 0 8px;
   font-family: ui-monospace, monospace;
@@ -163,20 +169,6 @@ body {
 .item-card:focus-visible {
   border-color: var(--accent);
   outline: none;
-}
-
-.item-card-icon {
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.item-card-icon .icon-atlas {
-  width: 32px;
-  height: 32px;
-  image-rendering: pixelated;
 }
 
 .item-card-name {
@@ -227,9 +219,24 @@ body {
   border-radius: 8px;
 }
 
-.item-detail-icon .icon-atlas {
-  width: 48px;
-  height: 48px;
+.item-detail-icon,
+.item-card-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.item-detail-icon {
+  flex: 0 0 32px;
+}
+
+.item-detail-icon .icon-atlas,
+.item-card-icon .icon-atlas {
+  width: 32px;
+  height: 32px;
+  display: block;
   image-rendering: pixelated;
 }
 

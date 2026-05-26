@@ -11,6 +11,7 @@
   const DEMO_JSON_CACHE = new Map();
   const RECIPE_FILTER_PLACEHOLDER = 'Filter recipe id or category…';
   const ITEM_FILTER_PLACEHOLDER = 'Filter item id or name…';
+  const ITEM_GRID_BATCH_SIZE = 120;
 
   function joinBase(base, path) {
     const b = base.replace(/\/+$/, '');
@@ -85,6 +86,10 @@
       this.itemIds = [];
       this.mountSession = null;
       this._filterTimer = null;
+      this.itemGridBatchSize = ITEM_GRID_BATCH_SIZE;
+      this.itemGridRenderVersion = 0;
+      this.itemGridState = { ids: [], renderedCount: 0 };
+      this.itemIconObserver = null;
 
       this.els = {
         locale: document.getElementById('locale-select'),
@@ -144,6 +149,26 @@
         this.mountSession.disconnect();
       }
       this.mountSession = null;
+    }
+
+    disconnectItemIconObserver() {
+      if (this.itemIconObserver?.disconnect) {
+        this.itemIconObserver.disconnect();
+      }
+      this.itemIconObserver = null;
+    }
+
+    cancelPendingItemGridWork() {
+      this.itemGridRenderVersion += 1;
+      this.disconnectItemIconObserver();
+      return this.itemGridRenderVersion;
+    }
+
+    queueIdleWork(callback) {
+      if (typeof window.requestIdleCallback === 'function') {
+        return window.requestIdleCallback(() => callback());
+      }
+      return setTimeout(() => callback(), 0);
     }
 
     resetMountedView() {
@@ -348,6 +373,12 @@
     createIconSpan(renderer, itemId, sizeClass) {
       const wrap = document.createElement('div');
       wrap.className = sizeClass || 'item-card-icon';
+      this.mountIconSpan(wrap, renderer, itemId);
+      return wrap;
+    }
+
+    mountIconSpan(wrap, renderer, itemId) {
+      if (!wrap || wrap.dataset.iconMounted === '1') return wrap;
       const span = document.createElement('span');
       span.className = 'icon-atlas';
       span.dataset.item = renderer.resolveAtlasId(itemId);
@@ -356,42 +387,109 @@
         span.dataset.missingFor = itemId;
       }
       wrap.appendChild(span);
+      wrap.dataset.iconMounted = '1';
       return wrap;
+    }
+
+    createLazyIconWrap(itemId, sizeClass) {
+      const wrap = document.createElement('div');
+      wrap.className = sizeClass || 'item-card-icon';
+      wrap.dataset.iconKey = itemId;
+      return wrap;
+    }
+
+    ensureItemIconObserver(renderer) {
+      if (typeof IntersectionObserver === 'undefined') return null;
+      if (this.itemIconObserver) return this.itemIconObserver;
+      this.itemIconObserver = new IntersectionObserver((entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          this.itemIconObserver?.unobserve?.(entry.target);
+          this.mountIconSpan(entry.target, renderer, canonicalItemId(entry.target.dataset.iconKey));
+        }
+      }, {
+        root: null,
+        rootMargin: '200px 0px',
+        threshold: 0,
+      });
+      return this.itemIconObserver;
+    }
+
+    observeItemIcons(renderer, wraps) {
+      if (!wraps.length) return;
+      const observer = this.ensureItemIconObserver(renderer);
+      if (!observer) {
+        wraps.forEach((wrap) => {
+          this.mountIconSpan(wrap, renderer, canonicalItemId(wrap.dataset.iconKey));
+        });
+        return;
+      }
+      wraps.forEach((wrap) => {
+        if (wrap.dataset.iconMounted === '1') return;
+        observer.observe(wrap);
+      });
+    }
+
+    buildItemCard(renderer, id) {
+      const card = document.createElement('article');
+      card.className = 'item-card';
+      card.dataset.itemId = id;
+      card.tabIndex = 0;
+      card.setAttribute('role', 'button');
+      card.addEventListener('click', () => this.navigate('item-detail', id));
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          this.navigate('item-detail', id);
+        }
+      });
+
+      const iconWrap = this.createLazyIconWrap(id);
+      card.appendChild(iconWrap);
+      const name = document.createElement('div');
+      name.className = 'item-card-name';
+      name.textContent = renderer.translateRegistry(id, 'item');
+      card.appendChild(name);
+      const idEl = document.createElement('div');
+      idEl.className = 'item-card-id';
+      idEl.textContent = id;
+      card.appendChild(idEl);
+      return { card, iconWrap };
+    }
+
+    scheduleItemGridBatch(renderer, ids, start, replace, version) {
+      const end = Math.min(start + this.itemGridBatchSize, ids.length);
+      const cards = [];
+      const iconWraps = [];
+      for (const id of ids.slice(start, end)) {
+        const built = this.buildItemCard(renderer, id);
+        cards.push(built.card);
+        iconWraps.push(built.iconWrap);
+      }
+
+      if (replace) {
+        this.els.itemGrid.replaceChildren(...cards);
+      } else {
+        cards.forEach((card) => this.els.itemGrid.appendChild(card));
+      }
+      this.itemGridState = { ids, renderedCount: end };
+      this.observeItemIcons(renderer, iconWraps);
+
+      if (end < ids.length) {
+        this.queueIdleWork(() => {
+          if (version !== this.itemGridRenderVersion) return;
+          this.scheduleItemGridBatch(renderer, ids, end, false, version);
+        });
+      }
     }
 
     async renderItemGrid() {
       const renderer = await this.ensureItemRenderer(this.renderer);
       if (!renderer) return;
       const ids = this.filteredItemIds();
-      const frag = document.createDocumentFragment();
-
-      for (const id of ids) {
-        const card = document.createElement('article');
-        card.className = 'item-card';
-        card.dataset.itemId = id;
-        card.tabIndex = 0;
-        card.setAttribute('role', 'button');
-        card.addEventListener('click', () => this.navigate('item-detail', id));
-        card.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            this.navigate('item-detail', id);
-          }
-        });
-
-        card.appendChild(this.createIconSpan(renderer, id));
-        const name = document.createElement('div');
-        name.className = 'item-card-name';
-        name.textContent = renderer.translateRegistry(id, 'item');
-        card.appendChild(name);
-        const idEl = document.createElement('div');
-        idEl.className = 'item-card-id';
-        idEl.textContent = id;
-        card.appendChild(idEl);
-        frag.appendChild(card);
-      }
-
-      this.els.itemGrid.replaceChildren(frag);
+      const version = this.cancelPendingItemGridWork();
+      this.itemGridState = { ids, renderedCount: 0 };
+      this.scheduleItemGridBatch(renderer, ids, 0, true, version);
     }
 
     async refreshItemGridLocale() {
@@ -408,6 +506,12 @@
         if (itemId && nameEl) {
           nameEl.textContent = renderer.translateRegistry(itemId, 'item');
         }
+      }
+      const ids = this.filteredItemIds();
+      const version = this.cancelPendingItemGridWork();
+      this.itemGridState = { ids, renderedCount: cards.length };
+      if (cards.length < ids.length) {
+        this.scheduleItemGridBatch(renderer, ids, cards.length, false, version);
       }
     }
 

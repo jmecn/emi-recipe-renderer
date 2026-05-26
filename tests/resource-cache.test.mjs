@@ -110,3 +110,76 @@ test('ensureIconStylesheets rewrites atlas urls with resourceVersion for non-dem
   assert.match(styleEl.textContent, /atlas-000\.png\?v=v3/);
   assert.ok(fetchCalls.some((u) => u.endsWith('/icons/icons.css?v=v3')));
 });
+
+test('manifest-driven icons preload the core shard and use inline atlas styles', async () => {
+  installRendererDomStubs();
+
+  let idleTask = null;
+  globalThis.requestIdleCallback = (cb) => {
+    idleTask = cb;
+    return 1;
+  };
+
+  const fetchCalls = [];
+  globalThis.fetch = async (url) => {
+    const href = String(url);
+    fetchCalls.push(href);
+    if (href.endsWith('/icons/index.json')) {
+      return jsonResponse({
+        schema: 1,
+        cellSize: 32,
+        pages: [
+          {
+            width: 2048,
+            height: 2048,
+            preload: true,
+            sources: [
+              { type: 'image/webp', file: 'atlas-000.webp' },
+              { type: 'image/png', file: 'atlas-000.png' },
+            ],
+          },
+          {
+            width: 2048,
+            height: 2048,
+            file: 'atlas-001.png',
+          },
+        ],
+        items: {
+          'fieldguide:missing_icon': { page: 0, x: 0, y: 0, usage: 1 },
+          'demo:core': { page: 0, x: 64, y: 96, usage: 1000 },
+          'demo:cold': { page: 1, x: 128, y: 160, usage: 1 },
+        },
+      });
+    }
+    throw new Error(`unexpected url ${href}`);
+  };
+
+  const renderer = new EmiRecipeRenderer({
+    baseUrl: '/emi-e',
+    locale: 'en_us',
+    injectIconStylesheets: true,
+  });
+
+  await renderer.ensureIconStylesheets();
+
+  assert.deepEqual(fetchCalls, ['/emi-e/icons/index.json']);
+  const coreLinks = document._appendedNodes.filter((node) => node.tagName === 'LINK' && node.rel === 'preload');
+  assert.equal(coreLinks.length, 1);
+  assert.equal(coreLinks[0].href, '/emi-e/icons/atlas-000.webp');
+
+  const span = renderer.createAtlasSpanForItem('demo:core');
+  assert.equal(span.style.width, '32px');
+  assert.equal(span.style.height, '32px');
+  assert.equal(span.style.backgroundPosition, '-64px -96px');
+  assert.match(span.style.backgroundImage, /image-set/);
+  assert.match(span.style.backgroundImage, /atlas-000\.webp/);
+  assert.match(span.style.backgroundImage, /atlas-000\.png/);
+
+  assert.ok(idleTask);
+  idleTask();
+  await Promise.resolve();
+
+  const allLinks = document._appendedNodes.filter((node) => node.tagName === 'LINK' && node.rel === 'preload');
+  assert.equal(allLinks.length, 2);
+  assert.equal(allLinks[1].href, '/emi-e/icons/atlas-001.png');
+});
