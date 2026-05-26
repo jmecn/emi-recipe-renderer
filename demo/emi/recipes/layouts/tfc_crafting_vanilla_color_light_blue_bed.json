@@ -166,6 +166,5 @@
       "ingredient": "item:minecraft:light_blue_bed",
       "tagDisplayItem": "minecraft:light_blue_bed"
     }
-  ],
-  "referencePng": "generated/recipes/tfc_crafting_vanilla_color_light_blue_bed.png"
+  ]
 }

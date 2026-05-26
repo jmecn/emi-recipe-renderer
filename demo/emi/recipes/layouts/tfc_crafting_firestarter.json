@@ -152,6 +152,5 @@
       "ingredient": "item:tfc:firestarter{Damage:0}",
       "tagDisplayItem": "tfc:firestarter@c6782f6a3a7dee47"
     }
-  ],
-  "referencePng": "generated/recipes/tfc_crafting_firestarter.png"
+  ]
 }

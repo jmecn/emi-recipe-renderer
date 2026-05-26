@@ -164,6 +164,5 @@
       "ingredient": "item:tfc:composter",
       "tagDisplayItem": "tfc:composter"
     }
-  ],
-  "referencePng": "generated/recipes/tfc_crafting_composter.png"
+  ]
 }

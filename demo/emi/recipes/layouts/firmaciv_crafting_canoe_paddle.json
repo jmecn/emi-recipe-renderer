@@ -152,6 +152,5 @@
       "ingredient": "item:firmaciv:canoe_paddle",
       "tagDisplayItem": "firmaciv:canoe_paddle"
     }
-  ],
-  "referencePng": "generated/recipes/firmaciv_crafting_canoe_paddle.png"
+  ]
 }

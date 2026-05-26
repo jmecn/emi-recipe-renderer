@@ -166,6 +166,5 @@
       "ingredient": "item:gtceu:copper_mining_hammer{Damage:0,DisallowContainerItem:0b,GT.Behaviours:{AoEColumn:1,AoELayer:0,AoERow:1,MaxAoEColumn:1,MaxAoELayer:0,MaxAoERow:1,TorchPlacing:1b},GT.Tool:{MaxDamage:1979},HideFlags:2}",
       "tagDisplayItem": "gtceu:copper_mining_hammer@ac0caefd86d975be"
     }
-  ],
-  "referencePng": "generated/recipes/gtceu_shaped_mining_hammer_copper.png"
+  ]
 }

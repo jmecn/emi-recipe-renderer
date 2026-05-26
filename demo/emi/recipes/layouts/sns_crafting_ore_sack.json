@@ -167,6 +167,5 @@
       "ingredient": "item:sns:ore_sack",
       "tagDisplayItem": "sns:ore_sack"
     }
-  ],
-  "referencePng": "generated/recipes/sns_crafting_ore_sack.png"
+  ]
 }

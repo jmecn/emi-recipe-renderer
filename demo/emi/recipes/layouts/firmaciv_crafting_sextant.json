@@ -168,6 +168,5 @@
       "ingredient": "item:firmaciv:sextant",
       "tagDisplayItem": "firmaciv:sextant"
     }
-  ],
-  "referencePng": "generated/recipes/firmaciv_crafting_sextant.png"
+  ]
 }

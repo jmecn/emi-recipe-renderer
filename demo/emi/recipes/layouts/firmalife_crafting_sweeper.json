@@ -67,7 +67,7 @@
       "custom": false,
       "ingredient": "#item:forge:tools/wrenches",
       "remainderIcon": "self",
-      "tagDisplayItem": "tfg:hv_boron_carbide_wrench"
+      "tagDisplayItem": "tfg:mv_diamond_tipped_mo_50_re_wrench"
     },
     {
       "x": 0,
@@ -163,6 +163,5 @@
       },
       "tagDisplayItem": "firmalife:sweeper"
     }
-  ],
-  "referencePng": "generated/recipes/firmalife_crafting_sweeper.png"
+  ]
 }

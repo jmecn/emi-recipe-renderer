@@ -95,7 +95,7 @@
       "custom": false,
       "ingredient": "#item:forge:tools/saws",
       "remainderIcon": "self",
-      "tagDisplayItem": "tfg:hv_boron_carbide_buzzsaw"
+      "tagDisplayItem": "tfg:mv_diamond_tipped_mo_50_re_buzzsaw"
     },
     {
       "x": 36,
@@ -167,6 +167,5 @@
       "ingredient": "item:gtceu:wood_crate",
       "tagDisplayItem": "gtceu:wood_crate"
     }
-  ],
-  "referencePng": "generated/recipes/gtceu_shaped_wooden_crate.png"
+  ]
 }

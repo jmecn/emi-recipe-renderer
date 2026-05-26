@@ -156,6 +156,5 @@
       "ingredient": "item:tfc:mud_bricks/loam",
       "tagDisplayItem": "tfc:mud_bricks/loam"
     }
-  ],
-  "referencePng": "generated/recipes/tfc_crafting_soil_loam_mud_bricks.png"
+  ]
 }

@@ -162,6 +162,5 @@
       "ingredient": "item:tfc:wood/scribing_table/birch",
       "tagDisplayItem": "tfc:wood/scribing_table/birch"
     }
-  ],
-  "referencePng": "generated/recipes/tfc_crafting_wood_birch_scribing_table.png"
+  ]
 }

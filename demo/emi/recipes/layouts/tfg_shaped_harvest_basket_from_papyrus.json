@@ -166,6 +166,5 @@
       "ingredient": "item:tfg:harvest_basket{Damage:0}",
       "tagDisplayItem": "tfg:harvest_basket@c6782f6a3a7dee47"
     }
-  ],
-  "referencePng": "generated/recipes/tfg_shaped_harvest_basket_from_papyrus.png"
+  ]
 }

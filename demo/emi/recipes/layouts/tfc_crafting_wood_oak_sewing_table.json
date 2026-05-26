@@ -65,7 +65,7 @@
       "custom": false,
       "ingredient": "#item:forge:tools/knives",
       "remainderIcon": "self",
-      "tagDisplayItem": "tfg:boron_carbide_knife"
+      "tagDisplayItem": "tfg:arsenic_bronze_knife"
     },
     {
       "x": 0,
@@ -163,6 +163,5 @@
       "ingredient": "item:tfc:wood/sewing_table/oak",
       "tagDisplayItem": "tfc:wood/sewing_table/oak"
     }
-  ],
-  "referencePng": "generated/recipes/tfc_crafting_wood_oak_sewing_table.png"
+  ]
 }

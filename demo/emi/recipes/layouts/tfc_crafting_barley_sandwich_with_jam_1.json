@@ -39,7 +39,7 @@
       "custom": false,
       "ingredient": "#item:forge:tools/knives",
       "remainderIcon": "self",
-      "tagDisplayItem": "tfg:boron_carbide_knife"
+      "tagDisplayItem": "tfg:arsenic_bronze_knife"
     },
     {
       "x": 18,
@@ -168,6 +168,5 @@
       },
       "tagDisplayItem": "tfc:food/barley_bread_jam_sandwich"
     }
-  ],
-  "referencePng": "generated/recipes/tfc_crafting_barley_sandwich_with_jam_1.png"
+  ]
 }

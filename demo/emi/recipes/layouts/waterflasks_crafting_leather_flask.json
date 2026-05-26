@@ -145,7 +145,7 @@
       "custom": false,
       "ingredient": "#item:forge:tools/knives",
       "remainderIcon": "self",
-      "tagDisplayItem": "tfg:boron_carbide_knife"
+      "tagDisplayItem": "tfg:arsenic_bronze_knife"
     },
     {
       "x": 92,
@@ -161,6 +161,5 @@
       "ingredient": "item:waterflasks:leather_flask{Damage:0}",
       "tagDisplayItem": "waterflasks:leather_flask@c6782f6a3a7dee47"
     }
-  ],
-  "referencePng": "generated/recipes/waterflasks_crafting_leather_flask.png"
+  ]
 }

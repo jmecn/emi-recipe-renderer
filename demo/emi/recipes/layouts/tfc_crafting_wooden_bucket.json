@@ -154,6 +154,5 @@
       "ingredient": "item:tfc:wooden_bucket",
       "tagDisplayItem": "tfc:wooden_bucket"
     }
-  ],
-  "referencePng": "generated/recipes/tfc_crafting_wooden_bucket.png"
+  ]
 }

@@ -166,6 +166,5 @@
       "ingredient": "item:tfc:gem_saw{Damage:0}",
       "tagDisplayItem": "tfc:gem_saw@c6782f6a3a7dee47"
     }
-  ],
-  "referencePng": "generated/recipes/tfc_crafting_gem_saw.png"
+  ]
 }

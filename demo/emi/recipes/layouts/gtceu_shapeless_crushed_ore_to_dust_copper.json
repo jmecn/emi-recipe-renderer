@@ -53,7 +53,7 @@
       "custom": false,
       "ingredient": "#item:forge:tools/hammers",
       "remainderIcon": "self",
-      "tagDisplayItem": "tfg:boron_carbide_hammer"
+      "tagDisplayItem": "tfg:diamond_tipped_mo_50_re_hammer"
     },
     {
       "x": 18,
@@ -167,6 +167,5 @@
       "ingredient": "item:gtceu:impure_copper_dust",
       "tagDisplayItem": "gtceu:impure_copper_dust"
     }
-  ],
-  "referencePng": "generated/recipes/gtceu_shapeless_crushed_ore_to_dust_copper.png"
+  ]
 }

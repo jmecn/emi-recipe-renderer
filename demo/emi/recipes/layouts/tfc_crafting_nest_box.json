@@ -164,6 +164,5 @@
       "ingredient": "item:tfc:nest_box",
       "tagDisplayItem": "tfc:nest_box"
     }
-  ],
-  "referencePng": "generated/recipes/tfc_crafting_nest_box.png"
+  ]
 }

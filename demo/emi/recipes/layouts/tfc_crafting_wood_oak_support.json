@@ -81,7 +81,7 @@
       "custom": false,
       "ingredient": "#item:tfc:saws",
       "remainderIcon": "self",
-      "tagDisplayItem": "tfg:hv_boron_carbide_buzzsaw"
+      "tagDisplayItem": "tfg:mv_diamond_tipped_mo_50_re_buzzsaw"
     },
     {
       "x": 0,
@@ -173,6 +173,5 @@
       },
       "tagDisplayItem": "tfc:wood/support/oak"
     }
-  ],
-  "referencePng": "generated/recipes/tfc_crafting_wood_oak_support.png"
+  ]
 }

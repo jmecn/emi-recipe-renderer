@@ -29,11 +29,13 @@ npm install emi-recipe-renderer
     baseUrl: '/your-export-root',
     injectIconStylesheets: true,
     lazy: true,
+    resourceVersion: window.APP_BUILD_ID,
   });
 </script>
 ```
 
 - **`baseUrl`** — root of the static export (layouts, icons, textures). Script and data URLs are independent (CDN + export host is fine).
+- **`resourceVersion`** — optional build/deploy version string. Keep it stable between releases; change it only when the export bundle changes so JSON, textures, `icons.css`, and atlas images all refresh together.
 - **HTML** — only `class="emi-recipe"` and `data-recipe-id`; layout paths stay in the export index.
 
 ## Export layout (`baseUrl` = `emi/` bundle root)
@@ -45,7 +47,7 @@ npm install emi-recipe-renderer
 - `tags/members.json` (optional)
 - `lang/<locale>.json` — item/fluid/tag names; missing keys fall back to `en_us`
 
-Options: `locale`, `lang` (inline tables per locale), `translations` (flat key overrides).
+Options: `locale`, `resourceVersion`, `lang` (inline tables per locale), `translations` (flat key overrides).
 
 Cross-origin export needs CORS on `fetch`.
 
@@ -74,11 +76,3 @@ npm run demo
 ```
 
 Copies `dist/` into `demo/lib/` (no `../dist` in HTML) and serves `demo/` at `http://127.0.0.1:8766/`.
-
-To refresh the bundled sample under `demo/emi/`:
-
-```bash
-python3 scripts/migrate-guide-export-to-emi-bundle.py /path/to/guide-export demo/emi
-```
-
-The demo includes **Recipes** (lazy-mounted grid + filter), **Items** (icon + translated name + id, filter), item detail (recipes as output / as input), and **language** switching from `bundle.json`.

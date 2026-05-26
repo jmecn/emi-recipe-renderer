@@ -162,6 +162,5 @@
       "ingredient": "item:tfc:metal/anvil/copper",
       "tagDisplayItem": "tfc:metal/anvil/copper"
     }
-  ],
-  "referencePng": "generated/recipes/tfc_crafting_metal_anvil_copper.png"
+  ]
 }

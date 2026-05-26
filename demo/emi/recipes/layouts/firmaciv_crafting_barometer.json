@@ -247,6 +247,5 @@
       "ingredient": "item:firmaciv:barometer",
       "tagDisplayItem": "firmaciv:barometer"
     }
-  ],
-  "referencePng": "generated/recipes/firmaciv_crafting_barometer.png"
+  ]
 }

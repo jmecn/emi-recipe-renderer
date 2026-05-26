@@ -15,7 +15,7 @@ After changing library source, run `npm run build:demo` again (or use `npm run d
 ## Refresh sample data
 
 ```bash
-python3 scripts/migrate-guide-export-to-emi-bundle.py ~/Downloads/guide-export demo/emi
+python3 migrate-guide-export-to-emi-bundle.py ~/Downloads/guide-export demo/emi
 ```
 
 Then commit `demo/emi/` if you want the live site updated.

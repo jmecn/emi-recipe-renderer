@@ -164,6 +164,5 @@
       "ingredient": "item:tfc:jar/plum_unsealed",
       "tagDisplayItem": "tfc:jar/plum_unsealed"
     }
-  ],
-  "referencePng": "generated/recipes/tfc_crafting_unseal_plum_jar.png"
+  ]
 }

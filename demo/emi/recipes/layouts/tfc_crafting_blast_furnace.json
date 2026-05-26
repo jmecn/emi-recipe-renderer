@@ -166,6 +166,5 @@
       "ingredient": "item:tfc:blast_furnace",
       "tagDisplayItem": "tfc:blast_furnace"
     }
-  ],
-  "referencePng": "generated/recipes/tfc_crafting_blast_furnace.png"
+  ]
 }

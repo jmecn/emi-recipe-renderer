@@ -8,11 +8,36 @@
 
   const DEMO_BASE_URL = 'emi';
   const STORAGE_LOCALE = 'emiRendererDemoLocale';
+  const DEMO_JSON_CACHE = new Map();
+  const RECIPE_FILTER_PLACEHOLDER = 'Filter recipe id or category…';
+  const ITEM_FILTER_PLACEHOLDER = 'Filter item id or name…';
 
   function joinBase(base, path) {
     const b = base.replace(/\/+$/, '');
     const p = path.replace(/^\/+/, '');
     return `${b}/${p}`;
+  }
+
+  function loadDemoJson(baseUrl, path, fallbackValue) {
+    const key = joinBase(baseUrl, path);
+    if (!DEMO_JSON_CACHE.has(key)) {
+      DEMO_JSON_CACHE.set(key, fetch(key)
+        .then((r) => (r.ok ? r.json() : fallbackValue))
+        .catch(() => fallbackValue));
+    }
+    return DEMO_JSON_CACHE.get(key);
+  }
+
+  function registerServiceWorker() {
+    if (!('serviceWorker' in navigator)) return;
+    const register = () => {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    };
+    if (document.readyState === 'complete') {
+      register();
+      return;
+    }
+    window.addEventListener('load', register, { once: true });
   }
 
   /** Same rules as library {@code stripRegistryId} (SNBT + `@nbtHash`). */
@@ -24,6 +49,10 @@
     const at = s.indexOf('@');
     if (at >= 0) s = s.slice(0, at);
     return s;
+  }
+
+  function isItemRoute(tab) {
+    return tab === 'items' || tab === 'item-detail';
   }
 
   function mergeItemsIndex(raw) {
@@ -117,6 +146,49 @@
       this.mountSession = null;
     }
 
+    resetMountedView() {
+      this.disconnectMount();
+      hideEmiTagPopover();
+    }
+
+    async ensureItemRenderer(renderer = this.renderer) {
+      if (!renderer) return null;
+      await renderer.ensureIconStylesheets();
+      await renderer.ensureIconIndices();
+      return renderer;
+    }
+
+    runRouteAction(route, handlers) {
+      if (route.tab === 'item-detail' && route.itemId) {
+        return handlers.itemDetail(route.itemId);
+      }
+      if (route.tab === 'items') {
+        return handlers.items();
+      }
+      return handlers.recipes();
+    }
+
+    syncPanels(route) {
+      this.els.panelRecipes.hidden = route.tab !== 'recipes';
+      this.els.panelItems.hidden = route.tab !== 'items';
+      this.els.panelItemDetail.hidden = route.tab !== 'item-detail';
+    }
+
+    syncTabLinks(route) {
+      this.els.tabLinks.forEach((a) => {
+        const tab = a.dataset.tab;
+        const current = tab === 'recipes' ? route.tab === 'recipes' : tab === 'items' && isItemRoute(route.tab);
+        if (current) a.setAttribute('aria-current', 'page');
+        else a.removeAttribute('aria-current');
+      });
+    }
+
+    syncFilterPlaceholder(route) {
+      this.els.filter.placeholder = isItemRoute(route.tab)
+        ? ITEM_FILTER_PLACEHOLDER
+        : RECIPE_FILTER_PLACEHOLDER;
+    }
+
     parseHash() {
       const raw = (location.hash || '#recipes').replace(/^#/, '');
       if (raw === 'items') {
@@ -141,30 +213,14 @@
 
     syncRoute() {
       const route = this.parseHash();
-
-      this.els.panelRecipes.hidden = route.tab !== 'recipes';
-      this.els.panelItems.hidden = route.tab !== 'items';
-      this.els.panelItemDetail.hidden = route.tab !== 'item-detail';
-
-      this.els.tabLinks.forEach((a) => {
-        const tab = a.dataset.tab;
-        const current = tab === 'recipes' && route.tab === 'recipes'
-          || tab === 'items' && (route.tab === 'items' || route.tab === 'item-detail');
-        if (current) a.setAttribute('aria-current', 'page');
-        else a.removeAttribute('aria-current');
+      this.syncPanels(route);
+      this.syncTabLinks(route);
+      this.syncFilterPlaceholder(route);
+      void this.runRouteAction(route, {
+        itemDetail: (itemId) => this.renderItemDetail(itemId),
+        items: () => this.renderItemGrid(),
+        recipes: () => this.renderRecipeGrid(),
       });
-
-      this.els.filter.placeholder = route.tab === 'items' || route.tab === 'item-detail'
-        ? 'Filter item id or name…'
-        : 'Filter recipe id or category…';
-
-      if (route.tab === 'item-detail' && route.itemId) {
-        void this.renderItemDetail(route.itemId);
-      } else if (route.tab === 'items') {
-        void this.renderItemGrid();
-      } else {
-        void this.renderRecipeGrid();
-      }
     }
 
     onFilterInput() {
@@ -176,7 +232,15 @@
       this.locale = this.els.locale.value;
       localStorage.setItem(STORAGE_LOCALE, this.locale);
       await this.ensureRenderer();
-      this.syncRoute();
+      await this.refreshCurrentViewForLocale();
+    }
+
+    async refreshCurrentViewForLocale() {
+      return this.runRouteAction(this.parseHash(), {
+        itemDetail: (itemId) => this.refreshItemDetailLocale(itemId),
+        items: () => this.refreshItemGridLocale(),
+        recipes: () => this.refreshRecipeGridLocale(),
+      });
     }
 
     populateLocaleSelect() {
@@ -235,8 +299,7 @@
     }
 
     async mountRecipeGrid(root) {
-      this.disconnectMount();
-      hideEmiTagPopover();
+      this.resetMountedView();
       if (!root.querySelector('.emi-recipe[data-recipe-id]')) {
         return;
       }
@@ -254,6 +317,34 @@
       await this.mountRecipeGrid(this.els.recipeGrid);
     }
 
+    async rerenderMountedRecipes(root) {
+      const renderer = await this.ensureRenderer();
+      if (!renderer || !this.recipeIndex || !root?.querySelectorAll) return;
+      const mounted = [...root.querySelectorAll('.emi-recipe[data-recipe-id][data-emi-mounted="1"]')];
+      this.resetMountedView();
+      for (const el of mounted) {
+        const recipeId = (el.dataset.recipeId || '').trim();
+        if (!recipeId) continue;
+        try {
+          const { layout } = await renderer.loadLayout(recipeId, this.recipeIndex);
+          await renderer.render(el, layout);
+          el.dataset.emiMounted = '1';
+          el.classList?.remove?.('emi-recipe-pending');
+        } catch (err) {
+          EmiRecipeRenderer._showMountError?.(el, recipeId, err?.message);
+        }
+      }
+      await this.mountRecipeGrid(root);
+    }
+
+    async refreshRecipeGridLocale() {
+      if (!this.els.recipeGrid?.querySelector?.('.emi-recipe[data-recipe-id]')) {
+        await this.renderRecipeGrid();
+        return;
+      }
+      await this.rerenderMountedRecipes(this.els.recipeGrid);
+    }
+
     createIconSpan(renderer, itemId, sizeClass) {
       const wrap = document.createElement('div');
       wrap.className = sizeClass || 'item-card-icon';
@@ -269,16 +360,15 @@
     }
 
     async renderItemGrid() {
-      const renderer = this.renderer;
+      const renderer = await this.ensureItemRenderer(this.renderer);
       if (!renderer) return;
-      await renderer.ensureIconStylesheets();
-      await renderer.ensureIconIndices();
       const ids = this.filteredItemIds();
       const frag = document.createDocumentFragment();
 
       for (const id of ids) {
         const card = document.createElement('article');
         card.className = 'item-card';
+        card.dataset.itemId = id;
         card.tabIndex = 0;
         card.setAttribute('role', 'button');
         card.addEventListener('click', () => this.navigate('item-detail', id));
@@ -304,6 +394,23 @@
       this.els.itemGrid.replaceChildren(frag);
     }
 
+    async refreshItemGridLocale() {
+      const renderer = await this.ensureItemRenderer(await this.ensureRenderer());
+      if (!renderer) return;
+      const cards = this.els.itemGrid?.querySelectorAll?.('.item-card[data-item-id]') || [];
+      if (!cards.length) {
+        await this.renderItemGrid();
+        return;
+      }
+      for (const card of cards) {
+        const itemId = canonicalItemId(card.dataset.itemId);
+        const nameEl = card.querySelector?.('.item-card-name');
+        if (itemId && nameEl) {
+          nameEl.textContent = renderer.translateRegistry(itemId, 'item');
+        }
+      }
+    }
+
     async renderItemDetail(itemId) {
       const renderer = await this.ensureRenderer();
       const entry = this.itemsIndex?.items?.[itemId];
@@ -312,9 +419,7 @@
         return;
       }
       this.showError('');
-
-      await renderer.ensureIconStylesheets();
-      await renderer.ensureIconIndices();
+      await this.ensureItemRenderer(renderer);
 
       this.els.itemDetailHeader.replaceChildren();
       const icon = this.createIconSpan(renderer, itemId, 'item-detail-icon');
@@ -342,17 +447,31 @@
       await this.mountRecipeGrid(this.els.panelItemDetail);
     }
 
+    async refreshItemDetailLocale(itemId) {
+      const renderer = await this.ensureRenderer();
+      const entry = this.itemsIndex?.items?.[itemId];
+      if (!renderer || !entry) return;
+      await this.ensureItemRenderer(renderer);
+      const title = this.els.itemDetailHeader?.querySelector?.('.item-detail-title');
+      if (title) {
+        title.textContent = renderer.translateRegistry(itemId, 'item');
+      } else {
+        await this.renderItemDetail(itemId);
+        return;
+      }
+      await this.rerenderMountedRecipes(this.els.panelItemDetail);
+    }
+
     async loadBundle() {
-      this.disconnectMount();
-      hideEmiTagPopover();
+      this.resetMountedView();
       this.showError('');
 
       try {
         const renderer = new EmiRecipeRenderer(this.rendererOptions());
         const [recipeIndex, bundleRes, itemsRes] = await Promise.all([
           renderer.loadIndex(),
-          fetch(joinBase(this.baseUrl, 'bundle.json')).then((r) => (r.ok ? r.json() : {})),
-          fetch(joinBase(this.baseUrl, 'items/index.json')).then((r) => (r.ok ? r.json() : { items: {} })),
+          renderer.ensureBundle(),
+          loadDemoJson(this.baseUrl, 'items/index.json', { items: {} }),
         ]);
 
         this.renderer = renderer;
@@ -374,7 +493,10 @@
     }
   }
 
+  global.EmiBundleDemo = EmiBundleDemo;
+
   document.addEventListener('DOMContentLoaded', () => {
+    registerServiceWorker();
     const app = new EmiBundleDemo();
     const localeParam = new URLSearchParams(location.search).get('locale');
     app.locale = localeParam || localStorage.getItem(STORAGE_LOCALE) || 'en_us';

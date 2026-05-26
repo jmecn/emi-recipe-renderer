@@ -158,6 +158,5 @@
       "ingredient": "item:tfc:rock/aqueduct/shale",
       "tagDisplayItem": "tfc:rock/aqueduct/shale"
     }
-  ],
-  "referencePng": "generated/recipes/tfc_crafting_rock_shale_aqueduct.png"
+  ]
 }

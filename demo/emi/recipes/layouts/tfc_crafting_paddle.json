@@ -158,6 +158,5 @@
       "ingredient": "item:tfc:paddle",
       "tagDisplayItem": "tfc:paddle"
     }
-  ],
-  "referencePng": "generated/recipes/tfc_crafting_paddle.png"
+  ]
 }

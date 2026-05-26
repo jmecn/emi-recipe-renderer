@@ -39,7 +39,7 @@
       "custom": false,
       "ingredient": "#item:forge:tools/knives",
       "remainderIcon": "self",
-      "tagDisplayItem": "tfg:boron_carbide_knife"
+      "tagDisplayItem": "tfg:arsenic_bronze_knife"
     },
     {
       "x": 18,
@@ -155,6 +155,5 @@
       "ingredient": "item:tfchotornot:tongs/wood{Damage:0}",
       "tagDisplayItem": "tfchotornot:tongs/wood@c6782f6a3a7dee47"
     }
-  ],
-  "referencePng": "generated/recipes/tfchotornot_crafting_tongs_wood.png"
+  ]
 }

@@ -39,7 +39,7 @@
       "custom": false,
       "ingredient": "#item:forge:tools/knives",
       "remainderIcon": "self",
-      "tagDisplayItem": "tfg:boron_carbide_knife"
+      "tagDisplayItem": "tfg:arsenic_bronze_knife"
     },
     {
       "x": 18,
@@ -165,6 +165,5 @@
       },
       "tagDisplayItem": "tfc:food/wheat_bread_sandwich"
     }
-  ],
-  "referencePng": "generated/recipes/tfc_crafting_wheat_sandwich.png"
+  ]
 }

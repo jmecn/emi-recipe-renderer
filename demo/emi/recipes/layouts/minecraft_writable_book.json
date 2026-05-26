@@ -168,6 +168,5 @@
       "ingredient": "item:minecraft:writable_book",
       "tagDisplayItem": "minecraft:writable_book"
     }
-  ],
-  "referencePng": "generated/recipes/minecraft_writable_book.png"
+  ]
 }

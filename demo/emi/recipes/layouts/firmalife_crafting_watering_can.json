@@ -203,6 +203,5 @@
       "ingredient": "item:firmalife:watering_can{Damage:0}",
       "tagDisplayItem": "firmalife:watering_can@c6782f6a3a7dee47"
     }
-  ],
-  "referencePng": "generated/recipes/firmalife_crafting_watering_can.png"
+  ]
 }

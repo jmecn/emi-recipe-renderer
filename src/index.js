@@ -19,6 +19,7 @@
   };
   const FALLBACK_LOCALE = 'en_us';
   const MISSING_ICON_ID = 'fieldguide:missing_icon';
+  const SHARED_RESOURCE_CACHE = new Map();
 
   function normalizeLocale(locale) {
     return String(locale || FALLBACK_LOCALE).trim().toLowerCase().replace('-', '_');
@@ -50,6 +51,81 @@
     const b = base.replace(/\/+$/, '');
     const p = path.replace(/^\/+/, '');
     return `${b}/${p}`;
+  }
+
+  function normalizeResourceVersion(version) {
+    return version == null ? '' : String(version).trim();
+  }
+
+  function appendResourceVersion(url, version) {
+    const v = normalizeResourceVersion(version);
+    if (!v) return url;
+    return `${url}${url.includes('?') ? '&' : '?'}v=${encodeURIComponent(v)}`;
+  }
+
+  function resolveAbsoluteUrl(url, baseUrl) {
+    const base = baseUrl || globalThis.location?.href || 'http://local.invalid/';
+    return new URL(url, base).toString();
+  }
+
+  function fetchJsonResource(resourceUrl, fallbackValue) {
+    return fetch(resourceUrl).then((res) => {
+      if (!res.ok) {
+        if (fallbackValue !== undefined) return fallbackValue;
+        throw new Error(`resource HTTP ${res.status}`);
+      }
+      return res.json();
+    });
+  }
+
+  function fetchRequiredJsonResource(resourceUrl, label) {
+    return fetch(resourceUrl).then((res) => {
+      if (!res.ok) throw new Error(`${label} HTTP ${res.status}`);
+      return res.json();
+    });
+  }
+
+  function fetchTextResource(resourceUrl, fallbackValue = '') {
+    return fetch(resourceUrl).then((res) => (res.ok ? res.text() : fallbackValue));
+  }
+
+  function sharedCacheKey(kind, resourceUrl) {
+    return `${kind}:${resourceUrl}`;
+  }
+
+  function getSharedResource(kind, resourceUrl, loader) {
+    const key = sharedCacheKey(kind, resourceUrl);
+    if (!SHARED_RESOURCE_CACHE.has(key)) {
+      SHARED_RESOURCE_CACHE.set(key, Promise.resolve()
+        .then(loader)
+        .catch((err) => {
+          SHARED_RESOURCE_CACHE.delete(key);
+          throw err;
+        }));
+    }
+    return SHARED_RESOURCE_CACHE.get(key);
+  }
+
+  function getSharedJsonResource(kind, resourceUrl, fallbackValue) {
+    return getSharedResource(kind, resourceUrl, () => fetchJsonResource(resourceUrl, fallbackValue));
+  }
+
+  function getSharedRequiredJsonResource(kind, resourceUrl, label) {
+    return getSharedResource(kind, resourceUrl, () => fetchRequiredJsonResource(resourceUrl, label));
+  }
+
+  function getSharedTextResource(kind, resourceUrl, fallbackValue = '') {
+    return getSharedResource(kind, resourceUrl, () => fetchTextResource(resourceUrl, fallbackValue));
+  }
+
+  function rewriteVersionedCssUrls(cssText, stylesheetUrl, version) {
+    const baseUrl = resolveAbsoluteUrl(stylesheetUrl);
+    return String(cssText || '').replace(/url\(([^)]+)\)/g, (full, raw) => {
+      const value = String(raw || '').trim().replace(/^['"]|['"]$/g, '');
+      if (!value || value.startsWith('data:')) return full;
+      const resolved = resolveAbsoluteUrl(value, baseUrl);
+      return `url("${appendResourceVersion(resolved, version)}")`;
+    });
   }
 
   /** Plain registry id: strip SNBT `{...}` and export NBT hash suffix `id@hex`. */
@@ -354,6 +430,7 @@
   class EmiRecipeRenderer {
     constructor(options = {}) {
       this.baseUrl = options.baseUrl || 'export';
+      this.resourceVersion = normalizeResourceVersion(options.resourceVersion);
       this.missingIconId = options.missingIconId || MISSING_ICON_ID;
       this.injectIconStylesheets = options.injectIconStylesheets === true;
       this.locale = normalizeLocale(options.locale);
@@ -383,8 +460,10 @@
       this.iconStylesPromise = null;
     }
 
-    setBaseUrl(url) {
-      this.baseUrl = url;
+    _resetLoadedResources() {
+      this._langCache.clear();
+      this._bundle = null;
+      this._activeLang = { fallback: {}, current: {} };
       this.textureManifest = null;
       this.textureManifestPromise = null;
       this.tagMembers = null;
@@ -392,8 +471,21 @@
       this.iconIds = null;
       this.iconIndexPromise = null;
       this.iconStylesPromise = null;
-      document.querySelectorAll('link[data-emi-icon]').forEach((el) => el.remove());
-      this._bundle = null;
+      document.querySelectorAll('[data-emi-icon]').forEach((el) => el.remove());
+    }
+
+    resolveResourceUrl(path) {
+      return appendResourceVersion(joinBase(this.baseUrl, path), this.resourceVersion);
+    }
+
+    setBaseUrl(url) {
+      this.baseUrl = url;
+      this._resetLoadedResources();
+    }
+
+    setResourceVersion(version) {
+      this.resourceVersion = normalizeResourceVersion(version);
+      this._resetLoadedResources();
     }
 
     translateKey(key) {
@@ -430,12 +522,9 @@
         this._langCache.set(code, table);
         return table;
       }
-      const res = await fetch(joinBase(this.baseUrl, `${PATHS.langDir}/${code}.json`));
-      if (!res.ok) {
-        this._langCache.set(code, {});
-        return {};
-      }
-      const table = await res.json();
+      const path = `${PATHS.langDir}/${code}.json`;
+      const resourceUrl = this.resolveResourceUrl(path);
+      const table = await getSharedJsonResource('lang', resourceUrl, {});
       this._langCache.set(code, table);
       return table;
     }
@@ -464,11 +553,9 @@
 
     async ensureBundle() {
       if (this._bundle) return this._bundle;
+      const resourceUrl = this.resolveResourceUrl(PATHS.bundle);
       try {
-        const res = await fetch(joinBase(this.baseUrl, PATHS.bundle));
-        if (res.ok) {
-          this._bundle = await res.json();
-        }
+        this._bundle = await getSharedJsonResource('bundle', resourceUrl, {});
       } catch {
         this._bundle = {};
       }
@@ -479,18 +566,17 @@
     async loadIndex() {
       await this.ensureBundle();
       await this._refreshActiveLang();
-      const res = await fetch(joinBase(this.baseUrl, PATHS.recipeIndex));
-      if (!res.ok) throw new Error(`index HTTP ${res.status}`);
-      return res.json();
+      const resourceUrl = this.resolveResourceUrl(PATHS.recipeIndex);
+      return getSharedRequiredJsonResource('index', resourceUrl, 'index');
     }
 
     async loadLayout(recipeId, index) {
       const entry = index.recipes[recipeId];
       if (!entry?.layout) throw new Error(`no layout for ${recipeId}`);
-      const res = await fetch(joinBase(this.baseUrl, entry.layout));
-      if (!res.ok) throw new Error(`layout HTTP ${res.status}`);
+      const resourceUrl = this.resolveResourceUrl(entry.layout);
+      const layout = await getSharedRequiredJsonResource('layout', resourceUrl, 'layout');
       return {
-        layout: await res.json(),
+        layout,
         entry,
         layoutPath: entry.layout,
       };
@@ -499,8 +585,12 @@
     async ensureTextureManifest() {
       if (this.textureManifest) return this.textureManifest;
       if (!this.textureManifestPromise) {
-        this.textureManifestPromise = fetch(joinBase(this.baseUrl, PATHS.textureManifest))
-          .then((r) => (r.ok ? r.json() : { textures: {} }))
+        const resourceUrl = this.resolveResourceUrl(PATHS.textureManifest);
+        this.textureManifestPromise = getSharedJsonResource(
+          'texture-manifest',
+          resourceUrl,
+          { textures: {} },
+        )
           .then((j) => {
             this.textureManifest = j.textures || {};
             return this.textureManifest;
@@ -516,8 +606,12 @@
     async ensureTagMembers() {
       if (this.tagMembers) return this.tagMembers;
       if (!this.tagMembersPromise) {
-        this.tagMembersPromise = fetch(joinBase(this.baseUrl, PATHS.tagMembers))
-          .then((r) => (r.ok ? r.json() : { items: {} }))
+        const resourceUrl = this.resolveResourceUrl(PATHS.tagMembers);
+        this.tagMembersPromise = getSharedJsonResource(
+          'tag-members',
+          resourceUrl,
+          { items: {} },
+        )
           .then((j) => {
             this.tagMembers = j.items || {};
             return this.tagMembers;
@@ -536,13 +630,25 @@
       this.iconStylesPromise = (async () => {
         await this.ensureIconIndices();
         const rel = `${PATHS.iconsDir}/icons.css`;
+        const resourceUrl = this.resolveResourceUrl(rel);
+        if (this.resourceVersion) {
+          if (document.querySelector('style[data-emi-icon="icons"]')) {
+            return;
+          }
+          const cssText = await getSharedTextResource('icon-css', resourceUrl, '');
+          const style = document.createElement('style');
+          style.dataset.emiIcon = 'icons';
+          style.textContent = rewriteVersionedCssUrls(cssText, resourceUrl, this.resourceVersion);
+          document.head.appendChild(style);
+          return;
+        }
         if (document.querySelector('link[data-emi-icon="icons"]')) {
           return;
         }
         await new Promise((resolve) => {
           const link = document.createElement('link');
           link.rel = 'stylesheet';
-          link.href = joinBase(this.baseUrl, rel);
+          link.href = resourceUrl;
           link.dataset.emiIcon = 'icons';
           link.onload = () => resolve();
           link.onerror = () => resolve();
@@ -555,15 +661,20 @@
     async ensureIconIndices() {
       if (this.iconIds) return;
       if (!this.iconIndexPromise) {
-        this.iconIndexPromise = (async () => {
-          const index = await fetch(joinBase(this.baseUrl, `${PATHS.iconsDir}/index.json`))
-            .then((r) => (r.ok ? r.json() : null));
-          const items = index?.items || {};
-          this.iconIds = new Set(Object.keys(items));
-          this.iconIds.add(MISSING_ICON_ID);
-        })().catch(() => {
-          this.iconIds = new Set([MISSING_ICON_ID]);
-        });
+        const resourceUrl = this.resolveResourceUrl(`${PATHS.iconsDir}/index.json`);
+        this.iconIndexPromise = getSharedJsonResource('icon-index', resourceUrl, null)
+          .then((index) => {
+            const items = index?.items || {};
+            const ids = new Set(Object.keys(items));
+            ids.add(MISSING_ICON_ID);
+            return ids;
+          })
+          .then((ids) => {
+            this.iconIds = ids;
+          })
+          .catch(() => {
+            this.iconIds = new Set([MISSING_ICON_ID]);
+          });
       }
       return this.iconIndexPromise;
     }
@@ -684,7 +795,7 @@
     resolveTexture(id) {
       if (!id || !this.textureManifest) return null;
       const rel = this.textureManifest[id];
-      return rel ? joinBase(this.baseUrl, `${PATHS.texturesDir}/${rel}`) : null;
+      return rel ? this.resolveResourceUrl(`${PATHS.texturesDir}/${rel}`) : null;
     }
 
     /** EMI recipe panel nine-patch: BACKGROUND @ u=27,v=0 corner=4 center=1 */
@@ -807,7 +918,7 @@
       box.style.width = `${w.w}px`;
       box.style.height = `${w.h}px`;
       const img = document.createElement('img');
-      img.src = joinBase(this.baseUrl, w.chrome);
+      img.src = this.resolveResourceUrl(w.chrome);
       img.alt = '';
       img.draggable = false;
       box.appendChild(img);
@@ -1034,6 +1145,7 @@
         injectIconStylesheets: options.injectIconStylesheets,
         missingIconId: options.missingIconId,
         locale: options.locale,
+        resourceVersion: options.resourceVersion,
         lang: options.lang,
         translations: options.translations,
         tooltipElement: options.tooltipElement,

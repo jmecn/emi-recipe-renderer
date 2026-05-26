@@ -166,6 +166,5 @@
       "ingredient": "item:tfc:metal/lamp/bronze",
       "tagDisplayItem": "tfc:metal/lamp/bronze"
     }
-  ],
-  "referencePng": "generated/recipes/tfc_crafting_metal_lamp_bronze.png"
+  ]
 }

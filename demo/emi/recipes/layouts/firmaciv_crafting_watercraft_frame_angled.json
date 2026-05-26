@@ -162,6 +162,5 @@
       "ingredient": "item:firmaciv:watercraft_frame_angled",
       "tagDisplayItem": "firmaciv:watercraft_frame_angled"
     }
-  ],
-  "referencePng": "generated/recipes/firmaciv_crafting_watercraft_frame_angled.png"
+  ]
 }

@@ -93,7 +93,7 @@
       "custom": false,
       "ingredient": "#item:forge:tools/knives",
       "remainderIcon": "self",
-      "tagDisplayItem": "tfg:boron_carbide_knife"
+      "tagDisplayItem": "tfg:arsenic_bronze_knife"
     },
     {
       "x": 36,
@@ -157,6 +157,5 @@
       "ingredient": "item:beneath:juicer",
       "tagDisplayItem": "beneath:juicer"
     }
-  ],
-  "referencePng": "generated/recipes/beneath_crafting_juicer.png"
+  ]
 }

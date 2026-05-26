@@ -166,6 +166,5 @@
       "ingredient": "item:gtceu:stone_knife{Damage:0,DisallowContainerItem:0b,GT.Behaviours:{},GT.Tool:{MaxDamage:47},HideFlags:2}",
       "tagDisplayItem": "gtceu:stone_knife@a34740aefbb6997e"
     }
-  ],
-  "referencePng": "generated/recipes/gtceu_shaped_knife_stone.png"
+  ]
 }

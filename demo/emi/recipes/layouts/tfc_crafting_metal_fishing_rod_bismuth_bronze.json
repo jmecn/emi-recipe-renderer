@@ -160,6 +160,5 @@
       "ingredient": "item:tfc:metal/fishing_rod/bismuth_bronze{Damage:0}",
       "tagDisplayItem": "tfc:metal/fishing_rod/bismuth_bronze@c6782f6a3a7dee47"
     }
-  ],
-  "referencePng": "generated/recipes/tfc_crafting_metal_fishing_rod_bismuth_bronze.png"
+  ]
 }

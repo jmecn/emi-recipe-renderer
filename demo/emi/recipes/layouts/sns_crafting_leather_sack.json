@@ -165,6 +165,5 @@
       "ingredient": "item:sns:leather_sack",
       "tagDisplayItem": "sns:leather_sack"
     }
-  ],
-  "referencePng": "generated/recipes/sns_crafting_leather_sack.png"
+  ]
 }

@@ -156,6 +156,5 @@
       "ingredient": "item:tfc:handstone{Damage:0}",
       "tagDisplayItem": "tfc:handstone@c6782f6a3a7dee47"
     }
-  ],
-  "referencePng": "generated/recipes/tfc_crafting_handstone.png"
+  ]
 }

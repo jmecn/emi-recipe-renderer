@@ -160,6 +160,5 @@
       "ingredient": "item:minecraft:netherite_leggings{Damage:0}",
       "tagDisplayItem": "minecraft:netherite_leggings@c6782f6a3a7dee47"
     }
-  ],
-  "referencePng": "generated/recipes/tfg_minecraft_shaped_netherite_leggings.png"
+  ]
 }

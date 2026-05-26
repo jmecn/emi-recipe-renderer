@@ -53,7 +53,7 @@
       "custom": false,
       "ingredient": "#item:forge:tools/knives",
       "remainderIcon": "self",
-      "tagDisplayItem": "tfg:boron_carbide_knife"
+      "tagDisplayItem": "tfg:arsenic_bronze_knife"
     },
     {
       "x": 18,
@@ -171,6 +171,5 @@
       },
       "tagDisplayItem": "firmalife:food/shredded_cheese"
     }
-  ],
-  "referencePng": "generated/recipes/firmalife_crafting_shredded_cheese.png"
+  ]
 }

@@ -39,7 +39,7 @@
       "custom": false,
       "ingredient": "#item:forge:tools/screwdrivers",
       "remainderIcon": "self",
-      "tagDisplayItem": "tfg:hv_boron_carbide_screwdriver"
+      "tagDisplayItem": "tfg:mv_diamond_tipped_mo_50_re_screwdriver"
     },
     {
       "x": 18,
@@ -53,7 +53,7 @@
       "drawBack": true,
       "custom": false,
       "ingredient": "#item:forge:screws",
-      "tagDisplayItem": "gtceu:annealed_copper_screw"
+      "tagDisplayItem": "gtceu:niobium_titanium_screw"
     },
     {
       "x": 36,
@@ -159,6 +159,5 @@
       "ingredient": "item:tfg:trowel",
       "tagDisplayItem": "tfg:trowel"
     }
-  ],
-  "referencePng": "generated/recipes/tfg_shaped_trowel.png"
+  ]
 }

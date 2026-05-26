@@ -53,7 +53,7 @@
       "custom": false,
       "ingredient": "#item:forge:tools/hammers",
       "remainderIcon": "self",
-      "tagDisplayItem": "tfg:boron_carbide_hammer"
+      "tagDisplayItem": "tfg:diamond_tipped_mo_50_re_hammer"
     },
     {
       "x": 18,
@@ -173,6 +173,5 @@
       },
       "tagDisplayItem": "tfc:treated_hide"
     }
-  ],
-  "referencePng": "generated/recipes/tfc_crafting_large_treated_hide.png"
+  ]
 }

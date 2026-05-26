@@ -67,7 +67,7 @@
       "custom": false,
       "ingredient": "#item:forge:tools/knives",
       "remainderIcon": "self",
-      "tagDisplayItem": "tfg:boron_carbide_knife"
+      "tagDisplayItem": "tfg:arsenic_bronze_knife"
     },
     {
       "x": 36,
@@ -171,6 +171,5 @@
       },
       "tagDisplayItem": "tfc:papyrus_strip"
     }
-  ],
-  "referencePng": "generated/recipes/tfc_crafting_papyrus_strips.png"
+  ]
 }

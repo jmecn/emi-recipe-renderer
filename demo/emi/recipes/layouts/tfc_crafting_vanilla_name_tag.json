@@ -160,6 +160,5 @@
       "ingredient": "item:minecraft:name_tag",
       "tagDisplayItem": "minecraft:name_tag"
     }
-  ],
-  "referencePng": "generated/recipes/tfc_crafting_vanilla_name_tag.png"
+  ]
 }

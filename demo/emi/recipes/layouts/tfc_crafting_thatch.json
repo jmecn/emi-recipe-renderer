@@ -156,6 +156,5 @@
       "ingredient": "item:tfc:thatch",
       "tagDisplayItem": "tfc:thatch"
     }
-  ],
-  "referencePng": "generated/recipes/tfc_crafting_thatch.png"
+  ]
 }

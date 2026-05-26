@@ -166,6 +166,5 @@
       "ingredient": "item:create:netherite_backtank",
       "tagDisplayItem": "create:netherite_backtank"
     }
-  ],
-  "referencePng": "generated/recipes/tfg_create_shaped_netherite_backtank_upgrade.png"
+  ]
 }

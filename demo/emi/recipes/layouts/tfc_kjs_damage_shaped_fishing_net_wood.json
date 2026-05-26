@@ -136,7 +136,7 @@
       "custom": false,
       "ingredient": "#item:forge:tools/knives",
       "remainderIcon": "self",
-      "tagDisplayItem": "tfg:boron_carbide_knife"
+      "tagDisplayItem": "tfg:arsenic_bronze_knife"
     },
     {
       "x": 36,
@@ -164,6 +164,5 @@
       "ingredient": "item:tfg:fishing_net/wood{Damage:0}",
       "tagDisplayItem": "tfg:fishing_net/wood@c6782f6a3a7dee47"
     }
-  ],
-  "referencePng": "generated/recipes/tfc_kjs_damage_shaped_fishing_net_wood.png"
+  ]
 }

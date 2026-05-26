@@ -162,6 +162,5 @@
       "ingredient": "item:create:netherite_diving_helmet{Damage:0}",
       "tagDisplayItem": "create:netherite_diving_helmet@c6782f6a3a7dee47"
     }
-  ],
-  "referencePng": "generated/recipes/tfg_create_shaped_netherite_diving_helmet_upgrade.png"
+  ]
 }

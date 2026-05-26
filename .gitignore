@@ -7,6 +7,7 @@ dist/
 
 # Built library copy for demo / GitHub Pages (see npm run build:demo)
 demo/lib/
+demo/sw.js
 
 # Local export samples at repo root (not the committed demo/emi bundle)
 /export/

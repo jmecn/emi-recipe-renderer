@@ -166,6 +166,5 @@
       "ingredient": "item:tfc:fire_clay",
       "tagDisplayItem": "tfc:fire_clay"
     }
-  ],
-  "referencePng": "generated/recipes/tfc_crafting_fire_clay.png"
+  ]
 }

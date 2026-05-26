@@ -156,6 +156,5 @@
       "ingredient": "item:minecraft:loom",
       "tagDisplayItem": "minecraft:loom"
     }
-  ],
-  "referencePng": "generated/recipes/tfc_crafting_vanilla_loom.png"
+  ]
 }

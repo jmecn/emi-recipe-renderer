@@ -81,7 +81,7 @@
       "custom": false,
       "ingredient": "#item:forge:tools/hammers",
       "remainderIcon": "self",
-      "tagDisplayItem": "tfg:boron_carbide_hammer"
+      "tagDisplayItem": "tfg:diamond_tipped_mo_50_re_hammer"
     },
     {
       "x": 0,
@@ -169,6 +169,5 @@
       "ingredient": "item:firmalife:food/tortilla_chips",
       "tagDisplayItem": "firmalife:food/tortilla_chips"
     }
-  ],
-  "referencePng": "generated/recipes/firmalife_crafting_tortilla_chips.png"
+  ]
 }

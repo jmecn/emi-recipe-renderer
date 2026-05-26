@@ -166,6 +166,5 @@
       "ingredient": "item:minecraft:map",
       "tagDisplayItem": "minecraft:map"
     }
-  ],
-  "referencePng": "generated/recipes/tfc_crafting_vanilla_map.png"
+  ]
 }

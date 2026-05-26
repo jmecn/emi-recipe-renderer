@@ -162,6 +162,5 @@
       "ingredient": "item:firmaciv:cannon",
       "tagDisplayItem": "firmaciv:cannon"
     }
-  ],
-  "referencePng": "generated/recipes/firmaciv_crafting_cannon.png"
+  ]
 }

@@ -170,6 +170,5 @@
       "ingredient": "item:sns:metal/horseshoes/red_steel{Damage:0}",
       "tagDisplayItem": "sns:metal/horseshoes/red_steel@c6782f6a3a7dee47"
     }
-  ],
-  "referencePng": "generated/recipes/sns_crafting_metal_horseshoes_red_steel.png"
+  ]
 }

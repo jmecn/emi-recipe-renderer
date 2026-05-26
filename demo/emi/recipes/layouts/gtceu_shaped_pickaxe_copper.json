@@ -166,6 +166,5 @@
       "ingredient": "item:gtceu:copper_pickaxe{Damage:0,DisallowContainerItem:0b,GT.Behaviours:{TorchPlacing:1b},GT.Tool:{MaxDamage:659},HideFlags:2}",
       "tagDisplayItem": "gtceu:copper_pickaxe@c38356a0fc7dcfee"
     }
-  ],
-  "referencePng": "generated/recipes/gtceu_shaped_pickaxe_copper.png"
+  ]
 }

@@ -164,6 +164,5 @@
       "ingredient": "item:tfc:wood/planks/acacia_loom",
       "tagDisplayItem": "tfc:wood/planks/acacia_loom"
     }
-  ],
-  "referencePng": "generated/recipes/tfc_crafting_wood_acacia_loom.png"
+  ]
 }

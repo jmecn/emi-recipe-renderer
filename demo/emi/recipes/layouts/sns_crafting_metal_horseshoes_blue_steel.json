@@ -170,6 +170,5 @@
       "ingredient": "item:sns:metal/horseshoes/blue_steel{Damage:0}",
       "tagDisplayItem": "sns:metal/horseshoes/blue_steel@c6782f6a3a7dee47"
     }
-  ],
-  "referencePng": "generated/recipes/sns_crafting_metal_horseshoes_blue_steel.png"
+  ]
 }

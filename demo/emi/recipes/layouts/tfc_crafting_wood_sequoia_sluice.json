@@ -160,6 +160,5 @@
       "ingredient": "item:tfc:wood/sluice/sequoia",
       "tagDisplayItem": "tfc:wood/sluice/sequoia"
     }
-  ],
-  "referencePng": "generated/recipes/tfc_crafting_wood_sequoia_sluice.png"
+  ]
 }
