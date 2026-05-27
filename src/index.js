@@ -78,10 +78,39 @@
     });
   }
 
-  function fetchRequiredJsonResource(resourceUrl, label) {
+  function fetchRequiredJsonResource(resourceUrl, label, attempt = 0) {
     return fetch(resourceUrl).then((res) => {
       if (!res.ok) throw new Error(`${label} HTTP ${res.status}`);
       return res.json();
+    }).catch((err) => {
+      const message = err?.message || String(err);
+      const retriable = attempt < 2
+        && (/failed to fetch|network|load/i.test(message) || message.includes('HTTP 5'));
+      if (!retriable) throw err;
+      const delayMs = 80 * (attempt + 1);
+      return new Promise((resolve) => { setTimeout(resolve, delayMs); })
+        .then(() => fetchRequiredJsonResource(resourceUrl, label, attempt + 1));
+    });
+  }
+
+  function createMountQueue(concurrency = 8) {
+    let active = 0;
+    const pending = [];
+    const pump = () => {
+      while (active < concurrency && pending.length > 0) {
+        const { run, resolve, reject } = pending.shift();
+        active += 1;
+        run()
+          .then(resolve, reject)
+          .finally(() => {
+            active -= 1;
+            pump();
+          });
+      }
+    };
+    return (run) => new Promise((resolve, reject) => {
+      pending.push({ run, resolve, reject });
+      pump();
     });
   }
 
@@ -643,6 +672,11 @@
         this._bundle = {};
       }
       if (!this._bundle) this._bundle = {};
+      const declaredMissing = this._bundle.missingIconId;
+      if (!declaredMissing) {
+        throw new Error('bundle.json missing required field: missingIconId');
+      }
+      this.missingIconId = String(declaredMissing);
       return this._bundle;
     }
 
@@ -754,7 +788,7 @@
           .then((index) => {
             const items = index?.items || {};
             const ids = new Set(Object.keys(items));
-            ids.add(MISSING_ICON_ID);
+            ids.add(this.missingIconId);
             this.iconAtlas = normalizeIconAtlas(index, (file) => this.resolveResourceUrl(`${PATHS.iconsDir}/${file}`));
             return ids;
           })
@@ -1336,12 +1370,14 @@
 
     static async _mountOne(renderer, index, el, recipeId) {
       const { layout } = await renderer.loadLayout(recipeId, index);
+      const size = EmiRecipeRenderer._displaySizeFromLayout(layout);
       EmiRecipeRenderer._reserveContainerSize(el, layout);
       await renderer.render(el, layout);
       el.dataset.emiMounted = '1';
       el.classList.remove('emi-recipe-pending');
-      el.style.width = '';
-      el.style.minHeight = '';
+      el.style.width = `${size.width}px`;
+      el.style.minWidth = `${size.width}px`;
+      el.style.minHeight = `${size.height}px`;
     }
 
     static _emitMountProgress(options, stats, total) {
@@ -1506,24 +1542,32 @@
         };
       }
 
-      const tryMount = async (el, recipeId) => {
-        if (el.dataset.emiMounted === '1' || inFlight.has(el)) return;
+      const mountConcurrency = Number.isFinite(options.mountConcurrency)
+        ? Math.max(1, options.mountConcurrency)
+        : 8;
+      const enqueueMount = createMountQueue(mountConcurrency);
+
+      const tryMount = (el, recipeId) => {
+        if (el.dataset.emiMounted === '1') return Promise.resolve();
+        if (inFlight.has(el)) return Promise.resolve();
         inFlight.add(el);
-        try {
-          await EmiRecipeRenderer._mountOne(renderer, index, el, recipeId);
-          stats.mounted += 1;
-        } catch (err) {
-          stats.failed += 1;
-          EmiRecipeRenderer._showMountError(el, recipeId, err?.message);
-          stats.errors.push({ recipeId, error: err });
-        } finally {
-          inFlight.delete(el);
-          EmiRecipeRenderer._emitMountProgress(options, stats, items.length);
-        }
+        return enqueueMount(async () => {
+          try {
+            await EmiRecipeRenderer._mountOne(renderer, index, el, recipeId);
+            stats.mounted += 1;
+          } catch (err) {
+            stats.failed += 1;
+            EmiRecipeRenderer._showMountError(el, recipeId, err?.message);
+            stats.errors.push({ recipeId, error: err });
+          } finally {
+            inFlight.delete(el);
+            EmiRecipeRenderer._emitMountProgress(options, stats, items.length);
+          }
+        });
       };
 
       const flushPending = async () => {
-        const pending = items.filter(({ el }) => el.dataset.emiMounted !== '1' && !inFlight.has(el));
+        const pending = items.filter(({ el }) => el.dataset.emiMounted !== '1');
         await Promise.all(pending.map(({ el, recipeId }) => tryMount(el, recipeId)));
       };
 

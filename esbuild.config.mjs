@@ -1,8 +1,7 @@
 import * as esbuild from 'esbuild';
-import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { copyFileSync, mkdirSync } from 'node:fs';
 
 const watch = process.argv.includes('--watch');
-const buildDemo = process.argv.includes('--demo');
 
 const buildOptions = {
   entryPoints: ['src/index.js'],
@@ -20,30 +19,23 @@ const buildOptions = {
 mkdirSync('dist', { recursive: true });
 copyFileSync('src/emi.css', 'dist/emi.css');
 
-function writeDemoArtifacts() {
-  const demoLibDir = 'demo/lib';
-  mkdirSync(demoLibDir, { recursive: true });
-  for (const name of ['emi.js', 'emi.css', 'emi.js.map']) {
-    copyFileSync(`dist/${name}`, `${demoLibDir}/${name}`);
-  }
-  console.log('copied dist -> demo/lib/');
-
-  const buildVersion = process.env.EMI_DEMO_CACHE_VERSION
-    || new Date().toISOString().replace(/[-:.TZ]/g, '');
-  const template = readFileSync('demo/sw-template.js', 'utf8');
-  const output = template.replace('__CACHE_VERSION__', JSON.stringify(buildVersion));
-  writeFileSync('demo/sw.js', output);
-  console.log(`wrote demo/sw.js (${buildVersion})`);
-}
-
 if (watch) {
   const ctx = await esbuild.context(buildOptions);
+  const minCtx = await esbuild.context({
+    ...buildOptions,
+    outfile: 'dist/emi.min.js',
+    minify: true,
+  });
   await ctx.watch();
+  await minCtx.watch();
   console.log('watching…');
 } else {
   await esbuild.build(buildOptions);
-  console.log('built dist/emi.js and dist/emi.css');
-  if (buildDemo) {
-    writeDemoArtifacts();
-  }
+  await esbuild.build({
+    ...buildOptions,
+    outfile: 'dist/emi.min.js',
+    minify: true,
+  });
+  copyFileSync('dist/emi.css', 'dist/emi.min.css');
+  console.log('built dist/emi.js, dist/emi.min.js, dist/emi.css, dist/emi.min.css');
 }

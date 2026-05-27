@@ -2,16 +2,36 @@
 
 Render exported EMI recipe layouts (schema v2) in the browser. Unofficial—not affiliated with the [EMI](https://github.com/emilyploszaj/emi) mod.
 
-## Usage
+## Install
 
 ```bash
 npm install emi-recipe-renderer
-# dist/emi.js and dist/emi.css after install
+```
+
+Published files live under `dist/` (`emi.js`, `emi.min.js`, `emi.css`, `emi.min.css`).
+
+### CDN (jsDelivr / unpkg)
+
+Pin a version after the package is on npm:
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/emi-recipe-renderer@0.1.0/dist/emi.min.css">
+<script src="https://cdn.jsdelivr.net/npm/emi-recipe-renderer@0.1.0/dist/emi.min.js"></script>
 ```
 
 ```html
-<link rel="stylesheet" href="/path/to/emi.css">
-<script src="/path/to/emi.js"></script>
+<!-- unpkg -->
+<link rel="stylesheet" href="https://unpkg.com/emi-recipe-renderer@0.1.0/dist/emi.min.css">
+<script src="https://unpkg.com/emi-recipe-renderer@0.1.0/dist/emi.min.js"></script>
+```
+
+Unminified: use `dist/emi.js` and `dist/emi.css` instead.
+
+## Usage
+
+```html
+<link rel="stylesheet" href="/path/to/emi.min.css">
+<script src="/path/to/emi.min.js"></script>
 
 <div id="tooltip"></div>
 <div id="tag-popover" class="tag-popover" hidden>
@@ -61,18 +81,35 @@ Requires Node **18+** (see `.nvmrc`).
 
 ```bash
 npm install
-npm run build    # dist/emi.js + dist/emi.css
+npm run build    # dist/emi.js + dist/emi.min.js + CSS
 npm run watch    # rebuild on src changes
+npm test
 ```
 
-### Interactive demo
+## Publish to npm
 
-**Live:** [https://jmecn.github.io/emi-recipe-renderer/](https://jmecn.github.io/emi-recipe-renderer/) (GitHub Pages deploys the `demo/` folder).
-
-Local:
+Package name `emi-recipe-renderer` is currently **unclaimed** on npm. One-time setup on your machine:
 
 ```bash
-npm run demo
+cd emi-recipe-renderer
+npm login          # browser or OTP if 2FA is enabled
+npm whoami         # confirm logged-in user
+npm run test
+npm publish        # runs prepublishOnly → build, then uploads dist/ + LICENSE + README
 ```
 
-Copies `dist/` into `demo/lib/` (no `../dist` in HTML) and serves `demo/` at `http://127.0.0.1:8766/`.
+Notes:
+
+- `dist/` is built automatically via `prepublishOnly`; it does not need to be committed.
+- Preview tarball contents: `npm pack --dry-run`
+- After publish, bump `version` in `package.json` for every subsequent release (`0.1.1`, `0.2.0`, …); npm does not allow republishing the same version.
+- With npm 2FA, use an OTP when prompted, or a [granular access token](https://docs.npmjs.com/creating-and-viewing-access-tokens) with **Publish** permission in CI.
+
+Verify:
+
+```bash
+npm view emi-recipe-renderer version
+curl -I "https://cdn.jsdelivr.net/npm/emi-recipe-renderer@0.1.0/dist/emi.min.js"
+```
+
+To validate a full export bundle against this library locally, use the separate [`emi-bundle-verifier`](../emi-bundle-verifier) project — it depends on this package from npm and copies `dist/` into its static site (or use `?cdn=jsdelivr` to test the CDN build).

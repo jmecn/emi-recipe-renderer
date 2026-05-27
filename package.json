@@ -11,20 +11,28 @@
     "dist",
     "LICENSE"
   ],
-  "main": "./dist/emi.js",
+  "main": "./dist/emi.min.js",
+  "style": "./dist/emi.min.css",
+  "unpkg": "./dist/emi.min.js",
+  "jsdelivr": "./dist/emi.min.js",
+  "browser": "./dist/emi.min.js",
   "exports": {
-    ".": "./dist/emi.js",
+    ".": {
+      "import": "./dist/emi.js",
+      "default": "./dist/emi.min.js"
+    },
+    "./emi.js": "./dist/emi.js",
+    "./emi.min.js": "./dist/emi.min.js",
     "./emi.css": "./dist/emi.css",
-    "./style.css": "./dist/emi.css"
+    "./emi.min.css": "./dist/emi.min.css",
+    "./style.css": "./dist/emi.min.css"
   },
   "sideEffects": [
     "*.css"
   ],
   "scripts": {
     "build": "node esbuild.config.mjs",
-    "build:demo": "node esbuild.config.mjs --demo",
     "watch": "node esbuild.config.mjs --watch",
-    "demo": "npm run build:demo && python3 -m http.server 8766 --directory demo",
     "test": "node --test tests/*.test.mjs",
     "prepublishOnly": "npm run build"
   },
@@ -37,8 +45,13 @@
     "recipe",
     "renderer"
   ],
+  "author": "jmecn",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jmecn/emi-recipe-renderer.git"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/jmecn/emi-recipe-renderer/issues"
+  },
+  "homepage": "https://github.com/jmecn/emi-recipe-renderer#readme"
 }

@@ -1,7 +1,0 @@
-{
-  "schema": 1,
-  "textures": {
-    "emi:textures/gui/background.png": "emi/textures/gui/background.png",
-    "emi:textures/gui/widgets.png": "emi/textures/gui/widgets.png"
-  }
-}

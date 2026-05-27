@@ -7,12 +7,27 @@ await import('../src/index.js');
 
 const { EmiRecipeRenderer } = globalThis;
 
+test('ensureBundle requires missingIconId in bundle.json', async () => {
+  globalThis.fetch = async (url) => {
+    if (String(url).endsWith('/bundle.json')) return jsonResponse({ languages: ['en_us'] });
+    throw new Error(`unexpected url ${url}`);
+  };
+
+  const renderer = new EmiRecipeRenderer({ baseUrl: '/emi-strict', locale: 'en_us' });
+  await assert.rejects(
+    () => renderer.loadIndex(),
+    /missingIconId/,
+  );
+});
+
 test('loadIndex reuses bundle, lang, and recipe index across renderer instances', async () => {
   const fetchCalls = [];
   globalThis.fetch = async (url) => {
     const href = String(url);
     fetchCalls.push(href);
-    if (href.endsWith('/bundle.json')) return jsonResponse({ languages: ['en_us'] });
+    if (href.endsWith('/bundle.json')) {
+      return jsonResponse({ languages: ['en_us'], missingIconId: 'fieldguide:missing_icon' });
+    }
     if (href.endsWith('/lang/en_us.json')) return jsonResponse({});
     if (href.endsWith('/recipes/index.json')) return jsonResponse({ recipes: {}, scale: 2 });
     throw new Error(`unexpected url ${href}`);
@@ -55,7 +70,9 @@ test('resourceVersion appends version to data urls and isolates shared cache per
   globalThis.fetch = async (url) => {
     const href = String(url);
     fetchCalls.push(href);
-    if (href.includes('/bundle.json')) return jsonResponse({ languages: ['en_us'] });
+    if (href.includes('/bundle.json')) {
+      return jsonResponse({ languages: ['en_us'], missingIconId: 'fieldguide:missing_icon' });
+    }
     if (href.includes('/lang/en_us.json')) return jsonResponse({});
     if (href.includes('/recipes/index.json')) return jsonResponse({ recipes: {}, scale: 2 });
     throw new Error(`unexpected url ${href}`);
