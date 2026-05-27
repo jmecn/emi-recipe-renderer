@@ -1,18 +1,22 @@
 # emi-recipe-renderer
 
-Render exported EMI recipe layouts (schema v2) in the browser. Unofficial—not affiliated with the [EMI](https://github.com/emilyploszaj/emi) mod.
+Browser renderer for exported EMI recipe layouts.  
+Unofficial project, not affiliated with [EMI](https://github.com/emilyploszaj/emi).
 
-## Install
+## Load the library
 
-```bash
-npm install emi-recipe-renderer
+### Local `dist/` files
+
+```html
+<link rel="stylesheet" href="/path/to/emi.min.css">
+<script src="/path/to/emi.min.js"></script>
 ```
 
-Published files live under `dist/` (`emi.js`, `emi.min.js`, `emi.css`, `emi.min.css`).
+Available files:
+- `dist/emi.js` / `dist/emi.min.js`
+- `dist/emi.css` / `dist/emi.min.css`
 
-### CDN (jsDelivr / unpkg)
-
-Pin a version after the package is on npm:
+### CDN
 
 ```html
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/emi-recipe-renderer@0.1.0/dist/emi.min.css">
@@ -25,9 +29,9 @@ Pin a version after the package is on npm:
 <script src="https://unpkg.com/emi-recipe-renderer@0.1.0/dist/emi.min.js"></script>
 ```
 
-Unminified: use `dist/emi.js` and `dist/emi.css` instead.
+Pin a published version instead of using a floating tag.
 
-## Usage
+## Minimal usage
 
 ```html
 <link rel="stylesheet" href="/path/to/emi.min.css">
@@ -46,70 +50,49 @@ Unminified: use `dist/emi.js` and `dist/emi.css` instead.
 
 <script>
   EmiRecipeRenderer.mountAll({
-    baseUrl: '/your-export-root',
+    baseUrl: '/emi-export',
     injectIconStylesheets: true,
-    lazy: true,
-    resourceVersion: window.APP_BUILD_ID,
   });
 </script>
 ```
 
-- **`baseUrl`** — root of the static export (layouts, icons, textures). Script and data URLs are independent (CDN + export host is fine).
-- **`resourceVersion`** — optional build/deploy version string. Keep it stable between releases; change it only when the export bundle changes so JSON, textures, `icons.css`, and atlas images all refresh together.
-- **HTML** — only `class="emi-recipe"` and `data-recipe-id`; layout paths stay in the export index.
-
-## Export layout (`baseUrl` = `emi/` bundle root)
-
-- `bundle.json` — languages list, default `en_us`
-- `recipes/index.json` + `recipes/layouts/*.json`
-- `textures/manifest.json`, `chrome/sh/`
-- `icons/icons.css` + `icons/index.json` (single atlas)
-- `tags/members.json` (optional)
-- `lang/<locale>.json` — item/fluid/tag names; missing keys fall back to `en_us`
-
-Options: `locale`, `resourceVersion`, `lang` (inline tables per locale), `translations` (flat key overrides).
-
-Cross-origin export needs CORS on `fetch`.
-
-## API
-
-`EmiRecipeRenderer`, `EmiRecipeRenderer.mountAll`, `initEmiSlotCarousels`, `hideEmiTagPopover`.
-
-## Development
-
-Requires Node **18+** (see `.nvmrc`).
-
-```bash
-npm install
-npm run build    # dist/emi.js + dist/emi.min.js + CSS
-npm run watch    # rebuild on src changes
-npm test
-```
-
-## Publish to npm
-
-Package name `emi-recipe-renderer` is currently **unclaimed** on npm. One-time setup on your machine:
-
-```bash
-cd emi-recipe-renderer
-npm login          # browser or OTP if 2FA is enabled
-npm whoami         # confirm logged-in user
-npm run test
-npm publish        # runs prepublishOnly → build, then uploads dist/ + LICENSE + README
-```
-
 Notes:
+- `baseUrl` is the root URL of your export bundle. It can be on a different host from `emi.min.js`.
+- Mount targets only need `class="emi-recipe"` and `data-recipe-id`.
+- `resourceVersion` is optional (`?v=...` cache-buster for JSON/CSS/images).
+- Optional localization inputs: `locale`, `lang` (inline per-locale tables), `translations` (flat key overrides).
 
-- `dist/` is built automatically via `prepublishOnly`; it does not need to be committed.
-- Preview tarball contents: `npm pack --dry-run`
-- After publish, bump `version` in `package.json` for every subsequent release (`0.1.1`, `0.2.0`, …); npm does not allow republishing the same version.
-- With npm 2FA, use an OTP when prompted, or a [granular access token](https://docs.npmjs.com/creating-and-viewing-access-tokens) with **Publish** permission in CI.
+## Required export data under `baseUrl`
 
-Verify:
+The renderer fetches these paths relative to `baseUrl`:
 
-```bash
-npm view emi-recipe-renderer version
-curl -I "https://cdn.jsdelivr.net/npm/emi-recipe-renderer@0.1.0/dist/emi.min.js"
-```
+- `bundle.json` (required; must include `missingIconId`)
+- `recipes/index.json` (required)
+- Layout JSON files from each recipe entry's `layout` field in `recipes/index.json`
+- `textures/manifest.json` (optional fallback to empty)
+- `icons/index.json` (required for icon lookup)
+- `icons/icons.css` (loaded when `injectIconStylesheets: true`)
+- `tags/members.json` (optional)
+- `lang/<locale>.json` (optional per locale; missing keys fall back to `en_us`)
 
-To validate a full export bundle against this library locally, use the separate [`emi-bundle-verifier`](../emi-bundle-verifier) project — it depends on this package from npm and copies `dist/` into its static site (or use `?cdn=jsdelivr` to test the CDN build).
+Layout path behavior:
+- The library reads `index.recipes[recipeId].layout` and fetches that exact path relative to `baseUrl`.
+- Do not hardcode `recipes/layouts/*.json` in client code; use whatever path is stored in the index.
+
+If `baseUrl` is cross-origin, the export host must allow CORS for these `fetch` requests.
+
+## API surface
+
+Global exports:
+- `EmiRecipeRenderer`
+- `EmiRecipeRenderer.mountAll`
+- `initEmiSlotCarousels`
+- `hideEmiTagPopover`
+
+## Dev and publish (brief)
+
+- Node `>=18`
+- Build: `npm run build`
+- Test: `npm test`
+- Watch: `npm run watch`
+- `npm publish` runs `prepublishOnly` (build) and publishes `dist/` + `LICENSE` (per package `files`)
