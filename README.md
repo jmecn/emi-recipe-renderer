@@ -96,3 +96,4 @@ Global exports:
 - Test: `npm test`
 - Watch: `npm run watch`
 - `npm publish` runs `prepublishOnly` (build) and publishes `dist/` + `LICENSE` (per package `files`)
+- GitHub Actions publish workflow runs on **Release published** and uses the release tag (for example `v0.1.1`); it skips if that version already exists on npm.
