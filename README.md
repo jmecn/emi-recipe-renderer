@@ -97,3 +97,19 @@ Global exports:
 - Watch: `npm run watch`
 - `npm publish` runs `prepublishOnly` (build) and publishes `dist/` + `LICENSE` (per package `files`)
 - GitHub Actions publish workflow runs on **Release published** and uses the release tag (for example `v0.1.1`); it skips if that version already exists on npm.
+
+## Release checklist
+
+1. Merge your changes from `dev` into `master`.
+2. Bump `package.json` `version` on `master` (must be a new version on npm).
+3. Run a quick local sanity check:
+   - `npm ci`
+   - `npm run build`
+   - `npm test`
+4. Create and push a matching tag (example: `v0.1.1` for version `0.1.1`).
+5. Create a GitHub Release from that tag and click **Publish release**.
+6. Wait for the `Publish npm package` workflow to finish.
+7. Verify npm and CDN:
+   - `npm view emi-recipe-renderer version`
+   - `https://cdn.jsdelivr.net/npm/emi-recipe-renderer@0.1.1/dist/emi.min.js`
+   - `https://unpkg.com/emi-recipe-renderer@0.1.1/dist/emi.min.js`
