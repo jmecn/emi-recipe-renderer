@@ -19,14 +19,14 @@ Available files:
 ### CDN
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/emi-recipe-renderer@0.1.0/dist/emi.min.css">
-<script src="https://cdn.jsdelivr.net/npm/emi-recipe-renderer@0.1.0/dist/emi.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/emi-recipe-renderer@0.2.1/dist/emi.min.css">
+<script src="https://cdn.jsdelivr.net/npm/emi-recipe-renderer@0.2.1/dist/emi.min.js"></script>
 ```
 
 ```html
 <!-- unpkg -->
-<link rel="stylesheet" href="https://unpkg.com/emi-recipe-renderer@0.1.0/dist/emi.min.css">
-<script src="https://unpkg.com/emi-recipe-renderer@0.1.0/dist/emi.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/emi-recipe-renderer@0.2.1/dist/emi.min.css">
+<script src="https://unpkg.com/emi-recipe-renderer@0.2.1/dist/emi.min.js"></script>
 ```
 
 Pin a published version instead of using a floating tag.

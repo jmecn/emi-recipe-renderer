@@ -100,6 +100,46 @@ test('resourceVersion appends version to data urls and isolates shared cache per
   assert.equal(countCalls(fetchCalls, '/recipes/index.json?v=v2'), 1);
 });
 
+test('loadTagCatalog fetches tags/index.json and caches result', async () => {
+  const fetchCalls = [];
+  globalThis.fetch = async (url) => {
+    const href = String(url);
+    fetchCalls.push(href);
+    if (href.endsWith('/tags/index.json')) {
+      return jsonResponse({
+        schema: 1,
+        items: ['forge:cloth', 'minecraft:planks'],
+        blocks: ['minecraft:mineable/pickaxe'],
+      });
+    }
+    throw new Error(`unexpected url ${href}`);
+  };
+
+  const renderer = new EmiRecipeRenderer({ baseUrl: '/emi-tag-catalog', locale: 'en_us' });
+  const a = await renderer.loadTagCatalog();
+  const b = await renderer.loadTagCatalog();
+
+  assert.equal(a.schema, 1);
+  assert.deepEqual(a.items, ['forge:cloth', 'minecraft:planks']);
+  assert.deepEqual(a.blocks, ['minecraft:mineable/pickaxe']);
+  assert.deepEqual(a.fluids, []);
+  assert.strictEqual(a, b);
+  assert.equal(countCalls(fetchCalls, '/tags/index.json'), 1);
+});
+
+test('loadTagCatalog returns empty buckets when index is missing', async () => {
+  globalThis.fetch = async (url) => {
+    if (String(url).endsWith('/tags/index.json')) {
+      return new Response('', { status: 404 });
+    }
+    throw new Error(`unexpected url ${url}`);
+  };
+
+  const renderer = new EmiRecipeRenderer({ baseUrl: '/emi-no-tags', locale: 'en_us' });
+  const catalog = await renderer.loadTagCatalog();
+  assert.deepEqual(catalog, { schema: 1, items: [], blocks: [], fluids: [] });
+});
+
 test('loadTagMembers fetches per-tag file and caches result', async () => {
   const fetchCalls = [];
   globalThis.fetch = async (url) => {

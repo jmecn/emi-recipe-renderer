@@ -1,7 +1,7 @@
 /**
  * emi.js — Field Guide EMI layout renderer (schema v2). Standalone library; no demo UI.
  *
- * @exports EmiRecipeRenderer, initEmiSlotCarousels, hideEmiTagPopover
+ * @exports EmiRecipeRenderer, initEmiSlotCarousels, hideEmiTagPopover, showEmiTagPopover
  *
  * Declarative mount: {@code <div class="emi-recipe" data-recipe-id="namespace:path">}.
  * Export root is {@code mountAll({ baseUrl })} only — not per-element attributes.
@@ -17,9 +17,12 @@
     textureManifest: 'textures/manifest.json',
     texturesDir: 'textures',
     tagsDir: 'tags',
+    tagsIndex: 'tags/index.json',
     iconsDir: 'icons',
     langDir: 'lang',
   };
+
+  const TAG_CATALOG_TYPES = ['items', 'blocks', 'fluids'];
   const FALLBACK_LOCALE = 'en_us';
   const MISSING_ICON_ID = 'fieldguide:missing_icon';
   const SHARED_RESOURCE_CACHE = new Map();
@@ -51,6 +54,27 @@
     const idx = value.indexOf(':');
     if (idx <= 0 || idx >= value.length - 1) return null;
     return { namespace: value.slice(0, idx), path: value.slice(idx + 1) };
+  }
+
+  function parseTagCatalog(raw) {
+    if (!raw || typeof raw !== 'object') {
+      throw new Error('invalid tags/index.json');
+    }
+    const catalog = {
+      schema: raw.schema ?? 1,
+      items: [],
+      blocks: [],
+      fluids: [],
+    };
+    for (const type of TAG_CATALOG_TYPES) {
+      const list = raw[type];
+      if (list == null) continue;
+      if (!Array.isArray(list)) {
+        throw new Error(`tags/index.json "${type}" must be array`);
+      }
+      catalog[type] = list.filter((id) => typeof id === 'string' && id.length > 0);
+    }
+    return catalog;
   }
 
   function tagRefToResourcePath(tagRef) {
@@ -622,6 +646,8 @@
       this.textureManifestPromise = null;
       this.recipeShardPaths = new Map();
       this.allRecipeIdsPromise = null;
+      this.tagCatalog = null;
+      this.tagCatalogPromise = null;
       this.tagMemberIdsByRef = new Map();
       this.iconIds = null;
       this.iconAtlas = null;
@@ -639,6 +665,8 @@
       this.textureManifestPromise = null;
       this.recipeShardPaths = new Map();
       this.allRecipeIdsPromise = null;
+      this.tagCatalog = null;
+      this.tagCatalogPromise = null;
       this.tagMemberIdsByRef = new Map();
       this.iconIds = null;
       this.iconAtlas = null;
@@ -815,6 +843,41 @@
           });
       }
       return this.textureManifestPromise;
+    }
+
+    /**
+     * Tag list/search catalog (§5.7.2). Not used for recipe render or popover.
+     * @returns {{ schema: number, items: string[], blocks: string[], fluids: string[] }}
+     */
+    async loadTagCatalog() {
+      if (this.tagCatalog) return this.tagCatalog;
+      if (!this.tagCatalogPromise) {
+        const resourceUrl = this.resolveResourceUrl(PATHS.tagsIndex);
+        const empty = { schema: 1, items: [], blocks: [], fluids: [] };
+        this.tagCatalogPromise = getSharedJsonResource('tag-catalog', resourceUrl, empty)
+          .then((raw) => {
+            if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
+              this.tagCatalog = empty;
+            } else {
+              try {
+                this.tagCatalog = parseTagCatalog(raw);
+              } catch (err) {
+                this.tagCatalog = empty;
+                console.warn('[emi] tags/index.json:', err?.message || err);
+              }
+            }
+            return this.tagCatalog;
+          })
+          .catch(() => {
+            this.tagCatalog = empty;
+            return this.tagCatalog;
+          });
+      }
+      return this.tagCatalogPromise;
+    }
+
+    getCachedTagCatalog() {
+      return this.tagCatalog;
     }
 
     async loadTagMembers(tagRef) {
@@ -1761,8 +1824,14 @@
     return TAG_GRID_Y + rows * TAG_SLOT;
   }
 
-  function tagEmiRecipeId(tag) {
-    return `emi:/tag/item/${tag.replace(':', '/')}`;
+  function tagEmiRecipeId(tag, tagKind = 'item') {
+    const segment = tagKind === 'block' ? 'block' : tagKind === 'fluid' ? 'fluid' : 'item';
+    return `emi:/tag/${segment}/${tag.replace(':', '/')}`;
+  }
+
+  function tagRefForKind(tag, tagKind = 'item') {
+    const prefix = tagKind === 'block' ? 'block' : tagKind === 'fluid' ? 'fluid' : 'item';
+    return `#${prefix}:${tag}`;
   }
 
   let tagPopoverAnchor = null;
@@ -1970,21 +2039,24 @@
     });
   }
 
-  async function showTagPopover(tag, anchorEl, renderer) {
-    const ids = await renderer.loadTagMembers(`#item:${tag}`);
+  async function showTagPopover(tag, anchorEl, renderer, tagKind = 'item') {
+    const tagRef = tagRefForKind(tag, tagKind);
+    const ids = await renderer.loadTagMembers(tagRef);
+    const registryKind = tagKind === 'fluid' ? 'fluid' : 'item';
     const items = ids.map((id) => ({
       lookupKey: id,
-      tooltip: renderer.translateRegistry(id, 'item'),
+      tooltip: renderer.translateRegistry(id, registryKind),
       remainderIcon: null,
       quantity: null,
     }));
+    const tagTypeDir = tagKind === 'block' ? 'blocks' : tagKind === 'fluid' ? 'fluids' : 'items';
     await showIngredientPopover({
       title: renderer.translateTag(tag),
-      subtitle: tagEmiRecipeId(tag),
+      subtitle: tagEmiRecipeId(tag, tagKind),
       items,
       anchorEl,
       renderer,
-      emptyMessage: `No members for #item:${tag} in ${PATHS.tagsDir}/<namespace>/items/*.json`,
+      emptyMessage: `No members for ${tagRef} in ${PATHS.tagsDir}/<namespace>/${tagTypeDir}/*.json`,
     });
   }
 
@@ -1993,11 +2065,13 @@ if (typeof module !== 'undefined' && module.exports) {
     EmiRecipeRenderer,
     initEmiSlotCarousels,
     hideEmiTagPopover,
+    showEmiTagPopover: showTagPopover,
     MISSING_ICON_ID,
   };
 }
 globalThis.EmiRecipeRenderer = EmiRecipeRenderer;
 globalThis.initEmiSlotCarousels = initEmiSlotCarousels;
 globalThis.hideEmiTagPopover = hideEmiTagPopover;
+globalThis.showEmiTagPopover = showTagPopover;
 globalThis.EmiMissingIconId = MISSING_ICON_ID;
 globalThis.stripEmiRegistryId = stripRegistryId;
