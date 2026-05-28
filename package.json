@@ -1,7 +1,7 @@
 {
   "name": "emi-recipe-renderer",
-  "version": "0.1.0",
-  "description": "Browser renderer for exported EMI recipe layouts (schema v2)",
+  "version": "0.2.0",
+  "description": "Browser renderer for exported EMI recipe layouts",
   "license": "MIT",
   "engines": {
     "node": ">=18"
