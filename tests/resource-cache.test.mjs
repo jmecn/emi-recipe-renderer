@@ -127,6 +127,28 @@ test('loadTagCatalog fetches tags/index.json and caches result', async () => {
   assert.equal(countCalls(fetchCalls, '/tags/index.json'), 1);
 });
 
+test('ensureTextureManifest enables gui textures used by tag popover', async () => {
+  globalThis.fetch = async (url) => {
+    if (String(url).endsWith('/textures/manifest.json')) {
+      return jsonResponse({
+        textures: {
+          'emi:textures/gui/background.png': 'emi/textures/gui/background.png',
+          'emi:textures/gui/widgets.png': 'emi/textures/gui/widgets.png',
+        },
+      });
+    }
+    throw new Error(`unexpected url ${url}`);
+  };
+
+  const renderer = new EmiRecipeRenderer({ baseUrl: '/emi-tex', locale: 'en_us' });
+  assert.equal(renderer.resolveTexture('emi:textures/gui/background.png'), null);
+  await renderer.ensureTextureManifest();
+  assert.match(
+    renderer.resolveTexture('emi:textures/gui/background.png'),
+    /background\.png$/,
+  );
+});
+
 test('loadTagCatalog returns empty buckets when index is missing', async () => {
   globalThis.fetch = async (url) => {
     if (String(url).endsWith('/tags/index.json')) {

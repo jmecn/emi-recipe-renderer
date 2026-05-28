@@ -439,6 +439,27 @@
     return parseIngredientEntry(ingredient);
   }
 
+  function collectTagRefsFromParsed(parsed, refs) {
+    if (!parsed || !refs) return;
+    if (parsed.kind === 'tag' && parsed.tagRef) {
+      refs.add(parsed.tagRef);
+      return;
+    }
+    if (parsed.kind === 'list') {
+      for (const entry of parsed.entries) {
+        collectTagRefsFromParsed(entry, refs);
+      }
+    }
+  }
+
+  function collectTagRefsFromLayout(layout) {
+    const refs = new Set();
+    for (const w of layout?.widgets || []) {
+      collectTagRefsFromParsed(parseIngredient(w.ingredient), refs);
+    }
+    return refs;
+  }
+
   function appendSlotQuantity(inner, parsed) {
     if (!parsed) return;
     if (parsed.kind === 'item') {
@@ -642,6 +663,7 @@
           ? document.getElementById(options.tagPopoverElementId)
           : null)
         || document.getElementById('tag-popover');
+      this.onItemClick = typeof options.onItemClick === 'function' ? options.onItemClick : null;
       this.textureManifest = null;
       this.textureManifestPromise = null;
       this.recipeShardPaths = new Map();
@@ -1058,7 +1080,7 @@
     }
 
     /** Tag/list/item icon keys for slot display (carousel when size > 1). */
-    resolveIconIds(parsed, maxCount = 32) {
+    resolveIconIds(parsed, widget, maxCount = 32) {
       if (!parsed) return [];
       let keys = [];
       if (parsed.kind === 'item') {
@@ -1068,8 +1090,16 @@
         keys = parsed.entries
           .filter((e) => e.kind === 'item' && lookupIconKey(e))
           .map((e) => lookupIconKey(e));
+        if (keys.length === 0 && widget?.tagDisplayItem) {
+          const display = stripRegistryId(String(widget.tagDisplayItem));
+          if (display) keys = [display];
+        }
       } else if (parsed.kind === 'tag') {
         keys = this.resolveItemIds(parsed);
+        if (keys.length === 0 && widget?.tagDisplayItem) {
+          const display = stripRegistryId(String(widget.tagDisplayItem));
+          if (display) keys = [display];
+        }
       } else if (parsed.kind === 'fluid') {
         keys = parsed.id ? [parsed.id] : [];
       }
@@ -1079,6 +1109,50 @@
         merged = [this.missingIconId];
       }
       return merged.length > maxCount ? merged.slice(0, maxCount) : merged;
+    }
+
+    async preloadTagMembersForLayout(layout) {
+      const refs = collectTagRefsFromLayout(layout);
+      if (refs.size === 0) return;
+      await Promise.all([...refs].map((ref) => this.loadTagMembers(ref)));
+    }
+
+    /** Item id to open in a host app (e.g. recipe-viewer item detail). Fluids omitted. */
+    resolveSlotNavigateItemId(parsed, widget) {
+      if (!parsed) return null;
+      if (parsed.kind === 'item' && parsed.ids?.[0]) {
+        return stripRegistryId(parsed.ids[0]);
+      }
+      if (parsed.kind === 'tag') {
+        const id = this.resolveTagDisplayId(parsed, widget);
+        return id && id !== this.missingIconId ? stripRegistryId(id) : null;
+      }
+      if (parsed.kind === 'list') {
+        const display = resolveListDisplayEntry(parsed, widget);
+        if (display?.kind === 'item' && display.ids?.[0]) {
+          return stripRegistryId(display.ids[0]);
+        }
+      }
+      return null;
+    }
+
+    /**
+     * When {@code onItemClick} is set, attach click → host navigation and skip tag/list popovers.
+     * @returns {boolean} true if navigation was wired
+     */
+    bindSlotItemNavigation(el, itemId, meta = {}) {
+      if (!itemId || typeof this.onItemClick !== 'function') return false;
+      const navId = stripRegistryId(itemId);
+      if (!navId || navId === this.missingIconId) return false;
+      el.dataset.emiItemId = navId;
+      el.classList.add('emi-slot-item-nav');
+      const label = this.translateRegistry(navId, meta.registryKind || 'item');
+      if (label) el.title = label;
+      el.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.onItemClick(navId, meta);
+      });
+      return true;
     }
 
     /** EMI TagEmiIngredient: stacks.get(0), with fallbacks when tag-members is missing. */
@@ -1102,11 +1176,7 @@
       wrap.style.left = `${(slotW - ICON) / 2}px`;
       wrap.style.top = `${(slotH - ICON) / 2}px`;
 
-      if (parsed.kind === 'fluid') {
-        return wrap;
-      }
-
-      const keys = this.resolveIconIds(parsed);
+      const keys = this.resolveIconIds(parsed, widget);
       if (keys.length === 0) return null;
 
       if (keys.length === 1) {
@@ -1176,6 +1246,7 @@
         this.ensureIconIndices(),
         this.ensureIconStylesheets(),
       ]);
+      await this.preloadTagMembersForLayout(layout);
       container.replaceChildren();
 
       const panel = layout.panel || {};
@@ -1378,6 +1449,20 @@
       el.addEventListener('focus', () => showTooltip(tooltipFor(), el, this._tooltipEl));
       el.addEventListener('blur', () => hideTooltip(this._tooltipEl));
 
+      // Tag slots keep the tag member popover; only plain items (and single-choice lists) navigate.
+      if (parsed?.kind !== 'tag') {
+        const navId = this.resolveSlotNavigateItemId(parsed, w);
+        const skipListPopover = parsed?.kind === 'list' && parsed.entries.length > 1;
+        if (!skipListPopover && navId && this.bindSlotItemNavigation(el, navId, {
+          source: 'recipe-slot',
+          parsed,
+          widget: w,
+          ingredient,
+        })) {
+          return;
+        }
+      }
+
       if (parsed?.kind === 'tag' && parsed.tag) {
         el.classList.add('emi-slot-tag-input');
         el.title = `Click to view tag: ${this.translateTag(parsed.tag)}`;
@@ -1441,6 +1526,7 @@
       el.className = 'emi-slot';
       if (showBack) el.classList.add('draw-back');
       if (w.large) el.classList.add('large');
+      if (parsed?.kind === 'fluid') el.classList.add('emi-slot-fluid');
       if (!hasIngredient) el.classList.add('emi-slot-empty');
       el.style.left = `${w.x}px`;
       el.style.top = `${w.y}px`;
@@ -1454,8 +1540,12 @@
       }
 
       if (hasIngredient) {
-        const icon = this.createSlotIcon(parsed, slotW, slotH, w);
-        if (icon) inner.appendChild(icon);
+        if (parsed.kind === 'fluid' && parsed.id) {
+          inner.appendChild(this.createTankFluidFill(parsed));
+        } else {
+          const icon = this.createSlotIcon(parsed, slotW, slotH, w);
+          if (icon) inner.appendChild(icon);
+        }
         const remainderIcon = this.resolveRemainderIcon(parsed, w);
         if (remainderIcon) {
           this.appendRemainderIcon(inner, remainderIcon);
@@ -1486,6 +1576,7 @@
         tagPopoverElement: options.tagPopoverElement,
         tooltipElementId: options.tooltipElementId,
         tagPopoverElementId: options.tagPopoverElementId,
+        onItemClick: options.onItemClick,
       };
     }
 
@@ -1887,6 +1978,10 @@
     cell.addEventListener('mouseleave', () => hideTooltip(renderer._tooltipEl));
     cell.addEventListener('focus', () => showTooltip(spec.tooltip, cell, renderer._tooltipEl));
     cell.addEventListener('blur', () => hideTooltip(renderer._tooltipEl));
+    renderer.bindSlotItemNavigation(cell, spec.lookupKey, {
+      source: 'tag-popover',
+      lookupKey: spec.lookupKey,
+    });
     return cell;
   }
 
@@ -1919,6 +2014,7 @@
 
     await Promise.all([
       renderer._refreshActiveLang(),
+      renderer.ensureTextureManifest(),
       renderer.ensureIconStylesheets(),
       renderer.ensureIconIndices(),
     ]);

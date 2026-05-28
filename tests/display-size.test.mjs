@@ -15,3 +15,17 @@ test('_displaySizeFromLayout uses panel frame dimensions and scale', () => {
   assert.equal(size.width, 304);
   assert.equal(size.height, 52);
 });
+
+test('createTankFluidFill renders fluid tiles from icon atlas', () => {
+  const renderer = new EmiRecipeRenderer({ baseUrl: '/emi', locale: 'en_us' });
+  renderer.iconIds = new Set(['minecraft:lava']);
+  renderer.iconAtlas = {
+    cellSize: 32,
+    pages: [{ file: 'atlas-000.png', width: 32, height: 32, sources: ['atlas-000.png'] }],
+    items: { 'minecraft:lava': { page: 0, x: 0, y: 0 } },
+  };
+  const fill = renderer.createTankFluidFill({ kind: 'fluid', id: 'minecraft:lava', amount: 1000 });
+  assert.equal(fill.className, 'emi-tank-fluid');
+  assert.equal(fill.childNodes.length, 1);
+  assert.equal(fill.childNodes[0].dataset.item, 'minecraft:lava');
+});
