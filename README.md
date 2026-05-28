@@ -68,16 +68,18 @@ The renderer fetches these paths relative to `baseUrl`:
 
 - `bundle.json` (required; must include `missingIconId`)
 - `recipes/index.json` (required)
-- Layout JSON files from each recipe entry's `layout` field in `recipes/index.json`
+- `recipes/shards/<namespace>.json` (required; one per namespace in root index)
+- Layout JSON under `recipes/layouts/` (paths derived from merged `namespace:path` ids)
 - `textures/manifest.json` (optional fallback to empty)
 - `icons/index.json` (required for icon lookup)
 - `icons/icons.css` (loaded when `injectIconStylesheets: true`)
-- `tags/members.json` (optional)
+- `tags/<namespace>/<items|blocks|fluids>/<path>.json` (optional per tag lookup)
 - `lang/<locale>.json` (optional per locale; missing keys fall back to `en_us`)
 
 Layout path behavior:
-- The library reads `index.recipes[recipeId].layout` and fetches that exact path relative to `baseUrl`.
-- Do not hardcode `recipes/layouts/*.json` in client code; use whatever path is stored in the index.
+- `recipes/index.json` only carries `namespaces`.
+- Each namespace resolves to one shard file: `recipes/shards/<namespace>.json`.
+- Renderer combines `namespace:path` ids and maps each id to `recipes/layouts/<id-with-:-and-/-replaced-by-_>.json` (same rule as `minecraft-web-export`).
 
 If `baseUrl` is cross-origin, the export host must allow CORS for these `fetch` requests.
 

@@ -7,6 +7,10 @@ await import('../src/index.js');
 
 const { EmiRecipeRenderer } = globalThis;
 
+function countCalls(fetchCalls, suffix) {
+  return fetchCalls.filter((url) => url.endsWith(suffix)).length;
+}
+
 test('ensureBundle requires missingIconId in bundle.json', async () => {
   globalThis.fetch = async (url) => {
     if (String(url).endsWith('/bundle.json')) return jsonResponse({ languages: ['en_us'] });
@@ -29,7 +33,7 @@ test('loadIndex reuses bundle, lang, and recipe index across renderer instances'
       return jsonResponse({ languages: ['en_us'], missingIconId: 'fieldguide:missing_icon' });
     }
     if (href.endsWith('/lang/en_us.json')) return jsonResponse({});
-    if (href.endsWith('/recipes/index.json')) return jsonResponse({ recipes: {}, scale: 2 });
+    if (href.endsWith('/recipes/index.json')) return jsonResponse({ schema: 1, namespaces: [], scale: 2 });
     throw new Error(`unexpected url ${href}`);
   };
 
@@ -39,30 +43,32 @@ test('loadIndex reuses bundle, lang, and recipe index across renderer instances'
   await a.loadIndex();
   await b.loadIndex();
 
-  assert.equal(fetchCalls.filter((u) => u.endsWith('/bundle.json')).length, 1);
-  assert.equal(fetchCalls.filter((u) => u.endsWith('/lang/en_us.json')).length, 1);
-  assert.equal(fetchCalls.filter((u) => u.endsWith('/recipes/index.json')).length, 1);
+  assert.equal(countCalls(fetchCalls, '/bundle.json'), 1);
+  assert.equal(countCalls(fetchCalls, '/lang/en_us.json'), 1);
+  assert.equal(countCalls(fetchCalls, '/recipes/index.json'), 1);
 });
 
 test('loadLayout reuses layout json across renderer instances', async () => {
   const fetchCalls = [];
+  const index = { schema: 1, scale: 2, namespaces: ['demo'] };
   globalThis.fetch = async (url) => {
     const href = String(url);
     fetchCalls.push(href);
-    if (href.endsWith('/recipes/layouts/test.json')) {
+    if (href.endsWith('/recipes/layouts/demo_test.json')) {
       return jsonResponse({ panel: { width: 126, height: 62 }, widgets: [] });
+    }
+    if (href.endsWith('/recipes/shards/demo.json')) {
+      return jsonResponse(['test']);
     }
     throw new Error(`unexpected url ${href}`);
   };
-
-  const index = { recipes: { 'demo:test': { layout: 'recipes/layouts/test.json' } } };
   const a = new EmiRecipeRenderer({ baseUrl: '/emi-b', locale: 'en_us' });
   const b = new EmiRecipeRenderer({ baseUrl: '/emi-b', locale: 'en_us' });
 
   await a.loadLayout('demo:test', index);
   await b.loadLayout('demo:test', index);
 
-  assert.equal(fetchCalls.filter((u) => u.endsWith('/recipes/layouts/test.json')).length, 1);
+  assert.equal(countCalls(fetchCalls, '/recipes/layouts/demo_test.json'), 1);
 });
 
 test('resourceVersion appends version to data urls and isolates shared cache per version', async () => {
@@ -74,7 +80,7 @@ test('resourceVersion appends version to data urls and isolates shared cache per
       return jsonResponse({ languages: ['en_us'], missingIconId: 'fieldguide:missing_icon' });
     }
     if (href.includes('/lang/en_us.json')) return jsonResponse({});
-    if (href.includes('/recipes/index.json')) return jsonResponse({ recipes: {}, scale: 2 });
+    if (href.includes('/recipes/index.json')) return jsonResponse({ schema: 1, namespaces: [], scale: 2 });
     throw new Error(`unexpected url ${href}`);
   };
 
@@ -86,12 +92,32 @@ test('resourceVersion appends version to data urls and isolates shared cache per
   await b.loadIndex();
   await c.loadIndex();
 
-  assert.equal(fetchCalls.filter((u) => u.endsWith('/bundle.json?v=v1')).length, 1);
-  assert.equal(fetchCalls.filter((u) => u.endsWith('/lang/en_us.json?v=v1')).length, 1);
-  assert.equal(fetchCalls.filter((u) => u.endsWith('/recipes/index.json?v=v1')).length, 1);
-  assert.equal(fetchCalls.filter((u) => u.endsWith('/bundle.json?v=v2')).length, 1);
-  assert.equal(fetchCalls.filter((u) => u.endsWith('/lang/en_us.json?v=v2')).length, 1);
-  assert.equal(fetchCalls.filter((u) => u.endsWith('/recipes/index.json?v=v2')).length, 1);
+  assert.equal(countCalls(fetchCalls, '/bundle.json?v=v1'), 1);
+  assert.equal(countCalls(fetchCalls, '/lang/en_us.json?v=v1'), 1);
+  assert.equal(countCalls(fetchCalls, '/recipes/index.json?v=v1'), 1);
+  assert.equal(countCalls(fetchCalls, '/bundle.json?v=v2'), 1);
+  assert.equal(countCalls(fetchCalls, '/lang/en_us.json?v=v2'), 1);
+  assert.equal(countCalls(fetchCalls, '/recipes/index.json?v=v2'), 1);
+});
+
+test('loadTagMembers fetches per-tag file and caches result', async () => {
+  const fetchCalls = [];
+  globalThis.fetch = async (url) => {
+    const href = String(url);
+    fetchCalls.push(href);
+    if (href.endsWith('/tags/forge/items/cloth.json')) {
+      return jsonResponse({ values: ['tfc:burlap_cloth'] });
+    }
+    throw new Error(`unexpected url ${href}`);
+  };
+
+  const renderer = new EmiRecipeRenderer({ baseUrl: '/emi-tags', locale: 'en_us' });
+  const a = await renderer.loadTagMembers('#item:forge:cloth');
+  const b = await renderer.loadTagMembers('#item:forge:cloth');
+
+  assert.deepEqual(a, ['tfc:burlap_cloth']);
+  assert.deepEqual(b, ['tfc:burlap_cloth']);
+  assert.equal(countCalls(fetchCalls, '/tags/forge/items/cloth.json'), 1);
 });
 
 test('ensureIconStylesheets rewrites atlas urls with resourceVersion for non-demo consumers', async () => {

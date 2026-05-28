@@ -8,18 +8,73 @@
  */
 'use strict';
 
+  const RECIPE_LAYOUTS_DIR = 'recipes/layouts';
+
   const PATHS = {
     bundle: 'bundle.json',
     recipeIndex: 'recipes/index.json',
+    recipeShardsDir: 'recipes/shards',
     textureManifest: 'textures/manifest.json',
     texturesDir: 'textures',
-    tagMembers: 'tags/members.json',
+    tagsDir: 'tags',
     iconsDir: 'icons',
     langDir: 'lang',
   };
   const FALLBACK_LOCALE = 'en_us';
   const MISSING_ICON_ID = 'fieldguide:missing_icon';
   const SHARED_RESOURCE_CACHE = new Map();
+
+  /** Same rule as minecraft-web-export {@code RecipeLayoutPaths.safeFileName}. */
+  function layoutPathForRecipeId(recipeId) {
+    const file = String(recipeId || '').replace(/:/g, '_').replace(/\//g, '_') + '.json';
+    return `${RECIPE_LAYOUTS_DIR}/${file}`;
+  }
+
+  function parseRecipeIndex(raw) {
+    if (!raw || typeof raw !== 'object') {
+      throw new Error('invalid recipes/index.json');
+    }
+    if (!Array.isArray(raw.namespaces)) {
+      throw new Error('recipes/index.json must contain namespaces array');
+    }
+    const namespaces = raw.namespaces
+      .filter((id) => typeof id === 'string' && id.length > 0);
+    return {
+      schema: raw.schema ?? 1,
+      scale: Number.isFinite(raw.scale) ? raw.scale : 2,
+      namespaces,
+    };
+  }
+
+  function splitRecipeId(recipeId) {
+    const value = String(recipeId || '');
+    const idx = value.indexOf(':');
+    if (idx <= 0 || idx >= value.length - 1) return null;
+    return { namespace: value.slice(0, idx), path: value.slice(idx + 1) };
+  }
+
+  function tagRefToResourcePath(tagRef) {
+    let value = String(tagRef || '').trim();
+    if (!value) return null;
+    if (value.startsWith('#')) value = value.slice(1);
+    const parts = value.split(':');
+    if (parts.length === 2) {
+      return { type: 'items', id: value, resourcePath: `${PATHS.tagsDir}/${parts[0]}/items/${parts[1]}.json` };
+    }
+    if (parts.length !== 3) return null;
+    const tagTypeMap = {
+      item: 'items',
+      block: 'blocks',
+      fluid: 'fluids',
+    };
+    const type = tagTypeMap[parts[0]] || '';
+    if (!type || !parts[1] || !parts[2]) return null;
+    return {
+      type,
+      id: `${parts[1]}:${parts[2]}`,
+      resourcePath: `${PATHS.tagsDir}/${parts[1]}/${type}/${parts[2]}.json`,
+    };
+  }
 
   function normalizeLocale(locale) {
     return String(locale || FALLBACK_LOCALE).trim().toLowerCase().replace('-', '_');
@@ -302,7 +357,13 @@
         return { kind: 'item', ids: [stripRegistryId(ingredient.slice(5))], amount: 1 };
       }
       if (ingredient.startsWith('#item:')) {
-        return { kind: 'tag', tag: ingredient.slice(6) };
+        return { kind: 'tag', tagType: 'item', tag: ingredient.slice(6), tagRef: ingredient };
+      }
+      if (ingredient.startsWith('#block:')) {
+        return { kind: 'tag', tagType: 'block', tag: ingredient.slice(7), tagRef: ingredient };
+      }
+      if (ingredient.startsWith('#fluid:')) {
+        return { kind: 'tag', tagType: 'fluid', tag: ingredient.slice(7), tagRef: ingredient };
       }
       if (ingredient.startsWith('fluid:')) {
         const body = ingredient.slice(6);
@@ -559,8 +620,9 @@
         || document.getElementById('tag-popover');
       this.textureManifest = null;
       this.textureManifestPromise = null;
-      this.tagMembers = null;
-      this.tagMembersPromise = null;
+      this.recipeShardPaths = new Map();
+      this.allRecipeIdsPromise = null;
+      this.tagMemberIdsByRef = new Map();
       this.iconIds = null;
       this.iconAtlas = null;
       this.iconIndexPromise = null;
@@ -575,8 +637,9 @@
       this._activeLang = { fallback: {}, current: {} };
       this.textureManifest = null;
       this.textureManifestPromise = null;
-      this.tagMembers = null;
-      this.tagMembersPromise = null;
+      this.recipeShardPaths = new Map();
+      this.allRecipeIdsPromise = null;
+      this.tagMemberIdsByRef = new Map();
       this.iconIds = null;
       this.iconAtlas = null;
       this.iconIndexPromise = null;
@@ -684,18 +747,52 @@
       await this.ensureBundle();
       await this._refreshActiveLang();
       const resourceUrl = this.resolveResourceUrl(PATHS.recipeIndex);
-      return getSharedRequiredJsonResource('index', resourceUrl, 'index');
+      const raw = await getSharedRequiredJsonResource('index', resourceUrl, 'index');
+      return parseRecipeIndex(raw);
+    }
+
+    async loadRecipeShardPaths(namespace) {
+      const ns = String(namespace || '').trim();
+      if (!ns) return [];
+      if (this.recipeShardPaths.has(ns)) return this.recipeShardPaths.get(ns);
+      const resourceUrl = this.resolveResourceUrl(`${PATHS.recipeShardsDir}/${ns}.json`);
+      const shard = await getSharedRequiredJsonResource(`index-shard-${ns}`, resourceUrl, `index-shard:${ns}`);
+      if (!Array.isArray(shard)) {
+        throw new Error(`recipes/shards/${ns}.json must be an array`);
+      }
+      const paths = shard.filter((entry) => typeof entry === 'string' && entry.length > 0);
+      this.recipeShardPaths.set(ns, paths);
+      return paths;
+    }
+
+    async loadAllRecipeIds(index) {
+      if (this.allRecipeIdsPromise) return this.allRecipeIdsPromise;
+      const normalized = parseRecipeIndex(index);
+      this.allRecipeIdsPromise = Promise.all(
+        normalized.namespaces.map(async (namespace) => {
+          const paths = await this.loadRecipeShardPaths(namespace);
+          return paths;
+        }),
+      ).then((groups) => groups.flatMap((paths, groupIndex) => (
+        paths.map((path) => `${normalized.namespaces[groupIndex]}:${path}`)
+      )));
+      return this.allRecipeIdsPromise;
     }
 
     async loadLayout(recipeId, index) {
-      const entry = index.recipes[recipeId];
-      if (!entry?.layout) throw new Error(`no layout for ${recipeId}`);
-      const resourceUrl = this.resolveResourceUrl(entry.layout);
+      const normalized = parseRecipeIndex(index);
+      const split = splitRecipeId(recipeId);
+      if (!split || !normalized.namespaces.includes(split.namespace)) {
+        throw new Error(`no layout for ${recipeId}`);
+      }
+      const ids = await this.loadAllRecipeIds(normalized);
+      if (!ids.includes(recipeId)) throw new Error(`no layout for ${recipeId}`);
+      const layoutPath = layoutPathForRecipeId(recipeId);
+      const resourceUrl = this.resolveResourceUrl(layoutPath);
       const layout = await getSharedRequiredJsonResource('layout', resourceUrl, 'layout');
       return {
         layout,
-        entry,
-        layoutPath: entry.layout,
+        layoutPath,
       };
     }
 
@@ -720,25 +817,26 @@
       return this.textureManifestPromise;
     }
 
-    async ensureTagMembers() {
-      if (this.tagMembers) return this.tagMembers;
-      if (!this.tagMembersPromise) {
-        const resourceUrl = this.resolveResourceUrl(PATHS.tagMembers);
-        this.tagMembersPromise = getSharedJsonResource(
-          'tag-members',
-          resourceUrl,
-          { items: {} },
-        )
-          .then((j) => {
-            this.tagMembers = j.items || {};
-            return this.tagMembers;
-          })
-          .catch(() => {
-            this.tagMembers = {};
-            return this.tagMembers;
-          });
+    async loadTagMembers(tagRef) {
+      const ref = tagRefToResourcePath(tagRef);
+      if (!ref) return [];
+      const cacheKey = `${ref.type}:${ref.id}`;
+      if (this.tagMemberIdsByRef.has(cacheKey)) {
+        return this.tagMemberIdsByRef.get(cacheKey);
       }
-      return this.tagMembersPromise;
+      const resourceUrl = this.resolveResourceUrl(ref.resourcePath);
+      const root = await getSharedJsonResource(`tag-members:${cacheKey}`, resourceUrl, { values: [] });
+      const ids = Array.isArray(root?.values)
+        ? root.values.filter((id) => typeof id === 'string' && id.length > 0)
+        : [];
+      this.tagMemberIdsByRef.set(cacheKey, ids);
+      return ids;
+    }
+
+    getCachedTagMembers(tagRef) {
+      const ref = tagRefToResourcePath(tagRef);
+      if (!ref) return [];
+      return this.tagMemberIdsByRef.get(`${ref.type}:${ref.id}`) || [];
     }
 
     async ensureIconStylesheets() {
@@ -889,7 +987,8 @@
         return parsed.entries.flatMap((entry) => (entry.kind === 'item' ? entry.ids : []));
       }
       if (parsed.kind === 'tag') {
-        return this.tagMembers?.[parsed.tag] || [];
+        if (parsed.tagType !== 'item') return [];
+        return this.getCachedTagMembers(parsed.tagRef || `#item:${parsed.tag}`);
       }
       if (parsed.kind === 'fluid') return parsed.id ? [parsed.id] : [];
       return [];
@@ -1011,7 +1110,6 @@
       await Promise.all([
         this._refreshActiveLang(),
         this.ensureTextureManifest(),
-        this.ensureTagMembers(),
         this.ensureIconIndices(),
         this.ensureIconStylesheets(),
       ]);
@@ -1663,14 +1761,6 @@
     return TAG_GRID_Y + rows * TAG_SLOT;
   }
 
-  function resolveTagPopoverIds(renderer, tag) {
-    const members = renderer.tagMembers?.[tag];
-    if (Array.isArray(members) && members.length) {
-      return members;
-    }
-    return [];
-  }
-
   function tagEmiRecipeId(tag) {
     return `emi:/tag/item/${tag.replace(':', '/')}`;
   }
@@ -1760,7 +1850,6 @@
 
     await Promise.all([
       renderer._refreshActiveLang(),
-      renderer.ensureTagMembers(),
       renderer.ensureIconStylesheets(),
       renderer.ensureIconIndices(),
     ]);
@@ -1882,7 +1971,7 @@
   }
 
   async function showTagPopover(tag, anchorEl, renderer) {
-    const ids = resolveTagPopoverIds(renderer, tag);
+    const ids = await renderer.loadTagMembers(`#item:${tag}`);
     const items = ids.map((id) => ({
       lookupKey: id,
       tooltip: renderer.translateRegistry(id, 'item'),
@@ -1895,7 +1984,7 @@
       items,
       anchorEl,
       renderer,
-      emptyMessage: `No members for #item:${tag} in tag-members.json`,
+      emptyMessage: `No members for #item:${tag} in ${PATHS.tagsDir}/<namespace>/items/*.json`,
     });
   }
 
