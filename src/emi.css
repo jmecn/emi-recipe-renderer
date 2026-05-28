@@ -393,6 +393,19 @@
   word-break: break-all;
 }
 
+
+.tag-popover-title-link {
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+.tag-popover-title-link:hover,
+.tag-popover-title-link:focus-visible {
+  color: var(--accent);
+  outline: none;
+}
 .tag-popover-emi-id {
   margin-top: 4px;
   font-family: ui-monospace, monospace;

@@ -403,6 +403,17 @@
       return { kind: 'item', ids: [stripRegistryId(ingredient)], amount: 1 };
     }
     if (typeof ingredient === 'object') {
+      if (ingredient.type === 'tag' && ingredient.id) {
+        const tagId = String(ingredient.id);
+        const registry = String(ingredient.registry || 'minecraft:item');
+        if (registry.includes('fluid')) {
+          return { kind: 'tag', tagType: 'fluid', tag: tagId, tagRef: `#fluid:${tagId}` };
+        }
+        if (registry.includes('block')) {
+          return { kind: 'tag', tagType: 'block', tag: tagId, tagRef: `#block:${tagId}` };
+        }
+        return { kind: 'tag', tagType: 'item', tag: tagId, tagRef: `#item:${tagId}` };
+      }
       if (ingredient.type === 'fluid' && ingredient.id) {
         return { kind: 'fluid', id: ingredient.id, amount: fluidAmount(ingredient.amount) };
       }
@@ -664,6 +675,7 @@
           : null)
         || document.getElementById('tag-popover');
       this.onItemClick = typeof options.onItemClick === 'function' ? options.onItemClick : null;
+      this.onTagClick = typeof options.onTagClick === 'function' ? options.onTagClick : null;
       this.textureManifest = null;
       this.textureManifestPromise = null;
       this.recipeShardPaths = new Map();
@@ -1117,9 +1129,12 @@
       await Promise.all([...refs].map((ref) => this.loadTagMembers(ref)));
     }
 
-    /** Item id to open in a host app (e.g. recipe-viewer item detail). Fluids omitted. */
+    /** Item or fluid id to open in a host app (e.g. recipe-viewer item detail). */
     resolveSlotNavigateItemId(parsed, widget) {
       if (!parsed) return null;
+      if (parsed.kind === 'fluid' && parsed.id) {
+        return stripRegistryId(parsed.id);
+      }
       if (parsed.kind === 'item' && parsed.ids?.[0]) {
         return stripRegistryId(parsed.ids[0]);
       }
@@ -1129,11 +1144,27 @@
       }
       if (parsed.kind === 'list') {
         const display = resolveListDisplayEntry(parsed, widget);
+        if (display?.kind === 'fluid' && display.id) {
+          return stripRegistryId(display.id);
+        }
+        if (display?.fluid?.id) {
+          return stripRegistryId(display.fluid.id);
+        }
         if (display?.kind === 'item' && display.ids?.[0]) {
           return stripRegistryId(display.ids[0]);
         }
       }
       return null;
+    }
+
+    resolveSlotNavigateRegistryKind(parsed, widget) {
+      if (!parsed) return 'item';
+      if (parsed.kind === 'fluid') return 'fluid';
+      if (parsed.kind === 'list') {
+        const display = resolveListDisplayEntry(parsed, widget);
+        if (display?.kind === 'fluid' || display?.fluid?.id) return 'fluid';
+      }
+      return 'item';
     }
 
     /**
@@ -1147,6 +1178,7 @@
       el.dataset.emiItemId = navId;
       el.classList.add('emi-slot-item-nav');
       const label = this.translateRegistry(navId, meta.registryKind || 'item');
+      el.dataset.emiRegistryKind = meta.registryKind || 'item';
       if (label) el.title = label;
       el.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -1455,6 +1487,7 @@
         const skipListPopover = parsed?.kind === 'list' && parsed.entries.length > 1;
         if (!skipListPopover && navId && this.bindSlotItemNavigation(el, navId, {
           source: 'recipe-slot',
+          registryKind: this.resolveSlotNavigateRegistryKind(parsed, w),
           parsed,
           widget: w,
           ingredient,
@@ -1577,6 +1610,7 @@
         tooltipElementId: options.tooltipElementId,
         tagPopoverElementId: options.tagPopoverElementId,
         onItemClick: options.onItemClick,
+        onTagClick: options.onTagClick,
       };
     }
 
@@ -2002,6 +2036,7 @@
     renderer,
     emptyMessage,
     featuredIndex = 0,
+    onTitleClick = null,
   }) {
     const pop = renderer._tagPopoverEl;
     if (!pop) return;
@@ -2035,6 +2070,21 @@
     const titleEl = document.createElement('div');
     titleEl.className = 'tag-popover-title';
     titleEl.textContent = title;
+    if (typeof onTitleClick === 'function') {
+      titleEl.classList.add('tag-popover-title-link');
+      titleEl.tabIndex = 0;
+      titleEl.setAttribute('role', 'button');
+      titleEl.setAttribute('aria-label', `Open tag ${title}`);
+      const trigger = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        onTitleClick();
+      };
+      titleEl.addEventListener('click', trigger);
+      titleEl.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') trigger(e);
+      });
+    }
     const subEl = document.createElement('div');
     subEl.className = 'tag-popover-emi-id';
     subEl.textContent = subtitle;
@@ -2153,6 +2203,12 @@
       anchorEl,
       renderer,
       emptyMessage: `No members for ${tagRef} in ${PATHS.tagsDir}/<namespace>/${tagTypeDir}/*.json`,
+      onTitleClick: typeof renderer.onTagClick === 'function'
+        ? () => {
+          renderer.onTagClick(tag, { tagKind, tagRef, source: 'tag-popover-title' });
+          hideEmiTagPopover(renderer._tagPopoverEl);
+        }
+        : null,
     });
   }
 
