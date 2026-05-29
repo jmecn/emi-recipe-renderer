@@ -8,6 +8,13 @@
  */
 'use strict';
 
+import {
+  applyMinecraftFormattedContent,
+  hasMinecraftFormatting,
+  stripMinecraftFormatting,
+} from './minecraft-text.js';
+import { translateComposedRegistry } from './gtceu-translate.js';
+
   const PATHS = {
     bundle: 'bundle.json',
     recipesRoutesDir: 'recipes/routes',
@@ -18,6 +25,7 @@
     tagsIndex: 'tags/index.json',
     iconsDir: 'icons',
     langDir: 'lang',
+    registryLabelsDir: 'registry-labels',
   };
 
   const TAG_CATALOG_TYPES = ['items', 'blocks', 'fluids'];
@@ -390,9 +398,13 @@
   function parseIngredientEntry(ingredient) {
     if (ingredient == null) return null;
     if (typeof ingredient === 'string') {
-      if (ingredient.startsWith('item:')) {
-        return { kind: 'item', ids: [stripRegistryId(ingredient.slice(5))], amount: 1 };
-      }
+    if (ingredient.startsWith('item:')) {
+      const body = ingredient.slice(5);
+      const brace = body.indexOf('{');
+      const id = stripRegistryId(brace >= 0 ? body.slice(0, brace) : body);
+      const nbt = brace >= 0 ? body.slice(brace) : null;
+      return { kind: 'item', ids: [id], amount: 1, nbt };
+    }
       if (ingredient.startsWith('#item:')) {
         return { kind: 'tag', tagType: 'item', tag: ingredient.slice(6), tagRef: ingredient };
       }
@@ -671,6 +683,8 @@
       this.injectIconStylesheets = options.injectIconStylesheets === true;
       this.locale = normalizeLocale(options.locale);
       this._langCache = new Map();
+      this._registryLabelsCache = new Map();
+      this._registryLabelsByLocale = null;
       this._langByLocale = options.lang && typeof options.lang === 'object' ? options.lang : null;
       this._langOverrides = options.translations && typeof options.translations === 'object'
         ? options.translations
@@ -706,6 +720,8 @@
 
     _resetLoadedResources() {
       this._langCache.clear();
+      this._registryLabelsCache.clear();
+      this._registryLabelsByLocale = null;
       this._bundle = null;
       this._activeLang = { fallback: {}, current: {} };
       this.textureManifest = null;
@@ -749,11 +765,60 @@
 
     translateRegistry(registryId, kind = 'item') {
       const bare = stripRegistryId(registryId);
+      const registryLabel = this._lookupRegistryLabel(bare, kind);
+      if (registryLabel) return registryLabel;
+
       for (const key of registryLangKeyCandidates(kind, registryId)) {
         const label = this.translateKey(key);
         if (label !== key) return label;
       }
+
+      const langTable = {
+        ...this._activeLang.fallback,
+        ...this._activeLang.current,
+      };
+      const composed = translateComposedRegistry(
+        bare,
+        kind,
+        (k) => this.translateKey(k),
+        langTable,
+      );
+      if (composed) return composed;
+
       return bare || String(registryId || '');
+    }
+
+    _lookupRegistryLabel(registryId, kind) {
+      const table = this._registryLabelsByLocale;
+      if (!table) return null;
+      const bucket = kind === 'block' ? table.blocks : kind === 'fluid' ? table.fluids : table.items;
+      if (!bucket) return null;
+      return bucket[registryId] || null;
+    }
+
+    async ensureRegistryLabels(locale) {
+      const code = normalizeLocale(locale);
+      if (this._registryLabelsCache.has(code)) {
+        return this._registryLabelsCache.get(code);
+      }
+      const path = `${PATHS.registryLabelsDir}/${code}.json`;
+      const resourceUrl = this.resolveResourceUrl(path);
+      let raw = null;
+      try {
+        raw = await getSharedJsonResource('registry-labels', resourceUrl, null);
+      } catch {
+        raw = null;
+      }
+      const table = raw && typeof raw === 'object'
+        ? {
+          language: code,
+          items: raw.items && typeof raw.items === 'object' ? raw.items : {},
+          blocks: raw.blocks && typeof raw.blocks === 'object' ? raw.blocks : {},
+          fluids: raw.fluids && typeof raw.fluids === 'object' ? raw.fluids : {},
+        }
+        : null;
+      this._registryLabelsCache.set(code, table);
+      return table;
     }
 
     translateTag(tag) {
@@ -789,6 +854,7 @@
         fallback: fallbackTable,
         current: currentTable,
       };
+      this._registryLabelsByLocale = await this.ensureRegistryLabels(locale);
     }
 
     async setLocale(locale) {
@@ -1078,11 +1144,10 @@
     /** Atlas sprite id for an item/fluid, falling back to {@link MISSING_ICON_ID}. */
     resolveAtlasId(registryId) {
       if (!registryId) return this.missingIconId;
+      if (this.iconIds?.has(registryId)) return registryId;
       const bare = stripRegistryId(registryId);
-      const candidates = bare === registryId ? [registryId] : [bare, registryId];
-      for (const id of candidates) {
-        if (this.iconIds?.has(id)) return id;
-      }
+      if (bare !== registryId && this.iconIds?.has(bare)) return bare;
+      if (this.iconIds?.has(bare)) return bare;
       return this.missingIconId;
     }
 
@@ -1137,8 +1202,12 @@
       if (!parsed) return [];
       let keys = [];
       if (parsed.kind === 'item') {
-        const k = lookupIconKey(parsed);
-        if (k) keys = [k];
+        if (widget?.tagDisplayItem) {
+          keys = [String(widget.tagDisplayItem)];
+        } else {
+          const k = lookupIconKey(parsed);
+          if (k) keys = [k];
+        }
       } else if (parsed.kind === 'list') {
         keys = parsed.entries
           .filter((e) => e.kind === 'item' && lookupIconKey(e))
@@ -1440,13 +1509,15 @@
       el.className = 'emi-text';
       el.style.left = `${(w.x || 0) + (w.baseX || 0)}px`;
       el.style.top = `${(w.y || 0) + (w.baseY || 0)}px`;
-      if (w.color != null) {
-        el.style.color = `#${(w.color & 0xffffff).toString(16).padStart(6, '0')}`;
-      }
-      if (w.translationKey) {
-        el.textContent = this.translateKey(w.translationKey);
+      const raw = w.translationKey ? this.translateKey(w.translationKey) : (w.text || '');
+      const baseColor = w.color != null
+        ? `#${(w.color & 0xffffff).toString(16).padStart(6, '0')}`
+        : null;
+      if (hasMinecraftFormatting(raw)) {
+        applyMinecraftFormattedContent(el, raw, baseColor);
       } else {
-        el.textContent = w.text || '';
+        if (baseColor) el.style.color = baseColor;
+        el.textContent = raw;
       }
       return el;
     }
@@ -1963,7 +2034,11 @@
   function showTooltip(text, anchor, tipEl) {
     const tip = tipEl || document.getElementById('tooltip');
     if (!tip || !text) return;
-    tip.textContent = text;
+    if (hasMinecraftFormatting(text)) {
+      applyMinecraftFormattedContent(tip, text);
+    } else {
+      tip.textContent = text;
+    }
     tip.style.display = 'block';
     const r = anchor.getBoundingClientRect();
     tip.style.left = `${Math.min(r.left, window.innerWidth - 330)}px`;
@@ -2253,6 +2328,10 @@
     });
   }
 
+  EmiRecipeRenderer.stripMinecraftFormatting = stripMinecraftFormatting;
+  EmiRecipeRenderer.setFormattedText = applyMinecraftFormattedContent;
+  EmiRecipeRenderer.hasMinecraftFormatting = hasMinecraftFormatting;
+
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
     EmiRecipeRenderer,
@@ -2260,9 +2339,14 @@ if (typeof module !== 'undefined' && module.exports) {
     hideEmiTagPopover,
     showEmiTagPopover: showTagPopover,
     MISSING_ICON_ID,
+    stripMinecraftFormatting,
+    applyMinecraftFormattedContent,
+    hasMinecraftFormatting,
   };
 }
 globalThis.EmiRecipeRenderer = EmiRecipeRenderer;
+globalThis.stripMinecraftFormatting = stripMinecraftFormatting;
+globalThis.applyMinecraftFormattedContent = applyMinecraftFormattedContent;
 globalThis.initEmiSlotCarousels = initEmiSlotCarousels;
 globalThis.hideEmiTagPopover = hideEmiTagPopover;
 globalThis.showEmiTagPopover = showTagPopover;

@@ -289,10 +289,13 @@
 }
 
 .emi-text {
-  font-family: "Courier New", monospace;
+  font-family: Minecraftia, Minecraft, monospace;
   font-size: 12px;
+  line-height: 1.1;
   white-space: nowrap;
-  text-shadow: 1px 1px 0 #333;
+  text-shadow: none;
+  -webkit-font-smoothing: none;
+  font-smooth: never;
 }
 
 #tooltip {
