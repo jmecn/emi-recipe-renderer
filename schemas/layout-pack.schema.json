@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/jmecn/emi-recipe-renderer/schemas/layout-pack.schema.json",
+  "title": "EMI layout pack",
+  "description": "recipes/layout-packs/<namespace>/<seq>-<digest>.json",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["schema", "namespace", "layouts"],
+  "properties": {
+    "schema": { "const": 1 },
+    "namespace": { "type": "string", "minLength": 1 },
+    "layouts": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "$ref": "layout.schema.json"
+      }
+    }
+  }
+}

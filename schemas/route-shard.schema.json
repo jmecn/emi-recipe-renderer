@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/jmecn/emi-recipe-renderer/schemas/route-shard.schema.json",
+  "title": "EMI route shard",
+  "description": "recipes/routes/<namespace>/<seq>-<digest>.json",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["schema", "namespace", "routes"],
+  "properties": {
+    "schema": { "const": 1 },
+    "namespace": { "type": "string", "minLength": 1 },
+    "routes": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
+    }
+  }
+}
