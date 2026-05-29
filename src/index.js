@@ -8,12 +8,10 @@
  */
 'use strict';
 
-  const RECIPE_LAYOUTS_DIR = 'recipes/layouts';
-
   const PATHS = {
     bundle: 'bundle.json',
-    recipeIndex: 'recipes/index.json',
-    recipeShardsDir: 'recipes/shards',
+    recipesRoutesDir: 'recipes/routes',
+    recipesLayoutPacksDir: 'recipes/layout-packs',
     textureManifest: 'textures/manifest.json',
     texturesDir: 'textures',
     tagsDir: 'tags',
@@ -27,25 +25,40 @@
   const MISSING_ICON_ID = 'fieldguide:missing_icon';
   const SHARED_RESOURCE_CACHE = new Map();
 
-  /** Same rule as minecraft-web-export {@code RecipeLayoutPaths.safeFileName}. */
-  function layoutPathForRecipeId(recipeId) {
-    const file = String(recipeId || '').replace(/:/g, '_').replace(/\//g, '_') + '.json';
-    return `${RECIPE_LAYOUTS_DIR}/${file}`;
-  }
-
   function parseRecipeIndex(raw) {
     if (!raw || typeof raw !== 'object') {
-      throw new Error('invalid recipes/index.json');
+      throw new Error('invalid bundle.json');
     }
-    if (!Array.isArray(raw.namespaces)) {
-      throw new Error('recipes/index.json must contain namespaces array');
+    if (raw.recipeIds && !raw.mods) {
+      throw new Error('bundle.json must contain mods object');
     }
-    const namespaces = raw.namespaces
-      .filter((id) => typeof id === 'string' && id.length > 0);
+    const { mods } = raw;
+    if (!mods || typeof mods !== 'object' || Array.isArray(mods)) {
+      throw new Error('bundle.json must contain mods object');
+    }
+    const namespaces = Object.keys(mods)
+      .filter((id) => typeof id === 'string' && id.length > 0)
+      .sort();
+    if (namespaces.length === 0) {
+      throw new Error('bundle.json mods must be non-empty');
+    }
+    for (const ns of namespaces) {
+      const mod = mods[ns];
+      if (!mod || typeof mod !== 'object') {
+        throw new Error(`bundle.json mods.${ns} must be an object`);
+      }
+      if (!Array.isArray(mod.routes) || mod.routes.length === 0) {
+        throw new Error(`bundle.json mods.${ns}.routes must be a non-empty array`);
+      }
+      if (!Array.isArray(mod.packs) || mod.packs.length === 0) {
+        throw new Error(`bundle.json mods.${ns}.packs must be a non-empty array`);
+      }
+    }
     return {
       schema: raw.schema ?? 1,
       scale: Number.isFinite(raw.scale) ? raw.scale : 2,
       namespaces,
+      mods,
     };
   }
 
@@ -678,7 +691,7 @@
       this.onTagClick = typeof options.onTagClick === 'function' ? options.onTagClick : null;
       this.textureManifest = null;
       this.textureManifestPromise = null;
-      this.recipeShardPaths = new Map();
+      this.routeShardCache = new Map();
       this.allRecipeIdsPromise = null;
       this.tagCatalog = null;
       this.tagCatalogPromise = null;
@@ -697,7 +710,7 @@
       this._activeLang = { fallback: {}, current: {} };
       this.textureManifest = null;
       this.textureManifestPromise = null;
-      this.recipeShardPaths = new Map();
+      this.routeShardCache = new Map();
       this.allRecipeIdsPromise = null;
       this.tagCatalog = null;
       this.tagCatalogPromise = null;
@@ -808,53 +821,81 @@
     async loadIndex() {
       await this.ensureBundle();
       await this._refreshActiveLang();
-      const resourceUrl = this.resolveResourceUrl(PATHS.recipeIndex);
-      const raw = await getSharedRequiredJsonResource('index', resourceUrl, 'index');
-      return parseRecipeIndex(raw);
+      return parseRecipeIndex(this._bundle);
     }
 
-    async loadRecipeShardPaths(namespace) {
+    async loadRouteShard(namespace, file) {
       const ns = String(namespace || '').trim();
-      if (!ns) return [];
-      if (this.recipeShardPaths.has(ns)) return this.recipeShardPaths.get(ns);
-      const resourceUrl = this.resolveResourceUrl(`${PATHS.recipeShardsDir}/${ns}.json`);
-      const shard = await getSharedRequiredJsonResource(`index-shard-${ns}`, resourceUrl, `index-shard:${ns}`);
-      if (!Array.isArray(shard)) {
-        throw new Error(`recipes/shards/${ns}.json must be an array`);
+      const stem = String(file || '').trim();
+      if (!ns || !stem) return {};
+      const cacheKey = `${ns}/${stem}`;
+      if (this.routeShardCache.has(cacheKey)) return this.routeShardCache.get(cacheKey);
+      const resourceUrl = this.resolveResourceUrl(`${PATHS.recipesRoutesDir}/${ns}/${stem}.json`);
+      const raw = await getSharedRequiredJsonResource(`route-${cacheKey}`, resourceUrl, `route:${cacheKey}`);
+      if (!raw || typeof raw !== 'object' || !raw.routes || typeof raw.routes !== 'object') {
+        throw new Error(`recipes/routes/${ns}/${stem}.json must contain routes object`);
       }
-      const paths = shard.filter((entry) => typeof entry === 'string' && entry.length > 0);
-      this.recipeShardPaths.set(ns, paths);
-      return paths;
+      this.routeShardCache.set(cacheKey, raw.routes);
+      return raw.routes;
+    }
+
+    async findPackIndex(normalized, namespace, path) {
+      const mod = normalized.mods[namespace];
+      if (!mod) return null;
+      for (const file of mod.routes) {
+        const routes = await this.loadRouteShard(namespace, file);
+        if (Object.hasOwn(routes, path)) {
+          return routes[path];
+        }
+      }
+      return null;
     }
 
     async loadAllRecipeIds(index) {
       if (this.allRecipeIdsPromise) return this.allRecipeIdsPromise;
-      const normalized = parseRecipeIndex(index);
+      const normalized = index && index.mods ? index : await this.loadIndex();
       this.allRecipeIdsPromise = Promise.all(
         normalized.namespaces.map(async (namespace) => {
-          const paths = await this.loadRecipeShardPaths(namespace);
-          return paths;
+          const mod = normalized.mods[namespace];
+          const paths = new Set();
+          for (const file of mod.routes) {
+            const routes = await this.loadRouteShard(namespace, file);
+            Object.keys(routes).forEach((entry) => paths.add(entry));
+          }
+          return [...paths].map((entry) => `${namespace}:${entry}`);
         }),
-      ).then((groups) => groups.flatMap((paths, groupIndex) => (
-        paths.map((path) => `${normalized.namespaces[groupIndex]}:${path}`)
-      )));
+      ).then((groups) => groups.flat());
       return this.allRecipeIdsPromise;
     }
 
     async loadLayout(recipeId, index) {
-      const normalized = parseRecipeIndex(index);
+      await this.ensureBundle();
+      const normalized = index && index.mods ? index : parseRecipeIndex(this._bundle);
       const split = splitRecipeId(recipeId);
       if (!split || !normalized.namespaces.includes(split.namespace)) {
         throw new Error(`no layout for ${recipeId}`);
       }
-      const ids = await this.loadAllRecipeIds(normalized);
-      if (!ids.includes(recipeId)) throw new Error(`no layout for ${recipeId}`);
-      const layoutPath = layoutPathForRecipeId(recipeId);
-      const resourceUrl = this.resolveResourceUrl(layoutPath);
-      const layout = await getSharedRequiredJsonResource('layout', resourceUrl, 'layout');
+      const packIndex = await this.findPackIndex(normalized, split.namespace, split.path);
+      if (packIndex == null) {
+        throw new Error(`no layout for ${recipeId}`);
+      }
+      const mod = normalized.mods[split.namespace];
+      const packRef = mod.packs[packIndex];
+      if (!packRef || typeof packRef.file !== 'string' || !packRef.file) {
+        throw new Error(`no layout for ${recipeId}`);
+      }
+      const packUrl = this.resolveResourceUrl(
+        `${PATHS.recipesLayoutPacksDir}/${split.namespace}/${packRef.file}.json`,
+      );
+      const cacheKey = `pack-${split.namespace}-${packRef.file}`;
+      const pack = await getSharedRequiredJsonResource(cacheKey, packUrl, 'layout-pack');
+      const layout = pack.layouts && pack.layouts[split.path];
+      if (!layout) {
+        throw new Error(`no layout for ${recipeId}`);
+      }
       return {
         layout,
-        layoutPath,
+        layoutPath: `${PATHS.recipesLayoutPacksDir}/${split.namespace}/${packRef.file}.json`,
       };
     }
 
