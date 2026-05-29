@@ -1,3 +1,5 @@
+import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
@@ -21,4 +23,10 @@ test('validateBundleRoot rejects invalid bundle.json shape', () => {
     () => validateBundleRoot(path.join(fixtureRoot, 'missing-dir')),
     /bundle root does not exist/,
   );
+});
+
+test('validateBundleRoot rejects bundle.json that fails schema', () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'emi-validate-'));
+  fs.writeFileSync(path.join(tmp, 'bundle.json'), JSON.stringify({ schema: 99 }), 'utf8');
+  assert.throws(() => validateBundleRoot(tmp), /bundle\.json:/);
 });

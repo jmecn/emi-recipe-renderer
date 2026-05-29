@@ -18,4 +18,4 @@ import { validateBundleRoot, printValidationOk } from 'emi-recipe-renderer/valid
 printValidationOk(validateBundleRoot('/path/to/emi-bundle-root'));
 ```
 
-`validateBundleRoot` checks each JSON file against schema and runs bundle-wide rules (routes ↔ layouts, file sizes, required assets). The browser build does not run this; use it in CI or before deploy.
+`validateBundleRoot` checks `bundle.json` and every route / layout-pack file listed in the manifest against the JSON Schemas in `schemas/`. It does not enforce export-time size budgets, route↔layout bijection, or presence of icons/items/lang assets. The browser build does not run this; use it in CI or before deploy.
