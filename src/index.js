@@ -13,7 +13,11 @@ import {
   hasMinecraftFormatting,
   stripMinecraftFormatting,
 } from './minecraft-text.js';
-import { translateComposedRegistry } from './gtceu-translate.js';
+import {
+  isGtceuComposedNamespace,
+  splitRegistryId,
+  translateComposedRegistry,
+} from './gtceu-translate.js';
 
   const PATHS = {
     bundle: 'bundle.json',
@@ -768,21 +772,25 @@ import { translateComposedRegistry } from './gtceu-translate.js';
       const registryLabel = this._lookupRegistryLabel(bare, kind);
       if (registryLabel) return registryLabel;
 
+      const langTable = {
+        ...this._activeLang.fallback,
+        ...this._activeLang.current,
+      };
+      const translateKey = (k) => this.translateKey(k);
+      const { namespace } = splitRegistryId(bare);
+
+      // GTCEu: composed material+tagprefix labels must win over item.gtceu.* (often English from export fill).
+      if (isGtceuComposedNamespace(namespace) && (kind === 'item' || kind === 'block' || kind === 'fluid')) {
+        const composedFirst = translateComposedRegistry(bare, kind, translateKey, langTable);
+        if (composedFirst) return composedFirst;
+      }
+
       for (const key of registryLangKeyCandidates(kind, registryId)) {
         const label = this.translateKey(key);
         if (label !== key) return label;
       }
 
-      const langTable = {
-        ...this._activeLang.fallback,
-        ...this._activeLang.current,
-      };
-      const composed = translateComposedRegistry(
-        bare,
-        kind,
-        (k) => this.translateKey(k),
-        langTable,
-      );
+      const composed = translateComposedRegistry(bare, kind, translateKey, langTable);
       if (composed) return composed;
 
       return bare || String(registryId || '');
