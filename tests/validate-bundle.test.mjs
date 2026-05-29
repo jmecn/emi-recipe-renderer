@@ -8,7 +8,7 @@ import assert from 'node:assert/strict';
 import { validateBundleRoot } from '../src/validate/index.mjs';
 
 const fixtureRoot = path.resolve(
-  fileURLToPath(new URL('../../emi-bundle-optimize/tests/fixtures/minimal-bundle', import.meta.url)),
+  fileURLToPath(new URL('./fixtures/minimal-bundle', import.meta.url)),
 );
 
 test('validateBundleRoot accepts minimal-bundle fixture', () => {
