@@ -11,6 +11,7 @@
     "dist",
     "schemas",
     "src/gtceu-translate.js",
+    "src/registry-label.mjs",
     "src/validate",
     "SCHEMA.md",
     "CHANGELOG.md",
@@ -35,7 +36,8 @@
     "./validate/cli": "./src/validate/cli.mjs",
     "./schemas/bundle.schema.json": "./schemas/bundle.schema.json",
     "./schemas/recipe-meta.schema.json": "./schemas/recipe-meta.schema.json",
-    "./gtceu-translate.js": "./src/gtceu-translate.js"
+    "./gtceu-translate.js": "./src/gtceu-translate.js",
+    "./registry-label.mjs": "./src/registry-label.mjs"
   },
   "sideEffects": [
     "*.css"

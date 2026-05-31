@@ -13,11 +13,8 @@ import {
   hasMinecraftFormatting,
   stripMinecraftFormatting,
 } from './minecraft-text.js';
-import {
-  isComposedRegistryNamespace,
-  splitRegistryId,
-  translateComposedRegistry,
-} from './gtceu-translate.js';
+import { splitRegistryId } from './gtceu-translate.js';
+import { createRegistryLabelResolver, registryLangKeyCandidates as _registryLangKeyCandidates } from './registry-label.mjs';
 
   const PATHS = {
     bundle: 'bundle.json',
@@ -192,20 +189,8 @@ import {
     return String(locale || FALLBACK_LOCALE).trim().toLowerCase().replace('-', '_');
   }
 
-  /** Lang key order aligned with Forge {@code LangKeyCollector#addRegistryKeys}. */
   function registryLangKeyCandidates(kind, registryId) {
-    const id = stripRegistryId(registryId);
-    if (!id) return [];
-    const dotted = id.replace(/\//g, '.').replace(/:/g, '.');
-    let prefixes;
-    if (kind === 'fluid') {
-      prefixes = ['fluid', 'item', 'block'];
-    } else if (kind === 'block') {
-      prefixes = ['block', 'item'];
-    } else {
-      prefixes = ['item', 'block', 'fluid'];
-    }
-    return prefixes.map((p) => `${p}.${dotted}`);
+    return _registryLangKeyCandidates(kind, registryId);
   }
 
   function tagToLangKey(tag) {
@@ -858,26 +843,12 @@ import {
     }
 
     translateRegistry(registryId, kind = 'item') {
-      const bare = stripRegistryId(registryId);
       const tables = this._langTables || { fallback: {}, current: {} };
-      const langTable = { ...tables.fallback, ...tables.current };
-      const translateFn = (k) => this.translate(k);
-      const { namespace } = splitRegistryId(bare);
-
-      if (isComposedRegistryNamespace(namespace) && (kind === 'item' || kind === 'block' || kind === 'fluid')) {
-        const composedFirst = translateComposedRegistry(bare, kind, translateFn, langTable);
-        if (composedFirst) return composedFirst;
-      }
-
-      for (const candidate of registryLangKeyCandidates(kind, registryId)) {
-        const label = this.translate(candidate);
-        if (label !== candidate) return label;
-      }
-
-      const composed = translateComposedRegistry(bare, kind, translateFn, langTable);
-      if (composed) return composed;
-
-      return bare || String(registryId || '');
+      return createRegistryLabelResolver({
+        current: tables.current,
+        fallback: tables.fallback,
+        overrides: this._langOverrides,
+      }).translateRegistry(registryId, kind);
     }
 
     translateTag(tag) {
