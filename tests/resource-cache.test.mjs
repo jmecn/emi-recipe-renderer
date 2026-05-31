@@ -154,7 +154,10 @@ test('ensureTextureManifest enables gui textures used by tag popover', async () 
   };
 
   const renderer = new EmiRecipeRenderer({ baseUrl: '/emi-tex', locale: 'en_us' });
-  assert.equal(renderer.resolveTexture('emi:textures/gui/background.png'), null);
+  assert.match(
+    renderer.resolveTexture('emi:textures/gui/background.png'),
+    /\/textures\/emi\/textures\/gui\/background\.png$/,
+  );
   await renderer.ensureTextureManifest();
   assert.match(
     renderer.resolveTexture('emi:textures/gui/background.png'),

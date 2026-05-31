@@ -30,7 +30,8 @@ import {
     langDir: 'lang',
   };
 
-  const RECIPE_CARD_MARGIN = 8;
+  /** Per-side margin; must match MWE layout panel.margin (default 4). */
+  const RECIPE_CARD_MARGIN = 4;
 
   const TAG_CATALOG_TYPES = ['items', 'blocks', 'fluids'];
   const FALLBACK_LOCALE = 'en_us';
@@ -609,13 +610,18 @@ import {
   }
 
   function formatPopoverEntryTooltip(entry, renderer) {
-    if (!entry || entry.kind !== 'item') return '';
+    if (!entry) return '';
+    if (entry.kind === 'fluid' && entry.id) {
+      const label = renderer ? renderer.translateRegistry(entry.id, 'fluid') : entry.id;
+      return `${label} (${formatFluidMb(entry.amount)})`;
+    }
+    if (entry.kind !== 'item') return '';
     if (entry.fluid?.id) {
       const fid = entry.ids?.[0] || entry.fluid.id;
       const label = renderer ? renderer.translateRegistry(fid, 'fluid') : fid;
       return `${label} (${formatFluidMb(entry.fluid.amount)})`;
     }
-    const id = entry.ids?.[0];
+    const id = entry.ids?.[0] || entry.id;
     if (!id) return '';
     const label = renderer ? renderer.translateRegistry(id, 'item') : id;
     const count = formatItemCount(entry.amount);
@@ -631,8 +637,17 @@ import {
     return formatPopoverEntryTooltip(entry, renderer);
   }
 
-  function formatListPopoverTitle(entry, renderer) {
+  function formatListPopoverTitle(entry, renderer, widget) {
+    const displayId = widget?.interaction?.displayId || widget?.tagDisplayItem;
+    if (displayId && renderer) {
+      const label = renderer.translateRegistry(String(displayId), 'item');
+      const bare = stripRegistryId(displayId);
+      if (label && label !== bare) return label;
+    }
     if (!entry) return '';
+    if (entry.kind === 'fluid' && entry.id) {
+      return renderer ? renderer.translateRegistry(entry.id, 'fluid') : entry.id;
+    }
     if (entry.fluid?.id) {
       return renderer ? renderer.translateRegistry(entry.fluid.id, 'fluid') : entry.fluid.id;
     }
@@ -1349,9 +1364,18 @@ import {
     }
 
     resolveTexture(id) {
-      if (!id || !this.textureManifest) return null;
-      const rel = this.textureManifest[id];
+      if (!id) return null;
+      const rel = this.textureManifest?.[id]
+        || EmiRecipeRenderer._fallbackTextureRel(id);
       return rel ? this.resolveResourceUrl(`${PATHS.texturesDir}/${rel}`) : null;
+    }
+
+    /** GUI sprites used by tag/list popovers when manifest is absent but PNGs exist. */
+    static _fallbackTextureRel(id) {
+      if (id === 'emi:textures/gui/background.png' || id === 'emi:textures/gui/widgets.png') {
+        return id.replace(':', '/');
+      }
+      return null;
     }
 
     /** EMI recipe panel nine-patch: BACKGROUND @ u=27,v=0 corner=4 center=1 */
@@ -1779,7 +1803,7 @@ import {
 
     static _displaySizeFromMeta(meta, imageScale) {
       const scale = imageScale ?? 2;
-      const margin = RECIPE_CARD_MARGIN;
+      const margin = Number.isFinite(meta.margin) ? meta.margin : RECIPE_CARD_MARGIN;
       const frameW = (meta.width ?? 0) + margin * 2;
       const frameH = (meta.height ?? 0) + margin * 2;
       return {
@@ -2194,7 +2218,8 @@ import {
     if (showTagMark) renderer.appendTagIndicator(inner);
 
     cell.appendChild(inner);
-    cell.addEventListener('mouseenter', () => showTooltip(spec.tooltip, cell, renderer._tooltipEl));
+    const tooltipText = spec.tooltip || '';
+    cell.addEventListener('mouseenter', () => showTooltip(tooltipText, cell, renderer._tooltipEl));
     cell.addEventListener('mouseleave', () => hideTooltip(renderer._tooltipEl));
     cell.addEventListener('focus', () => showTooltip(spec.tooltip, cell, renderer._tooltipEl));
     cell.addEventListener('blur', () => hideTooltip(renderer._tooltipEl));
@@ -2255,7 +2280,11 @@ import {
     headText.className = 'tag-popover-header-text';
     const titleEl = document.createElement('div');
     titleEl.className = 'tag-popover-title';
-    titleEl.textContent = title;
+    if (hasMinecraftFormatting(title)) {
+      applyMinecraftFormattedContent(titleEl, title);
+    } else {
+      titleEl.textContent = title;
+    }
     if (typeof onTitleClick === 'function') {
       titleEl.classList.add('tag-popover-title-link');
       titleEl.tabIndex = 0;
@@ -2361,7 +2390,7 @@ import {
     let featuredIndex = items.findIndex((item) => item.lookupKey === displayKey);
     if (featuredIndex < 0) featuredIndex = 0;
     await showIngredientPopover({
-      title: formatListPopoverTitle(display),
+      title: formatListPopoverTitle(display, renderer, widget),
       subtitle: `${items.length} ingredient options`,
       items,
       anchorEl,

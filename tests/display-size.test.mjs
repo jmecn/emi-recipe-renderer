@@ -16,10 +16,10 @@ test('_displaySizeFromLayout uses panel frame dimensions and scale', () => {
   assert.equal(size.height, 52);
 });
 
-test('_displaySizeFromMeta uses imageScale and recipe margin', () => {
-  const size = EmiRecipeRenderer._displaySizeFromMeta({ width: 144, height: 18 }, 2);
-  assert.equal(size.width, 320);
-  assert.equal(size.height, 68);
+test('_displaySizeFromMeta uses imageScale and meta margin', () => {
+  const size = EmiRecipeRenderer._displaySizeFromMeta({ width: 144, height: 18, margin: 4 }, 2);
+  assert.equal(size.width, 304);
+  assert.equal(size.height, 52);
 });
 
 test('createTankFluidFill renders fluid tiles from icon atlas', () => {
