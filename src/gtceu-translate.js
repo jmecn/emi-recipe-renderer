@@ -6,12 +6,16 @@
 /** Mod id for GregTech CEu composed names (tagprefix + material). */
 export const GTCEU_NAMESPACE = 'gtceu';
 
+/** TFG modpack materials use the same tagprefix + material.* compose rules as GTCEu. */
+export const TFG_NAMESPACE = 'tfg';
+
 /**
  * Registry namespaces resolved with mod-specific compose rules before flat `item.*` keys.
  * Add mods here when {@link translateComposedRegistry} gains matching rules (e.g. AE2, AFC).
  */
 export const COMPOSED_REGISTRY_NAMESPACES = new Set([
   GTCEU_NAMESPACE,
+  TFG_NAMESPACE,
 ]);
 
 /** Fluid lang templates (FluidStorageKeys.translationKeyFunction). */
@@ -50,6 +54,16 @@ export const GTCEU_TAG_PREFIX_PATTERN_OVERRIDES = {
   long_rod: 'long_%s_rod',
   small_spring: 'small_%s_spring',
   fine_wire: 'fine_%s_wire',
+  wire_gt_single: '%s_single_wire',
+  wire_gt_double: '%s_double_wire',
+  wire_gt_quadruple: '%s_quadruple_wire',
+  wire_gt_octal: '%s_octal_wire',
+  wire_gt_hex: '%s_hex_wire',
+  cable_gt_single: '%s_single_cable',
+  cable_gt_double: '%s_double_cable',
+  cable_gt_quadruple: '%s_quadruple_cable',
+  cable_gt_octal: '%s_octal_cable',
+  cable_gt_hex: '%s_hex_cable',
   small_gear: 'small_%s_gear',
 };
 
@@ -243,7 +257,6 @@ function composeFromTemplate(templateKey, matLabel, translateKey) {
  */
 export function translateComposedFluid(namespace, path, translateKey, langTable = null) {
   if (!isComposedRegistryNamespace(namespace) || !path) return null;
-  if (!isGtceuComposedNamespace(namespace)) return null;
 
   const { storageKey, materialPath } = parseGtceuFluidPath(path);
   const matLabel = resolveMaterialLabel(namespace, materialPath, path, translateKey);
@@ -297,7 +310,6 @@ export function tryItemSpecificLang(namespace, path, translateKey, langTable = n
 
 export function translateComposedItem(namespace, path, translateKey, langTable = null) {
   if (!isComposedRegistryNamespace(namespace) || !path) return null;
-  if (!isGtceuComposedNamespace(namespace)) return null;
 
   const itemOverride = tryItemSpecificLang(namespace, path, translateKey, langTable);
   if (itemOverride) return itemOverride;
@@ -336,14 +348,14 @@ export function translateComposedRegistry(registryId, kind, translateKey, langTa
   return null;
 }
 
-/** @deprecated use {@link isComposedRegistryNamespace} */
+/** GT-style tagprefix + material compose (GTCEu and TFG). */
 export function isGtceuComposedNamespace(namespace) {
-  return namespace === GTCEU_NAMESPACE;
+  return isComposedRegistryNamespace(namespace);
 }
 
 export function collectComposedItemLangKeys(namespace, path, langTable = null) {
   const keys = new Set();
-  if (!isGtceuComposedNamespace(namespace) || !path) return keys;
+  if (!isComposedRegistryNamespace(namespace) || !path) return keys;
 
   keys.add(`item.${namespace}.${path}`);
 
@@ -379,7 +391,7 @@ export function collectComposedItemLangKeys(namespace, path, langTable = null) {
 
 export function collectComposedFluidLangKeys(namespace, path, langTable = null) {
   const keys = new Set();
-  if (!isGtceuComposedNamespace(namespace) || !path) return keys;
+  if (!isComposedRegistryNamespace(namespace) || !path) return keys;
 
   const { storageKey, materialPath } = parseGtceuFluidPath(path);
   const templateKey = pickGtceuFluidLangKey(storageKey, materialPath, langTable);

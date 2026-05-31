@@ -78,6 +78,32 @@ test('translateComposedItem resolves tagprefix material items', () => {
   assert.equal(label, '铝锭');
 });
 
+test('translateComposedItem resolves TFG material.tfg.* with shared tagprefix', () => {
+  const lang = {
+    'material.tfg.latex': '胶乳',
+    'tagprefix.ingot': '%s锭',
+  };
+  const label = translateComposedItem('tfg', 'latex_ingot', (k) => lang[k] ?? k, lang);
+  assert.equal(label, '胶乳锭');
+});
+
+test('translateComposedItem resolves wire_gt_single with modpack tagprefix key', () => {
+  const lang = {
+    'tagprefix.wire_gt_single': '1x%s导线',
+    'material.gtceu.gold': '金',
+  };
+  const label = translateComposedItem('gtceu', 'gold_single_wire', (k) => lang[k] ?? k, lang);
+  assert.equal(label, '1x金导线');
+});
+
+test('collectComposedItemLangKeys includes material.tfg for TFG ingots', () => {
+  const keys = collectComposedItemLangKeys('tfg', 'latex_ingot', {
+    'tagprefix.ingot': '%s锭',
+  });
+  assert.ok(keys.has('material.tfg.latex'));
+  assert.ok(keys.has('tagprefix.ingot'));
+});
+
 test('tryItemSpecificLang wins over tagprefix compose', () => {
   const lang = {
     ...zhCn,
@@ -114,6 +140,14 @@ test('tryItemSpecificLang fills %s from material.<path> without tagprefix patter
 test('translateComposedRegistry composes fluids before flat fluid.* keys', () => {
   const label = translateComposedRegistry('gtceu:liquid_air', 'fluid', t, zhCn);
   assert.equal(label, '液态空气');
+});
+
+test('collectComposedItemLangKeys includes wire_gt_single tagprefix for single wires', () => {
+  const keys = collectComposedItemLangKeys('gtceu', 'copper_single_wire', {
+    'tagprefix.wire_gt_single': '1x%s导线',
+  });
+  assert.ok(keys.has('tagprefix.wire_gt_single'));
+  assert.ok(keys.has('material.gtceu.copper'));
 });
 
 test('collectComposedItemLangKeys keeps bucket, item override, and tagprefix dependencies', () => {
