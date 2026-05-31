@@ -1,6 +1,6 @@
 {
   "name": "emi-recipe-renderer",
-  "version": "0.4.3",
+  "version": "0.5.0",
   "description": "Browser renderer for exported EMI recipe layouts",
   "license": "MIT",
   "engines": {
@@ -10,8 +10,10 @@
   "files": [
     "dist",
     "schemas",
+    "src/gtceu-translate.js",
     "src/validate",
     "SCHEMA.md",
+    "CHANGELOG.md",
     "LICENSE"
   ],
   "main": "./dist/emi.min.js",
@@ -32,9 +34,8 @@
     "./validate": "./src/validate/index.mjs",
     "./validate/cli": "./src/validate/cli.mjs",
     "./schemas/bundle.schema.json": "./schemas/bundle.schema.json",
-    "./schemas/route-shard.schema.json": "./schemas/route-shard.schema.json",
-    "./schemas/layout-pack.schema.json": "./schemas/layout-pack.schema.json",
-    "./schemas/layout.schema.json": "./schemas/layout.schema.json"
+    "./schemas/recipe-meta.schema.json": "./schemas/recipe-meta.schema.json",
+    "./gtceu-translate.js": "./src/gtceu-translate.js"
   },
   "sideEffects": [
     "*.css"

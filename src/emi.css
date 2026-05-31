@@ -42,6 +42,39 @@
   box-sizing: border-box;
 }
 
+.emi-recipe-card-stage {
+  line-height: 0;
+}
+
+.emi-recipe-card-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  pointer-events: none;
+  user-select: none;
+}
+
+.emi-recipe-hitlayer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.emi-recipe-hit {
+  position: absolute;
+  box-sizing: border-box;
+  pointer-events: auto;
+  cursor: pointer;
+  background: transparent;
+}
+
+.emi-recipe-hit:focus-visible {
+  outline: 1px solid var(--slot-hover, #6cb6ff);
+  outline-offset: -1px;
+}
+
 .emi-recipe-root {
   position: absolute;
   top: 0;

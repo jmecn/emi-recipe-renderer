@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/jmecn/emi-recipe-renderer/schemas/recipe-meta.schema.json",
+  "title": "EMI recipe meta (v2)",
+  "type": "object",
+  "required": ["schema", "id", "width", "height", "widgets"],
+  "properties": {
+    "schema": { "const": 1 },
+    "id": { "type": "string", "minLength": 3 },
+    "width": { "type": "number", "exclusiveMinimum": 0 },
+    "height": { "type": "number", "exclusiveMinimum": 0 },
+    "category": { "type": "string" },
+    "widgets": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/widget" }
+    }
+  },
+  "$defs": {
+    "widget": {
+      "type": "object",
+      "required": ["x", "y", "w", "h", "interaction"],
+      "properties": {
+        "x": { "type": "number" },
+        "y": { "type": "number" },
+        "w": { "type": "number", "exclusiveMinimum": 0 },
+        "h": { "type": "number", "exclusiveMinimum": 0 },
+        "role": { "type": "string" },
+        "interaction": { "$ref": "#/$defs/interaction" },
+        "tooltip": {
+          "type": "object",
+          "properties": {
+            "text": { "type": "string" }
+          }
+        }
+      }
+    },
+    "interaction": {
+      "type": "object",
+      "required": ["kind"],
+      "properties": {
+        "kind": {
+          "enum": ["item", "fluid", "tag", "list", "empty"]
+        }
+      }
+    }
+  }
+}

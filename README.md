@@ -11,8 +11,8 @@ npm install emi-recipe-renderer
 ```
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/emi-recipe-renderer@0.4.0/dist/emi.min.css">
-<script src="https://cdn.jsdelivr.net/npm/emi-recipe-renderer@0.4.0/dist/emi.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/emi-recipe-renderer@0.5.0/dist/emi.min.css">
+<script src="https://cdn.jsdelivr.net/npm/emi-recipe-renderer@0.5.0/dist/emi.min.js"></script>
 ```
 
 ## Usage

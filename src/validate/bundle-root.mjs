@@ -5,7 +5,7 @@ import { validateRecipeIndexSchemas } from './recipe-index.mjs';
 import { fail } from './util.mjs';
 
 /**
- * Validate EMI bundle JSON against published schemas (bundle, route shards, layout packs).
+ * Validate EMI bundle JSON against published schemas (bundle schema 2 + recipe meta).
  * @param {string} bundleRoot
  * @returns {{ bundle: object, recipeIds: string[], root: string }}
  */

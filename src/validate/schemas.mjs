@@ -7,17 +7,13 @@ import Ajv2020 from 'ajv/dist/2020.js';
 const schemasDir = path.join(fileURLToPath(new URL('.', import.meta.url)), '../../schemas');
 
 const SCHEMA_FILES = [
-  'layout.schema.json',
-  'route-shard.schema.json',
-  'layout-pack.schema.json',
   'bundle.schema.json',
+  'recipe-meta.schema.json',
 ];
 
 const SCHEMA_IDS = {
   bundle: 'https://github.com/jmecn/emi-recipe-renderer/schemas/bundle.schema.json',
-  'route-shard': 'https://github.com/jmecn/emi-recipe-renderer/schemas/route-shard.schema.json',
-  'layout-pack': 'https://github.com/jmecn/emi-recipe-renderer/schemas/layout-pack.schema.json',
-  layout: 'https://github.com/jmecn/emi-recipe-renderer/schemas/layout.schema.json',
+  'recipe-meta': 'https://github.com/jmecn/emi-recipe-renderer/schemas/recipe-meta.schema.json',
 };
 
 /**
@@ -36,7 +32,7 @@ let validatorCache;
 
 /**
  * @returns {{
- *   validate: (data: unknown, name: 'bundle' | 'route-shard' | 'layout-pack' | 'layout') => string | null
+ *   validate: (data: unknown, name: 'bundle' | 'recipe-meta') => string | null
  * }}
  */
 export function getSchemaValidator() {

@@ -4,8 +4,7 @@ import path from 'node:path';
 import { getSchemaValidator } from './schemas.mjs';
 import { fail, readJson } from './util.mjs';
 
-export const ROUTES_DIR = 'recipes/routes';
-export const LAYOUT_PACKS_DIR = 'recipes/layout-packs';
+export const RECIPES_DIR = 'recipes';
 
 const schemaValidator = getSchemaValidator();
 
@@ -28,53 +27,58 @@ export function readRecipeBundle(bundleRoot) {
   const rel = 'bundle.json';
   const bundle = readJsonAt(bundleRoot, rel);
   assertSchema(bundle, 'bundle', rel);
-  const { mods } = bundle;
-  const namespaces = Object.keys(mods)
-    .filter((id) => typeof id === 'string' && id.length > 0)
-    .sort();
-  return { bundle, mods, namespaces };
-}
-
-export function readRouteShard(bundleRoot, namespace, file) {
-  const rel = `${ROUTES_DIR}/${namespace}/${file}.json`;
-  const shard = readJsonAt(bundleRoot, rel);
-  assertSchema(shard, 'route-shard', rel);
-  return shard.routes;
-}
-
-export function readLayoutPack(bundleRoot, namespace, file) {
-  const rel = `${LAYOUT_PACKS_DIR}/${namespace}/${file}.json`;
-  const pack = readJsonAt(bundleRoot, rel);
-  assertSchema(pack, 'layout-pack', rel);
-  return { pack, rel };
+  if (bundle.schema !== 2) {
+    fail(`${rel}: schema must be 2`);
+  }
+  return { bundle };
 }
 
 /**
- * Schema-validate bundle.json and every route / layout-pack file it references.
+ * Validate bundle.json and recipe card files under recipes/<namespace>/.
  * @param {string} bundleRoot
- * @returns {{ bundle: object, recipeIds: string[] }}
  */
-export function validateRecipeIndexSchemas(bundleRoot) {
-  const { bundle, mods, namespaces } = readRecipeBundle(bundleRoot);
-  const recipeIds = [];
+function recipeImageExtension(bundle) {
+  const format = bundle.recipeImageFormat ?? 'png';
+  if (format !== 'png' && format !== 'webp') {
+    fail('bundle.json: recipeImageFormat must be "png" or "webp"');
+  }
+  return format;
+}
 
-  for (const ns of namespaces) {
-    const mod = mods[ns];
-    for (const routeFile of mod.routes) {
-      const routes = readRouteShard(bundleRoot, ns, routeFile);
-      for (const recipePath of Object.keys(routes)) {
-        recipeIds.push(`${ns}:${recipePath}`);
+export function validateRecipeIndexSchemas(bundleRoot) {
+  const { bundle } = readRecipeBundle(bundleRoot);
+  const imageExt = recipeImageExtension(bundle);
+  const recipeIds = [];
+  const recipesRoot = path.join(bundleRoot, RECIPES_DIR);
+  if (!fs.existsSync(recipesRoot)) {
+    fail(`missing directory: ${RECIPES_DIR}/`);
+  }
+
+  for (const namespace of fs.readdirSync(recipesRoot)) {
+    const nsDir = path.join(recipesRoot, namespace);
+    if (!fs.statSync(nsDir).isDirectory()) continue;
+    for (const file of fs.readdirSync(nsDir)) {
+      if (!file.endsWith('.json')) continue;
+      const stem = file.slice(0, -5);
+      const rel = `${RECIPES_DIR}/${namespace}/${file}`;
+      const meta = readJsonAt(bundleRoot, rel);
+      assertSchema(meta, 'recipe-meta', rel);
+      const imageRel = `${RECIPES_DIR}/${namespace}/${stem}.${imageExt}`;
+      if (!fs.existsSync(path.join(bundleRoot, imageRel))) {
+        fail(`missing ${imageExt} for meta: ${imageRel}`);
       }
-    }
-    for (const packRef of mod.packs) {
-      readLayoutPack(bundleRoot, ns, packRef.file);
+      if (!meta.id || typeof meta.id !== 'string') {
+        fail(`${rel}: missing id field`);
+      }
+      recipeIds.push(meta.id);
     }
   }
 
+  recipeIds.sort();
   return { bundle, recipeIds };
 }
 
-/** @deprecated alias; same as {@link validateRecipeIndexSchemas} */
+/** @deprecated alias */
 export function readRecipeIds(bundleRoot) {
   return validateRecipeIndexSchemas(bundleRoot);
 }

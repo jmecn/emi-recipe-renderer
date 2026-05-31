@@ -11,21 +11,24 @@ function countCalls(fetchCalls, suffix) {
   return fetchCalls.filter((url) => url.endsWith(suffix)).length;
 }
 
-const DEMO_MODS = {
-  demo: {
-    routes: ['000-abc123'],
-    packs: [{ file: '000-def456', bytes: 512 }],
-  },
-};
-
 function bundlePayload(extra = {}) {
   return {
+    schema: 2,
+    imageScale: 2,
+    recipeCount: 1,
     languages: ['en_us'],
     missingIconId: 'fieldguide:missing_icon',
-    mods: DEMO_MODS,
     ...extra,
   };
 }
+
+const DEMO_META = {
+  schema: 1,
+  id: 'demo:test',
+  width: 126,
+  height: 62,
+  widgets: [],
+};
 
 test('ensureBundle requires missingIconId in bundle.json', async () => {
   globalThis.fetch = async (url) => {
@@ -46,7 +49,7 @@ test('loadIndex reuses bundle and lang across renderer instances', async () => {
     const href = String(url);
     fetchCalls.push(href);
     if (href.endsWith('/bundle.json')) {
-      return jsonResponse(bundlePayload({ schema: 1, scale: 2 }));
+      return jsonResponse(bundlePayload());
     }
     if (href.endsWith('/lang/en_us.json')) return jsonResponse({});
     throw new Error(`unexpected url ${href}`);
@@ -62,35 +65,26 @@ test('loadIndex reuses bundle and lang across renderer instances', async () => {
   assert.equal(countCalls(fetchCalls, '/lang/en_us.json'), 1);
 });
 
-test('loadLayout reuses layout pack json across renderer instances', async () => {
+test('loadRecipeMeta reuses recipe meta json across renderer instances', async () => {
   const fetchCalls = [];
-  const index = { schema: 1, scale: 2, namespaces: ['demo'], mods: DEMO_MODS };
   globalThis.fetch = async (url) => {
     const href = String(url);
     fetchCalls.push(href);
     if (href.endsWith('/bundle.json')) {
-      return jsonResponse(bundlePayload({ schema: 1, scale: 2 }));
+      return jsonResponse(bundlePayload());
     }
-    if (href.endsWith('/recipes/routes/demo/000-abc123.json')) {
-      return jsonResponse({ routes: { test: 0 } });
-    }
-    if (href.endsWith('/recipes/layout-packs/demo/000-def456.json')) {
-      return jsonResponse({
-        layouts: {
-          test: { panel: { width: 126, height: 62 }, widgets: [] },
-        },
-      });
+    if (href.endsWith('/recipes/demo/test.json')) {
+      return jsonResponse(DEMO_META);
     }
     throw new Error(`unexpected url ${href}`);
   };
   const a = new EmiRecipeRenderer({ baseUrl: '/emi-b', locale: 'en_us' });
   const b = new EmiRecipeRenderer({ baseUrl: '/emi-b', locale: 'en_us' });
 
-  await a.loadLayout('demo:test', index);
-  await b.loadLayout('demo:test', index);
+  await a.loadRecipeMeta('demo:test');
+  await b.loadRecipeMeta('demo:test');
 
-  assert.equal(countCalls(fetchCalls, '/recipes/routes/demo/000-abc123.json'), 1);
-  assert.equal(countCalls(fetchCalls, '/recipes/layout-packs/demo/000-def456.json'), 1);
+  assert.equal(countCalls(fetchCalls, '/recipes/demo/test.json'), 1);
 });
 
 test('resourceVersion appends version to data urls and isolates shared cache per version', async () => {
@@ -99,7 +93,7 @@ test('resourceVersion appends version to data urls and isolates shared cache per
     const href = String(url);
     fetchCalls.push(href);
     if (href.includes('/bundle.json')) {
-      return jsonResponse(bundlePayload({ schema: 1, scale: 2 }));
+      return jsonResponse(bundlePayload());
     }
     if (href.includes('/lang/en_us.json')) return jsonResponse({});
     throw new Error(`unexpected url ${href}`);

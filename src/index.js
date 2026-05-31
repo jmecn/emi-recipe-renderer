@@ -14,64 +14,126 @@ import {
   stripMinecraftFormatting,
 } from './minecraft-text.js';
 import {
-  isGtceuComposedNamespace,
+  isComposedRegistryNamespace,
   splitRegistryId,
   translateComposedRegistry,
 } from './gtceu-translate.js';
 
   const PATHS = {
     bundle: 'bundle.json',
-    recipesRoutesDir: 'recipes/routes',
-    recipesLayoutPacksDir: 'recipes/layout-packs',
+    recipesDir: 'recipes',
     textureManifest: 'textures/manifest.json',
     texturesDir: 'textures',
     tagsDir: 'tags',
     tagsIndex: 'tags/index.json',
     iconsDir: 'icons',
     langDir: 'lang',
-    registryLabelsDir: 'registry-labels',
   };
+
+  const RECIPE_CARD_MARGIN = 8;
 
   const TAG_CATALOG_TYPES = ['items', 'blocks', 'fluids'];
   const FALLBACK_LOCALE = 'en_us';
   const MISSING_ICON_ID = 'fieldguide:missing_icon';
   const SHARED_RESOURCE_CACHE = new Map();
 
-  function parseRecipeIndex(raw) {
+  function pathSafeFromPath(pathPart) {
+    if (!pathPart || pathPart.length === 0) return 'unknown';
+    return String(pathPart).replace(/\//g, '_');
+  }
+
+  function normalizeRecipeImageFormat(raw) {
+    const value = raw == null || raw === '' ? 'png' : String(raw);
+    if (value !== 'png' && value !== 'webp') {
+      throw new Error('bundle.json recipeImageFormat must be "png" or "webp"');
+    }
+    return value;
+  }
+
+  function parseBundleV2(raw) {
     if (!raw || typeof raw !== 'object') {
       throw new Error('invalid bundle.json');
     }
-    if (raw.recipeIds && !raw.mods) {
-      throw new Error('bundle.json must contain mods object');
+    if (raw.schema !== 2) {
+      throw new Error('bundle.json schema must be 2');
     }
-    const { mods } = raw;
-    if (!mods || typeof mods !== 'object' || Array.isArray(mods)) {
-      throw new Error('bundle.json must contain mods object');
-    }
-    const namespaces = Object.keys(mods)
-      .filter((id) => typeof id === 'string' && id.length > 0)
-      .sort();
-    if (namespaces.length === 0) {
-      throw new Error('bundle.json mods must be non-empty');
-    }
-    for (const ns of namespaces) {
-      const mod = mods[ns];
-      if (!mod || typeof mod !== 'object') {
-        throw new Error(`bundle.json mods.${ns} must be an object`);
-      }
-      if (!Array.isArray(mod.routes) || mod.routes.length === 0) {
-        throw new Error(`bundle.json mods.${ns}.routes must be a non-empty array`);
-      }
-      if (!Array.isArray(mod.packs) || mod.packs.length === 0) {
-        throw new Error(`bundle.json mods.${ns}.packs must be a non-empty array`);
-      }
+    const imageScale = Number.isFinite(raw.imageScale) ? raw.imageScale : 2;
+    if (imageScale <= 0) {
+      throw new Error('bundle.json imageScale must be a positive number');
     }
     return {
-      schema: raw.schema ?? 1,
-      scale: Number.isFinite(raw.scale) ? raw.scale : 2,
-      namespaces,
-      mods,
+      schema: 2,
+      imageScale,
+      recipeImageFormat: normalizeRecipeImageFormat(raw.recipeImageFormat),
+      recipeCount: Number.isFinite(raw.recipeCount) ? raw.recipeCount : 0,
+      languages: Array.isArray(raw.languages) ? raw.languages : ['en_us'],
+      missingIconId: raw.missingIconId,
     };
+  }
+
+  function metaEntryToParsed(entry) {
+    if (!entry || typeof entry !== 'object') return null;
+    if (entry.kind === 'item' && entry.id) {
+      const parsed = {
+        kind: 'item',
+        ids: [stripRegistryId(String(entry.id))],
+        amount: itemAmount(entry.amount),
+      };
+      if (entry.nbt != null) {
+        parsed.nbt = typeof entry.nbt === 'string' ? entry.nbt : JSON.stringify(entry.nbt);
+      }
+      return parsed;
+    }
+    if (entry.kind === 'fluid' && entry.id) {
+      return {
+        kind: 'fluid',
+        id: stripRegistryId(String(entry.id)),
+        amount: fluidAmount(entry.amountMb),
+      };
+    }
+    return null;
+  }
+
+  function parseMetaInteraction(interaction, widget = {}) {
+    if (!interaction || typeof interaction !== 'object') return null;
+    const kind = interaction.kind;
+    if (kind === 'item') return metaEntryToParsed(interaction);
+    if (kind === 'fluid') return metaEntryToParsed(interaction);
+    if (kind === 'tag' && interaction.tag) {
+      const tagKind = interaction.tagKind || 'item';
+      const prefix = tagKind === 'fluid' ? 'fluid' : tagKind === 'block' ? 'block' : 'item';
+      return {
+        kind: 'tag',
+        tagType: tagKind,
+        tag: String(interaction.tag),
+        tagRef: `#${prefix}:${interaction.tag}`,
+      };
+    }
+    if (kind === 'list' && Array.isArray(interaction.entries)) {
+      const entries = interaction.entries.map(metaEntryToParsed).filter(Boolean);
+      return entries.length ? { kind: 'list', entries, featuredIndex: interaction.featuredIndex } : null;
+    }
+    if (kind === 'empty') return null;
+    return null;
+  }
+
+  function widgetShimFromMeta(widget) {
+    const shim = { ...widget };
+    const displayId = widget?.interaction?.displayId;
+    if (displayId) shim.tagDisplayItem = displayId;
+    if (widget?.interaction?.kind === 'list' && Number.isFinite(widget.interaction.featuredIndex)) {
+      shim.featuredIndex = widget.interaction.featuredIndex;
+    }
+    return shim;
+  }
+
+  function collectTagRefsFromMeta(meta) {
+    const refs = new Set();
+    for (const w of meta?.widgets || []) {
+      const shim = widgetShimFromMeta(w);
+      collectTagRefsFromParsed(parseMetaInteraction(w.interaction, shim), refs);
+    }
+    return refs;
   }
 
   function splitRecipeId(recipeId) {
@@ -527,6 +589,11 @@ import {
    */
   function resolveListDisplayEntry(parsed, widget) {
     if (!parsed?.entries?.length) return null;
+    const featuredIndex = widget?.featuredIndex ?? widget?.interaction?.featuredIndex
+      ?? parsed.featuredIndex;
+    if (Number.isFinite(featuredIndex) && parsed.entries[featuredIndex]) {
+      return parsed.entries[featuredIndex];
+    }
     const withFluid = parsed.entries.filter((e) => e.fluid?.amount != null);
     if (withFluid.length) {
       return withFluid.reduce((a, b) => (a.fluid.amount <= b.fluid.amount ? a : b));
@@ -687,14 +754,13 @@ import {
       this.injectIconStylesheets = options.injectIconStylesheets === true;
       this.locale = normalizeLocale(options.locale);
       this._langCache = new Map();
-      this._registryLabelsCache = new Map();
-      this._registryLabelsByLocale = null;
       this._langByLocale = options.lang && typeof options.lang === 'object' ? options.lang : null;
       this._langOverrides = options.translations && typeof options.translations === 'object'
         ? options.translations
         : {};
       this._bundle = null;
-      this._activeLang = { fallback: {}, current: {} };
+      /** In-memory lang tables: always load en_us first, then active locale (see {@link #_refreshActiveLang}). */
+      this._langTables = { fallback: {}, current: {} };
       this._tooltipEl = options.tooltipElement
         || (typeof options.tooltipElementId === 'string'
           ? document.getElementById(options.tooltipElementId)
@@ -724,10 +790,8 @@ import {
 
     _resetLoadedResources() {
       this._langCache.clear();
-      this._registryLabelsCache.clear();
-      this._registryLabelsByLocale = null;
       this._bundle = null;
-      this._activeLang = { fallback: {}, current: {} };
+      this._langTables = { fallback: {}, current: {} };
       this.textureManifest = null;
       this.textureManifestPromise = null;
       this.routeShardCache = new Map();
@@ -758,80 +822,52 @@ import {
       this._resetLoadedResources();
     }
 
-    translateKey(key) {
-      if (!key) return '';
+    /**
+     * Resolve a lang/*.json key: overrides → active locale → en_us → key.
+     * @param {string} key
+     * @returns {string}
+     */
+    translate(key) {
+      if (key == null || key === '') return '';
       const k = String(key);
       if (this._langOverrides[k] != null) return this._langOverrides[k];
-      if (this._activeLang.current[k] != null) return this._activeLang.current[k];
-      if (this._activeLang.fallback[k] != null) return this._activeLang.fallback[k];
+      const tables = this._langTables || { fallback: {}, current: {} };
+      if (tables.current[k] != null) return tables.current[k];
+      if (tables.fallback[k] != null) return tables.fallback[k];
       return k;
+    }
+
+    /** @deprecated use {@link #translate} */
+    translateKey(key) {
+      return this.translate(key);
     }
 
     translateRegistry(registryId, kind = 'item') {
       const bare = stripRegistryId(registryId);
-      const registryLabel = this._lookupRegistryLabel(bare, kind);
-      if (registryLabel) return registryLabel;
-
-      const langTable = {
-        ...this._activeLang.fallback,
-        ...this._activeLang.current,
-      };
-      const translateKey = (k) => this.translateKey(k);
+      const tables = this._langTables || { fallback: {}, current: {} };
+      const langTable = { ...tables.fallback, ...tables.current };
+      const translateFn = (k) => this.translate(k);
       const { namespace } = splitRegistryId(bare);
 
-      // GTCEu: composed material+tagprefix labels must win over item.gtceu.* (often English from export fill).
-      if (isGtceuComposedNamespace(namespace) && (kind === 'item' || kind === 'block' || kind === 'fluid')) {
-        const composedFirst = translateComposedRegistry(bare, kind, translateKey, langTable);
+      if (isComposedRegistryNamespace(namespace) && (kind === 'item' || kind === 'block' || kind === 'fluid')) {
+        const composedFirst = translateComposedRegistry(bare, kind, translateFn, langTable);
         if (composedFirst) return composedFirst;
       }
 
-      for (const key of registryLangKeyCandidates(kind, registryId)) {
-        const label = this.translateKey(key);
-        if (label !== key) return label;
+      for (const candidate of registryLangKeyCandidates(kind, registryId)) {
+        const label = this.translate(candidate);
+        if (label !== candidate) return label;
       }
 
-      const composed = translateComposedRegistry(bare, kind, translateKey, langTable);
+      const composed = translateComposedRegistry(bare, kind, translateFn, langTable);
       if (composed) return composed;
 
       return bare || String(registryId || '');
     }
 
-    _lookupRegistryLabel(registryId, kind) {
-      const table = this._registryLabelsByLocale;
-      if (!table) return null;
-      const bucket = kind === 'block' ? table.blocks : kind === 'fluid' ? table.fluids : table.items;
-      if (!bucket) return null;
-      return bucket[registryId] || null;
-    }
-
-    async ensureRegistryLabels(locale) {
-      const code = normalizeLocale(locale);
-      if (this._registryLabelsCache.has(code)) {
-        return this._registryLabelsCache.get(code);
-      }
-      const path = `${PATHS.registryLabelsDir}/${code}.json`;
-      const resourceUrl = this.resolveResourceUrl(path);
-      let raw = null;
-      try {
-        raw = await getSharedJsonResource('registry-labels', resourceUrl, null);
-      } catch {
-        raw = null;
-      }
-      const table = raw && typeof raw === 'object'
-        ? {
-          language: code,
-          items: raw.items && typeof raw.items === 'object' ? raw.items : {},
-          blocks: raw.blocks && typeof raw.blocks === 'object' ? raw.blocks : {},
-          fluids: raw.fluids && typeof raw.fluids === 'object' ? raw.fluids : {},
-        }
-        : null;
-      this._registryLabelsCache.set(code, table);
-      return table;
-    }
-
     translateTag(tag) {
       const key = tagToLangKey(tag);
-      const label = this.translateKey(key);
+      const label = this.translate(key);
       return label !== key ? label : tag;
     }
 
@@ -854,15 +890,14 @@ import {
 
     async _refreshActiveLang() {
       const fallbackTable = await this.ensureLang(FALLBACK_LOCALE);
-      const locale = this.locale;
+      const locale = normalizeLocale(this.locale);
       const currentTable = locale === FALLBACK_LOCALE
         ? fallbackTable
         : await this.ensureLang(locale);
-      this._activeLang = {
+      this._langTables = {
         fallback: fallbackTable,
         current: currentTable,
       };
-      this._registryLabelsByLocale = await this.ensureRegistryLabels(locale);
     }
 
     async setLocale(locale) {
@@ -889,88 +924,48 @@ import {
         throw new Error('bundle.json missing required field: missingIconId');
       }
       this.missingIconId = String(declaredMissing);
+      this.recipeImageFormat = normalizeRecipeImageFormat(this._bundle.recipeImageFormat);
       return this._bundle;
+    }
+
+    recipeCardImageExtension() {
+      return this.recipeImageFormat === 'webp' ? 'webp' : 'png';
     }
 
     async loadIndex() {
       await this.ensureBundle();
       await this._refreshActiveLang();
-      return parseRecipeIndex(this._bundle);
+      return parseBundleV2(this._bundle);
     }
 
-    async loadRouteShard(namespace, file) {
-      const ns = String(namespace || '').trim();
-      const stem = String(file || '').trim();
-      if (!ns || !stem) return {};
-      const cacheKey = `${ns}/${stem}`;
-      if (this.routeShardCache.has(cacheKey)) return this.routeShardCache.get(cacheKey);
-      const resourceUrl = this.resolveResourceUrl(`${PATHS.recipesRoutesDir}/${ns}/${stem}.json`);
-      const raw = await getSharedRequiredJsonResource(`route-${cacheKey}`, resourceUrl, `route:${cacheKey}`);
-      if (!raw || typeof raw !== 'object' || !raw.routes || typeof raw.routes !== 'object') {
-        throw new Error(`recipes/routes/${ns}/${stem}.json must contain routes object`);
-      }
-      this.routeShardCache.set(cacheKey, raw.routes);
-      return raw.routes;
-    }
-
-    async findPackIndex(normalized, namespace, path) {
-      const mod = normalized.mods[namespace];
-      if (!mod) return null;
-      for (const file of mod.routes) {
-        const routes = await this.loadRouteShard(namespace, file);
-        if (Object.hasOwn(routes, path)) {
-          return routes[path];
-        }
-      }
-      return null;
-    }
-
-    async loadAllRecipeIds(index) {
-      if (this.allRecipeIdsPromise) return this.allRecipeIdsPromise;
-      const normalized = index && index.mods ? index : await this.loadIndex();
-      this.allRecipeIdsPromise = Promise.all(
-        normalized.namespaces.map(async (namespace) => {
-          const mod = normalized.mods[namespace];
-          const paths = new Set();
-          for (const file of mod.routes) {
-            const routes = await this.loadRouteShard(namespace, file);
-            Object.keys(routes).forEach((entry) => paths.add(entry));
-          }
-          return [...paths].map((entry) => `${namespace}:${entry}`);
-        }),
-      ).then((groups) => groups.flat());
-      return this.allRecipeIdsPromise;
-    }
-
-    async loadLayout(recipeId, index) {
-      await this.ensureBundle();
-      const normalized = index && index.mods ? index : parseRecipeIndex(this._bundle);
+    resolveRecipeCard(recipeId) {
       const split = splitRecipeId(recipeId);
-      if (!split || !normalized.namespaces.includes(split.namespace)) {
-        throw new Error(`no layout for ${recipeId}`);
+      if (!split) {
+        throw new Error(`invalid recipe id: ${recipeId}`);
       }
-      const packIndex = await this.findPackIndex(normalized, split.namespace, split.path);
-      if (packIndex == null) {
-        throw new Error(`no layout for ${recipeId}`);
-      }
-      const mod = normalized.mods[split.namespace];
-      const packRef = mod.packs[packIndex];
-      if (!packRef || typeof packRef.file !== 'string' || !packRef.file) {
-        throw new Error(`no layout for ${recipeId}`);
-      }
-      const packUrl = this.resolveResourceUrl(
-        `${PATHS.recipesLayoutPacksDir}/${split.namespace}/${packRef.file}.json`,
-      );
-      const cacheKey = `pack-${split.namespace}-${packRef.file}`;
-      const pack = await getSharedRequiredJsonResource(cacheKey, packUrl, 'layout-pack');
-      const layout = pack.layouts && pack.layouts[split.path];
-      if (!layout) {
-        throw new Error(`no layout for ${recipeId}`);
-      }
+      const format = this.recipeImageFormat
+        ?? normalizeRecipeImageFormat(this._bundle?.recipeImageFormat);
+      const ext = format === 'webp' ? 'webp' : 'png';
+      const pathSafe = pathSafeFromPath(split.path);
+      const rel = `${PATHS.recipesDir}/${split.namespace}/${pathSafe}`;
       return {
-        layout,
-        layoutPath: `${PATHS.recipesLayoutPacksDir}/${split.namespace}/${packRef.file}.json`,
+        recipeId,
+        namespace: split.namespace,
+        pathSafe,
+        imageFormat: format,
+        imageUrl: this.resolveResourceUrl(`${rel}.${ext}`),
+        metaUrl: this.resolveResourceUrl(`${rel}.json`),
       };
+    }
+
+    async loadRecipeMeta(recipeId) {
+      const { metaUrl } = this.resolveRecipeCard(recipeId);
+      const cacheKey = `recipe-meta:${recipeId}`;
+      return getSharedRequiredJsonResource(cacheKey, metaUrl, 'recipe-meta');
+    }
+
+    async loadAllRecipeIds() {
+      throw new Error('loadAllRecipeIds is not available for bundle schema 2');
     }
 
     async ensureTextureManifest() {
@@ -1247,6 +1242,12 @@ import {
       await Promise.all([...refs].map((ref) => this.loadTagMembers(ref)));
     }
 
+    async preloadTagMembersForMeta(meta) {
+      const refs = collectTagRefsFromMeta(meta);
+      if (refs.size === 0) return;
+      await Promise.all([...refs].map((ref) => this.loadTagMembers(ref)));
+    }
+
     /** Item or fluid id to open in a host app (e.g. recipe-viewer item detail). */
     resolveSlotNavigateItemId(parsed, widget) {
       if (!parsed) return null;
@@ -1517,7 +1518,7 @@ import {
       el.className = 'emi-text';
       el.style.left = `${(w.x || 0) + (w.baseX || 0)}px`;
       el.style.top = `${(w.y || 0) + (w.baseY || 0)}px`;
-      const raw = w.translationKey ? this.translateKey(w.translationKey) : (w.text || '');
+      const raw = w.translationKey ? this.translate(w.translationKey) : (w.text || '');
       const baseColor = w.color != null
         ? `#${(w.color & 0xffffff).toString(16).padStart(6, '0')}`
         : null;
@@ -1584,9 +1585,12 @@ import {
       inner.appendChild(mark);
     }
 
-    bindSlotHover(el, ingredient, w, parsed) {
+    bindSlotHover(el, ingredient, w, parsed, tooltipOverride) {
       el.tabIndex = 0;
       const tooltipFor = () => {
+        if (typeof tooltipOverride === 'string' && tooltipOverride.length > 0) {
+          return tooltipOverride;
+        }
         if (parsed?.kind === 'tag' && parsed.tag) {
           const tagLabel = this.translateTag(parsed.tag);
           return `Tag: ${tagLabel}`;
@@ -1621,7 +1625,7 @@ import {
         el.title = `Click to view tag: ${this.translateTag(parsed.tag)}`;
         el.addEventListener('click', (e) => {
           e.stopPropagation();
-          showTagPopover(parsed.tag, el, this);
+          showTagPopover(parsed.tag, el, this, parsed.tagType || 'item');
         });
       } else if (parsed?.kind === 'list' && parsed.entries.length > 1) {
         el.classList.add('emi-slot-tag-input');
@@ -1631,6 +1635,13 @@ import {
           showListPopover(parsed, w, el, this);
         });
       }
+    }
+
+    bindInteraction(el, widget) {
+      const shim = widgetShimFromMeta(widget);
+      const parsed = parseMetaInteraction(widget.interaction, shim);
+      const tooltipOverride = widget.tooltip?.text;
+      this.bindSlotHover(el, null, shim, parsed, tooltipOverride);
     }
 
     renderTank(w) {
@@ -1756,7 +1767,7 @@ import {
 
     static _displaySizeFromLayout(layout) {
       const panel = layout.panel || {};
-      const margin = panel.margin ?? 4;
+      const margin = panel.margin ?? RECIPE_CARD_MARGIN;
       const scale = layout.scale ?? 2;
       const frameW = panel.frameWidth ?? (panel.width ?? 0) + margin * 2;
       const frameH = panel.frameHeight ?? (panel.height ?? 0) + margin * 2;
@@ -1766,24 +1777,75 @@ import {
       };
     }
 
+    static _displaySizeFromMeta(meta, imageScale) {
+      const scale = imageScale ?? 2;
+      const margin = RECIPE_CARD_MARGIN;
+      const frameW = (meta.width ?? 0) + margin * 2;
+      const frameH = (meta.height ?? 0) + margin * 2;
+      return {
+        width: frameW * scale,
+        height: frameH * scale,
+        scale,
+        margin,
+      };
+    }
+
     /** Reserve block size on the mount node before paint (grid row height). */
-    static _reserveContainerSize(el, layout) {
-      const { width, height } = EmiRecipeRenderer._displaySizeFromLayout(layout);
+    static _reserveContainerSize(el, width, height) {
       el.style.width = `${width}px`;
       el.style.minHeight = `${height}px`;
       el.style.boxSizing = 'border-box';
     }
 
-    static async _mountOne(renderer, index, el, recipeId) {
-      const { layout } = await renderer.loadLayout(recipeId, index);
-      const size = EmiRecipeRenderer._displaySizeFromLayout(layout);
-      EmiRecipeRenderer._reserveContainerSize(el, layout);
-      await renderer.render(el, layout);
-      el.dataset.emiMounted = '1';
+    static _mountRecipeCardDom(renderer, el, recipeId, meta, card, bundle) {
+      const size = EmiRecipeRenderer._displaySizeFromMeta(meta, bundle.imageScale);
+      el.replaceChildren();
       el.classList.remove('emi-recipe-pending');
+      el.dataset.emiMounted = '1';
       el.style.width = `${size.width}px`;
       el.style.minWidth = `${size.width}px`;
       el.style.minHeight = `${size.height}px`;
+
+      const stage = document.createElement('div');
+      stage.className = 'emi-recipe-stage emi-recipe-card-stage';
+      stage.style.width = `${size.width}px`;
+      stage.style.height = `${size.height}px`;
+
+      const img = document.createElement('img');
+      img.className = 'emi-recipe-card-image';
+      img.src = card.imageUrl;
+      img.alt = recipeId;
+      img.loading = 'lazy';
+      img.decoding = 'async';
+      img.width = size.width;
+      img.height = size.height;
+
+      const hitLayer = document.createElement('div');
+      hitLayer.className = 'emi-recipe-hitlayer';
+      const marginPx = size.margin * size.scale;
+      for (const widget of meta.widgets || []) {
+        if (!widget.interaction || widget.interaction.kind === 'empty') continue;
+        const hit = document.createElement('div');
+        hit.className = 'emi-recipe-hit';
+        hit.style.left = `${marginPx + (widget.x ?? 0) * size.scale}px`;
+        hit.style.top = `${marginPx + (widget.y ?? 0) * size.scale}px`;
+        hit.style.width = `${(widget.w ?? 18) * size.scale}px`;
+        hit.style.height = `${(widget.h ?? 18) * size.scale}px`;
+        renderer.bindInteraction(hit, widget);
+        hitLayer.appendChild(hit);
+      }
+
+      stage.append(img, hitLayer);
+      el.appendChild(stage);
+    }
+
+    static async _mountOne(renderer, bundle, el, recipeId) {
+      const card = renderer.resolveRecipeCard(recipeId);
+      const meta = await renderer.loadRecipeMeta(recipeId);
+      const size = EmiRecipeRenderer._displaySizeFromMeta(meta, bundle.imageScale);
+      EmiRecipeRenderer._reserveContainerSize(el, size.width, size.height);
+      await renderer.preloadTagMembersForMeta(meta);
+      EmiRecipeRenderer._mountRecipeCardDom(renderer, el, recipeId, meta, card, bundle);
     }
 
     static _emitMountProgress(options, stats, total) {
@@ -1799,7 +1861,7 @@ import {
 
     /**
      * Load and render one {@code .emi-recipe} from {@code data-recipe-id}
-     * (via layouts-index → layout JSON). Layout paths are not part of the public API.
+     * (PNG + recipe meta JSON). Card paths are resolved from recipeId only.
      */
     static async mountElement(el, options = {}) {
       const recipeId = (el.dataset.recipeId || options.recipeId || '').trim();
@@ -1858,7 +1920,7 @@ import {
       } catch (e) {
         for (const { el, recipeId } of items) {
           stats.failed += 1;
-          EmiRecipeRenderer._showMountError(el, recipeId, `layouts-index: ${e.message}`);
+          EmiRecipeRenderer._showMountError(el, recipeId, `bundle: ${e.message}`);
           stats.errors.push({ recipeId, error: e });
         }
         EmiRecipeRenderer._emitMountProgress(options, stats, items.length);
@@ -1926,7 +1988,7 @@ import {
       } catch (e) {
         for (const { el, recipeId } of items) {
           stats.failed += 1;
-          EmiRecipeRenderer._showMountError(el, recipeId, `layouts-index: ${e.message}`);
+          EmiRecipeRenderer._showMountError(el, recipeId, `bundle: ${e.message}`);
           stats.errors.push({ recipeId, error: e });
         }
         EmiRecipeRenderer._emitMountProgress(options, stats, items.length);

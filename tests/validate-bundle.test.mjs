@@ -15,7 +15,7 @@ test('validateBundleRoot accepts minimal-bundle fixture', () => {
   const result = validateBundleRoot(fixtureRoot);
   assert.equal(result.recipeIds.length, 1);
   assert.equal(result.recipeIds[0], 'test:smoke');
-  assert.equal(result.bundle.schema, 1);
+  assert.equal(result.bundle.schema, 2);
 });
 
 test('validateBundleRoot rejects invalid bundle.json shape', () => {
