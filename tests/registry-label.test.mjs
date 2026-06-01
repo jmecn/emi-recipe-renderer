@@ -20,9 +20,10 @@ test('registryNamespace defaults to minecraft', () => {
   assert.equal(registryNamespace('gtceu:ingot'), 'gtceu');
 });
 
-test('COMPOSED_FIRST_NAMESPACES includes gtceu and tfg', () => {
+test('COMPOSED_FIRST_NAMESPACES includes gtceu, tfg, and greate', () => {
   assert.equal(COMPOSED_FIRST_NAMESPACES.has('gtceu'), true);
   assert.equal(COMPOSED_FIRST_NAMESPACES.has('tfg'), true);
+  assert.equal(COMPOSED_FIRST_NAMESPACES.has('greate'), true);
   assert.equal(COMPOSED_FIRST_NAMESPACES.has('afc'), false);
 });
 
@@ -51,4 +52,18 @@ test('gtceu: composed labels before exported nameKey', () => {
     },
   });
   assert.equal(resolver.translateRegistry('gtceu:aluminium_ingot', 'item'), '铝锭');
+});
+
+test('gtceu: skips exported nameKey that still contains %s', () => {
+  const resolver = createRegistryLabelResolver({
+    current: {
+      'tagprefix.poor_raw': '贫瘠粗%s',
+      'material.gtceu.borax': '硼砂',
+    },
+    fallback: {},
+    nameKeysByRegistryId: {
+      'gtceu:poor_raw_borax': 'tagprefix.poor_raw',
+    },
+  });
+  assert.equal(resolver.translateRegistry('gtceu:poor_raw_borax', 'item'), '贫瘠粗硼砂');
 });

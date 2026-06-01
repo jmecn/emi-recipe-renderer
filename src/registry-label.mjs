@@ -11,7 +11,7 @@ import {
 export const FALLBACK_LOCALE = 'en_us';
 
 /** Namespaces that resolve labels via material + tagprefix (or fluid templates) before flat keys. */
-export const COMPOSED_FIRST_NAMESPACES = new Set(['gtceu', 'tfg']);
+export const COMPOSED_FIRST_NAMESPACES = new Set(['gtceu', 'tfg', 'greate']);
 
 export function normalizeLocale(locale) {
   return String(locale || FALLBACK_LOCALE).trim().toLowerCase().replace('-', '_');
@@ -89,15 +89,19 @@ export function createRegistryLabelResolver(options) {
     return k;
   }
 
+  function isResolvedLabel(label, key) {
+    return label != null && label !== key && !String(label).includes('%s');
+  }
+
   function translateDefaultRules(bare, registryId, kind) {
     const exportedKey = nameKeysByRegistryId[bare];
     if (exportedKey) {
       const label = translate(exportedKey);
-      if (label !== exportedKey) return label;
+      if (isResolvedLabel(label, exportedKey)) return label;
     }
     for (const candidate of registryLangKeyCandidates(kind, registryId)) {
       const label = translate(candidate);
-      if (label !== candidate) return label;
+      if (isResolvedLabel(label, candidate)) return label;
     }
     return bare || String(registryId || '');
   }
@@ -112,6 +116,7 @@ export function createRegistryLabelResolver(options) {
       switch (ns) {
         case 'gtceu':
         case 'tfg':
+        case 'greate':
           if (isRegistryKind(kind)) {
             const composed = translateComposedRegistry(bare, kind, translateFn, merged);
             if (composed) return composed;

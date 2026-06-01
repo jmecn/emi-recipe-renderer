@@ -9,6 +9,9 @@ export const GTCEU_NAMESPACE = 'gtceu';
 /** TFG modpack materials use the same tagprefix + material.* compose rules as GTCEu. */
 export const TFG_NAMESPACE = 'tfg';
 
+/** Greate uses GTCEu materials + tagprefix compose (rose quartz ores, etc.). */
+export const GREATE_NAMESPACE = 'greate';
+
 /**
  * Registry namespaces resolved with mod-specific compose rules before flat `item.*` keys.
  * Add mods here when {@link translateComposedRegistry} gains matching rules (e.g. AE2, AFC).
@@ -16,6 +19,7 @@ export const TFG_NAMESPACE = 'tfg';
 export const COMPOSED_REGISTRY_NAMESPACES = new Set([
   GTCEU_NAMESPACE,
   TFG_NAMESPACE,
+  GREATE_NAMESPACE,
 ]);
 
 /** Fluid lang templates (FluidStorageKeys.translationKeyFunction). */
@@ -76,13 +80,40 @@ export const GTCEU_TAG_PREFIX_PATTERN_OVERRIDES = {
   pipe_normal_item: '%s_normal_item_pipe',
   pipe_large_item: '%s_large_item_pipe',
   pipe_huge_item: '%s_huge_item_pipe',
-  pipe_small_restrictive: '%s_small_restrictive_pipe',
-  pipe_normal_restrictive: '%s_normal_restrictive_pipe',
-  pipe_large_restrictive: '%s_large_restrictive_pipe',
-  pipe_huge_restrictive: '%s_huge_restrictive_pipe',
+  pipe_small_restrictive: '%s_small_restrictive_item_pipe',
+  pipe_normal_restrictive: '%s_normal_restrictive_item_pipe',
+  pipe_large_restrictive: '%s_large_restrictive_item_pipe',
+  pipe_huge_restrictive: '%s_huge_restrictive_item_pipe',
+  poor_raw: 'poor_raw_%s',
+  rich_raw: 'rich_raw_%s',
+  dusty_raw: 'dusty_raw_%s',
+  repair_kit: 'repair_kit_%s',
+  unfired_repair_kit: 'unfired_repair_kit_%s',
 };
 
-/** GTToolType.idFormat overrides (default is {@code %s_<name>}). */
+/** Item paths whose {@code item.<ns>.<path>} template uses {@code %s} as an empty in-game prefix (fluid cells, etc.). */
+const EMPTY_PLACEHOLDER_ITEM_PATHS = new Set([
+  'universal_fluid_cell',
+  'turbine_rotor',
+  'fish_roe',
+]);
+
+/** GregTech voltage tiers used as registry id prefixes (GTToolType.idFormat). */
+export const GT_VOLTAGE_TIER_PREFIXES = [
+  'lv',
+  'mv',
+  'hv',
+  'ev',
+  'iv',
+  'luv',
+  'zpm',
+  'uv',
+  'uev',
+  'uhv',
+  'max',
+];
+
+/** GTToolType.idFormat overrides when registry id does not match {@code <tier>_%s_<rest>}. */
 export const GT_TOOL_ID_FORMAT_OVERRIDES = {
   lv_drill: 'lv_%s_drill',
   mv_drill: 'mv_%s_drill',
@@ -103,6 +134,54 @@ export const GT_TOOL_ID_FORMAT_OVERRIDES = {
   iv_screwdriver: 'iv_%s_screwdriver',
 };
 
+/**
+ * Electric tools registered by gtmutils ({@code UtilToolType}, assets under {@code item.gtceu.tool.*}).
+ * idFormat is always {@code <tier>_%s_<tool>} except wirecutter → {@code <tier>_%s_wire_cutter}.
+ * @see net.neganote.gtutilities.common.tools.UtilToolType (gtmutils 2.9.x)
+ */
+export const GTMUTILS_ELECTRIC_TOOL_NAMES = [
+  'mv_screwdriver',
+  'ev_screwdriver',
+  'luv_screwdriver',
+  'zpm_screwdriver',
+  'mv_chainsaw',
+  'ev_chainsaw',
+  'luv_chainsaw',
+  'zpm_chainsaw',
+  'luv_drill',
+  'zpm_drill',
+  'mv_wrench',
+  'ev_wrench',
+  'luv_wrench',
+  'zpm_wrench',
+  'mv_wirecutter',
+  'ev_wirecutter',
+  'luv_wirecutter',
+  'zpm_wirecutter',
+  'mv_buzzsaw',
+  'hv_buzzsaw',
+  'ev_buzzsaw',
+  'iv_buzzsaw',
+  'luv_buzzsaw',
+  'zpm_buzzsaw',
+];
+
+/**
+ * Registry id pattern for {@code item.gtceu.tool.<toolName>} (GTToolType.idFormat).
+ * Tiered electric tools use {@code <tier>_%s_<tool>} (e.g. {@code ev_%s_buzzsaw}).
+ */
+export function defaultGtToolIdPattern(toolName) {
+  const override = GT_TOOL_ID_FORMAT_OVERRIDES[toolName];
+  if (override) return override;
+  const wirecutter = String(toolName).match(
+    /^(lv|mv|hv|ev|iv|luv|zpm|uv|uev|uhv|max)_wirecutter$/,
+  );
+  if (wirecutter) return `${wirecutter[1]}_%s_wire_cutter`;
+  const tiered = String(toolName).match(/^(lv|mv|hv|ev|iv|luv|zpm|uv|uev|uhv|max)_(.+)$/);
+  if (tiered) return `${tiered[1]}_%s_${tiered[2]}`;
+  return `%s_${toolName}`;
+}
+
 export function splitRegistryId(registryId) {
   const bare = String(registryId || '').trim();
   const idx = bare.indexOf(':');
@@ -115,6 +194,46 @@ export function splitRegistryId(registryId) {
 export function formatLangTemplate(template, ...args) {
   let i = 0;
   return String(template ?? '').replace(/%s/g, () => (i < args.length ? args[i++] : '%s'));
+}
+
+function formatLangTemplateTrimmed(template, ...args) {
+  return formatLangTemplate(template, ...args).trim();
+}
+
+/**
+ * GT fluid cells / universal cell: {@code %s} is often an empty in-game prefix.
+ * Per-material cells may embed the material in the template ({@code %s钢单元}) or only in {@code %s} ({@code %s流体单元}).
+ */
+function tryEmptyPlaceholderItemLang(namespace, path, translateKey) {
+  if (!path) return null;
+  const itemKey = `item.${namespace}.${path}`;
+  const itemTemplate = resolveKey(translateKey, itemKey);
+  if (!itemTemplate || !itemTemplate.includes('%s')) return null;
+
+  if (EMPTY_PLACEHOLDER_ITEM_PATHS.has(path)) {
+    return formatLangTemplateTrimmed(itemTemplate, '');
+  }
+
+  if (!path.endsWith('_fluid_cell')) return null;
+
+  const matPath = path.slice(0, -'_fluid_cell'.length);
+  const matLabel = matPath
+    ? (
+      resolveKey(translateKey, materialKey(namespace, matPath))
+      ?? (namespace !== GTCEU_NAMESPACE
+        ? resolveKey(translateKey, materialKey(GTCEU_NAMESPACE, matPath))
+        : null)
+    )
+    : null;
+
+  const templateWithoutPlaceholder = itemTemplate.replace(/%s/g, '');
+  if (matLabel && templateWithoutPlaceholder.includes(matLabel)) {
+    return formatLangTemplateTrimmed(itemTemplate, '');
+  }
+  if (matLabel) {
+    return formatLangTemplate(itemTemplate, matLabel);
+  }
+  return formatLangTemplateTrimmed(itemTemplate, '');
 }
 
 export function extractMaterialFromIdPattern(path, pattern) {
@@ -149,15 +268,29 @@ export function buildGtToolPatterns(langTable) {
   const patterns = [];
   const table = langTable && typeof langTable === 'object' ? langTable : {};
   const prefix = `item.${GTCEU_NAMESPACE}.tool.`;
+  const seen = new Set();
+
+  function addToolPattern(toolName, templateKey) {
+    if (!toolName || toolName.includes('.') || seen.has(toolName)) return;
+    const template = table[templateKey];
+    if (typeof template !== 'string' || !template.includes('%s')) return;
+    seen.add(toolName);
+    patterns.push({
+      toolName,
+      pattern: defaultGtToolIdPattern(toolName),
+      templateKey,
+    });
+  }
+
   for (const key of Object.keys(table)) {
     if (!key.startsWith(prefix)) continue;
-    const toolName = key.slice(prefix.length);
-    if (!toolName || toolName.includes('.')) continue;
-    const template = table[key];
-    if (typeof template !== 'string' || !template.includes('%s')) continue;
-    const pattern = GT_TOOL_ID_FORMAT_OVERRIDES[toolName] || `%s_${toolName}`;
-    patterns.push({ toolName, pattern, templateKey: key });
+    addToolPattern(key.slice(prefix.length), key);
   }
+
+  for (const toolName of GTMUTILS_ELECTRIC_TOOL_NAMES) {
+    addToolPattern(toolName, `${prefix}${toolName}`);
+  }
+
   patterns.sort((a, b) => b.pattern.length - a.pattern.length);
   return patterns;
 }
@@ -232,12 +365,12 @@ export function parseGtceuFluidPath(path) {
 }
 
 /**
- * Heuristic for FluidStorageKeys.GAS element branch (no Material on web).
- * Single-segment chemical-style ids (air, oxygen) — not alloy names with underscores.
+ * Heuristic for FluidStorageKeys.GAS element branch (no Material metadata on web).
+ * Matches short element ids (oxygen, chlorine) — not polymers (polytetrafluoroethylene) or modpack materials (latex).
  */
 export function isLikelyElementMaterial(materialPath) {
   const name = String(materialPath || '');
-  if (!name || name.includes('_')) return false;
+  if (!name || name.includes('_') || name.length > 12) return false;
   return /^[a-z][a-z0-9]*$/.test(name);
 }
 
@@ -273,11 +406,22 @@ function firstPresentFluidTemplate(langTable, keys) {
   return null;
 }
 
+function pickGenericFluidTemplate(langTable) {
+  return (
+    firstPresentFluidTemplate(langTable, [
+      GTCEU_FLUID_LANG_KEYS.generic,
+      GTCEU_FLUID_LANG_KEYS.liquidPlain,
+    ]) || GTCEU_FLUID_LANG_KEYS.generic
+  );
+}
+
 /**
  * Pick gtceu.fluid.* template key from storage variant (mirrors FluidStorageKeys).
+ * @param {string} [namespace] Registry namespace ({@code gtceu}, {@code tfg}, …).
  */
-export function pickGtceuFluidLangKey(storageKey, materialPath, langTable = null) {
+export function pickGtceuFluidLangKey(storageKey, materialPath, langTable = null, namespace = GTCEU_NAMESPACE) {
   const table = langTable && typeof langTable === 'object' ? langTable : {};
+  const modpackFluid = namespace !== GTCEU_NAMESPACE;
   switch (storageKey) {
     case 'molten':
       return GTCEU_FLUID_LANG_KEYS.molten;
@@ -289,30 +433,28 @@ export function pickGtceuFluidLangKey(storageKey, materialPath, langTable = null
         GTCEU_FLUID_LANG_KEYS.liquidPlain,
       ]) || GTCEU_FLUID_LANG_KEYS.liquid;
     case 'gas':
+      if (modpackFluid) {
+        return pickGenericFluidTemplate(table);
+      }
       if (isLikelyElementMaterial(materialPath)) {
         return firstPresentFluidTemplate(table, [
           GTCEU_FLUID_LANG_KEYS.gasGeneric,
           GTCEU_FLUID_LANG_KEYS.generic,
         ]) || GTCEU_FLUID_LANG_KEYS.gasGeneric;
       }
-      return firstPresentFluidTemplate(table, [
-        GTCEU_FLUID_LANG_KEYS.gasVapor,
-        GTCEU_FLUID_LANG_KEYS.gasGeneric,
-        GTCEU_FLUID_LANG_KEYS.generic,
-      ]) || GTCEU_FLUID_LANG_KEYS.gasVapor;
+      return pickGenericFluidTemplate(table);
     case 'primary':
     default:
+      if (modpackFluid) {
+        return pickGenericFluidTemplate(table);
+      }
       if (isLikelyElementMaterial(materialPath)) {
         return firstPresentFluidTemplate(table, [
           GTCEU_FLUID_LANG_KEYS.gasGeneric,
           GTCEU_FLUID_LANG_KEYS.generic,
         ]) || GTCEU_FLUID_LANG_KEYS.gasGeneric;
       }
-      return firstPresentFluidTemplate(table, [
-        GTCEU_FLUID_LANG_KEYS.liquid,
-        GTCEU_FLUID_LANG_KEYS.gasVapor,
-        GTCEU_FLUID_LANG_KEYS.generic,
-      ]) || GTCEU_FLUID_LANG_KEYS.liquid;
+      return pickGenericFluidTemplate(table);
   }
 }
 
@@ -356,13 +498,16 @@ function composeFromTemplate(templateKey, matLabel, translateKey) {
 export function translateComposedFluid(namespace, path, translateKey, langTable = null) {
   if (!isComposedRegistryNamespace(namespace) || !path) return null;
 
+  const flatFluid = resolveKey(translateKey, `fluid.${namespace}.${path}`);
+  if (flatFluid) return flatFluid;
+
   const { storageKey, materialPath } = parseGtceuFluidPath(path);
   const matLabel = resolveMaterialLabel(namespace, materialPath, path, translateKey);
   if (!matLabel) {
     return resolveKey(translateKey, materialKey(namespace, path));
   }
 
-  const templateKey = pickGtceuFluidLangKey(storageKey, materialPath, langTable);
+  const templateKey = pickGtceuFluidLangKey(storageKey, materialPath, langTable, namespace);
   const composed = composeFromTemplate(templateKey, matLabel, translateKey);
   if (composed) return composed;
 
@@ -389,6 +534,10 @@ function composeTagPrefixLabel(namespace, materialPath, langSuffix, translateKey
  */
 export function tryItemSpecificLang(namespace, path, translateKey, langTable = null) {
   if (!path) return null;
+
+  const emptyPlaceholder = tryEmptyPlaceholderItemLang(namespace, path, translateKey);
+  if (emptyPlaceholder) return emptyPlaceholder;
+
   const itemKey = `item.${namespace}.${path}`;
   const itemTemplate = resolveKey(translateKey, itemKey);
   if (!itemTemplate) return null;
@@ -408,6 +557,9 @@ export function tryItemSpecificLang(namespace, path, translateKey, langTable = n
 
 export function translateComposedItem(namespace, path, translateKey, langTable = null) {
   if (!isComposedRegistryNamespace(namespace) || !path) return null;
+
+  const emptyPlaceholder = tryEmptyPlaceholderItemLang(namespace, path, translateKey);
+  if (emptyPlaceholder) return emptyPlaceholder;
 
   const budLabel = translateBudIndicator(namespace, path, translateKey);
   if (budLabel) return budLabel;
@@ -517,7 +669,7 @@ export function collectComposedFluidLangKeys(namespace, path, langTable = null) 
   if (!isComposedRegistryNamespace(namespace) || !path) return keys;
 
   const { storageKey, materialPath } = parseGtceuFluidPath(path);
-  const templateKey = pickGtceuFluidLangKey(storageKey, materialPath, langTable);
+  const templateKey = pickGtceuFluidLangKey(storageKey, materialPath, langTable, namespace);
   if (templateKey) keys.add(templateKey);
   keys.add(materialKey(namespace, materialPath));
   if (materialPath !== path) keys.add(materialKey(namespace, path));
