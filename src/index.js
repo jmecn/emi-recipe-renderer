@@ -26,6 +26,7 @@ import { createRegistryLabelResolver, registryLangKeyCandidates as _registryLang
     iconsDir: 'icons',
     categoryIconsDir: 'categories/icons',
     langDir: 'lang',
+    itemNameKeys: 'items/name-keys.json',
   };
 
   /** Per-side margin; must match MWE layout panel.margin (default 4). */
@@ -760,6 +761,8 @@ import { createRegistryLabelResolver, registryLangKeyCandidates as _registryLang
         ? options.translations
         : {};
       this._bundle = null;
+      this._itemNameKeys = null;
+      this._itemNameKeysPromise = null;
       /** In-memory lang tables: always load en_us first, then active locale (see {@link #_refreshActiveLang}). */
       this._langTables = { fallback: {}, current: {} };
       this._tooltipEl = options.tooltipElement
@@ -796,6 +799,8 @@ import { createRegistryLabelResolver, registryLangKeyCandidates as _registryLang
     _resetLoadedResources() {
       this._langCache.clear();
       this._bundle = null;
+      this._itemNameKeys = null;
+      this._itemNameKeysPromise = null;
       this._langTables = { fallback: {}, current: {} };
       this.textureManifest = null;
       this.textureManifestPromise = null;
@@ -851,13 +856,35 @@ import { createRegistryLabelResolver, registryLangKeyCandidates as _registryLang
       return this.translate(key);
     }
 
+    async ensureItemNameKeys() {
+      if (this._itemNameKeys) return this._itemNameKeys;
+      if (this._itemNameKeysPromise) return this._itemNameKeysPromise;
+      this._itemNameKeysPromise = (async () => {
+        const resourceUrl = this.resolveResourceUrl(PATHS.itemNameKeys);
+        try {
+          const data = await getSharedJsonResource('itemNameKeys', resourceUrl, {});
+          this._itemNameKeys = data?.items && typeof data.items === 'object' ? data.items : {};
+        } catch {
+          this._itemNameKeys = {};
+        }
+        return this._itemNameKeys;
+      })();
+      return this._itemNameKeysPromise;
+    }
+
     translateRegistry(registryId, kind = 'item') {
       const tables = this._langTables || { fallback: {}, current: {} };
       return createRegistryLabelResolver({
         current: tables.current,
         fallback: tables.fallback,
         overrides: this._langOverrides,
+        nameKeysByRegistryId: this._itemNameKeys || {},
       }).translateRegistry(registryId, kind);
+    }
+
+    async translateRegistryAsync(registryId, kind = 'item') {
+      await this.ensureItemNameKeys();
+      return this.translateRegistry(registryId, kind);
     }
 
     translateTag(tag) {

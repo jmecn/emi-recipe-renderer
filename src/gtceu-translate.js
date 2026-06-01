@@ -409,9 +409,6 @@ export function tryItemSpecificLang(namespace, path, translateKey, langTable = n
 export function translateComposedItem(namespace, path, translateKey, langTable = null) {
   if (!isComposedRegistryNamespace(namespace) || !path) return null;
 
-  const itemOverride = tryItemSpecificLang(namespace, path, translateKey, langTable);
-  if (itemOverride) return itemOverride;
-
   const budLabel = translateBudIndicator(namespace, path, translateKey);
   if (budLabel) return budLabel;
 
@@ -435,6 +432,9 @@ export function translateComposedItem(namespace, path, translateKey, langTable =
     const label = composeTagPrefixLabel(namespace, materialPath, entry.langSuffix, translateKey, langTable);
     if (label) return label;
   }
+
+  const itemOverride = tryItemSpecificLang(namespace, path, translateKey, langTable);
+  if (itemOverride) return itemOverride;
 
   return null;
 }

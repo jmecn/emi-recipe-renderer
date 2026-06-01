@@ -123,14 +123,14 @@ test('tryItemSpecificLang wins over tagprefix compose', () => {
   assert.equal(label, '特制铝锭');
 });
 
-test('translateComposedItem prefers item.<modid>.<path> override', () => {
+test('translateComposedItem prefers tagprefix over item.<modid>.<path> template', () => {
   const lang = {
     'material.gtceu.aluminium': '铝',
     'tagprefix.ingot': '%s锭',
     'item.gtceu.aluminium_ingot': '特制%s锭',
   };
   const label = translateComposedItem('gtceu', 'aluminium_ingot', (k) => lang[k] ?? k, lang);
-  assert.equal(label, '特制铝锭');
+  assert.equal(label, '铝锭');
 });
 
 test('tryItemSpecificLang fills %s from material.<path> without tagprefix pattern', () => {
