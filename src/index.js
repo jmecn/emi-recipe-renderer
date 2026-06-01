@@ -24,6 +24,7 @@ import { createRegistryLabelResolver, registryLangKeyCandidates as _registryLang
     tagsDir: 'tags',
     tagsIndex: 'tags/index.json',
     iconsDir: 'icons',
+    categoryIconsDir: 'categories/icons',
     langDir: 'lang',
   };
 
@@ -782,6 +783,10 @@ import { createRegistryLabelResolver, registryLangKeyCandidates as _registryLang
       this.tagMemberIdsByRef = new Map();
       this.iconIds = null;
       this.iconAtlas = null;
+      this.categoryIconAtlas = null;
+      this.categoryIconIds = null;
+      this.categoryIconIndexPromise = null;
+      this.categoryIconStylesPromise = null;
       this.iconIndexPromise = null;
       this.iconStylesPromise = null;
       this.iconPreloadUrls = new Set();
@@ -801,6 +806,10 @@ import { createRegistryLabelResolver, registryLangKeyCandidates as _registryLang
       this.tagMemberIdsByRef = new Map();
       this.iconIds = null;
       this.iconAtlas = null;
+      this.categoryIconAtlas = null;
+      this.categoryIconIds = null;
+      this.categoryIconIndexPromise = null;
+      this.categoryIconStylesPromise = null;
       this.iconIndexPromise = null;
       this.iconStylesPromise = null;
       this.iconPreloadUrls = new Set();
@@ -1147,12 +1156,87 @@ import { createRegistryLabelResolver, registryLangKeyCandidates as _registryLang
     createAtlasSpanForIconKey(lookupKey) {
       const id = this.resolveAtlasId(lookupKey);
       const span = createAtlasSpan('icon-atlas', id);
-      const entry = this.iconAtlas?.items?.[id];
-      const page = Number.isInteger(entry?.page) ? this.iconAtlas?.pages?.[entry.page] : null;
+      this.applyAtlasSpanStyle(span, this.iconAtlas, id);
+      if (id === this.missingIconId && lookupKey) {
+        span.title = lookupKey;
+        span.dataset.missingFor = lookupKey;
+      }
+      return span;
+    }
+
+    async ensureCategoryIconIndices() {
+      if (this.categoryIconIds) return;
+      if (!this.categoryIconIndexPromise) {
+        const resourceUrl = this.resolveResourceUrl(`${PATHS.categoryIconsDir}/index.json`);
+        this.categoryIconIndexPromise = getSharedJsonResource('category-icon-index', resourceUrl, null)
+          .then((index) => {
+            const items = index?.items || {};
+            const ids = new Set(Object.keys(items));
+            ids.add(this.missingIconId);
+            this.categoryIconAtlas = normalizeIconAtlas(
+              index,
+              (file) => this.resolveResourceUrl(`${PATHS.categoryIconsDir}/${file}`),
+            );
+            return ids;
+          })
+          .then((ids) => {
+            this.categoryIconIds = ids;
+            return ids;
+          });
+      }
+      return this.categoryIconIndexPromise;
+    }
+
+    async ensureCategoryIconStylesheets() {
+      if (!this.injectIconStylesheets) return;
+      if (this.categoryIconStylesPromise) return this.categoryIconStylesPromise;
+      this.categoryIconStylesPromise = (async () => {
+        await this.ensureCategoryIconIndices();
+        if (!this.categoryIconAtlas) return;
+        const rel = `${PATHS.categoryIconsDir}/category-icons.css`;
+        const resourceUrl = this.resolveResourceUrl(rel);
+        if (this.resourceVersion) {
+          if (document.querySelector('style[data-emi-icon="category"]')) return;
+          const cssText = await getSharedTextResource('category-icon-css', resourceUrl, '');
+          const style = document.createElement('style');
+          style.dataset.emiIcon = 'category';
+          style.textContent = rewriteVersionedCssUrls(cssText, resourceUrl, this.resourceVersion);
+          document.head.appendChild(style);
+          return;
+        }
+        if (document.querySelector('link[data-emi-icon="category"]')) return;
+        await new Promise((resolve) => {
+          const link = document.createElement('link');
+          link.rel = 'stylesheet';
+          link.href = resourceUrl;
+          link.dataset.emiIcon = 'category';
+          link.onload = () => resolve();
+          link.onerror = () => resolve();
+          document.head.appendChild(link);
+        });
+      })();
+      return this.categoryIconStylesPromise;
+    }
+
+    /** EMI recipe category tab icon (16×16 dedicated atlas). */
+    createAtlasSpanForCategoryIcon(categoryId) {
+      const id = this.categoryIconIds?.has(categoryId) ? categoryId : this.missingIconId;
+      const span = createAtlasSpan('category-icon-atlas', id);
+      this.applyAtlasSpanStyle(span, this.categoryIconAtlas, id);
+      if (id === this.missingIconId && categoryId) {
+        span.title = categoryId;
+        span.dataset.missingFor = categoryId;
+      }
+      return span;
+    }
+
+    applyAtlasSpanStyle(span, atlas, lookupId) {
+      const entry = atlas?.items?.[lookupId];
+      const page = Number.isInteger(entry?.page) ? atlas?.pages?.[entry.page] : null;
       const bgImage = buildAtlasBackgroundImage(page?.sources);
       if (entry && page && bgImage) {
-        span.style.width = `${this.iconAtlas.cellSize}px`;
-        span.style.height = `${this.iconAtlas.cellSize}px`;
+        span.style.width = `${atlas.cellSize}px`;
+        span.style.height = `${atlas.cellSize}px`;
         span.style.backgroundImage = bgImage;
         span.style.backgroundRepeat = 'no-repeat';
         span.style.backgroundPosition = `-${entry.x}px -${entry.y}px`;
@@ -1160,11 +1244,6 @@ import { createRegistryLabelResolver, registryLangKeyCandidates as _registryLang
           span.style.backgroundSize = `${page.width}px ${page.height}px`;
         }
       }
-      if (id === this.missingIconId && lookupKey) {
-        span.title = lookupKey;
-        span.dataset.missingFor = lookupKey;
-      }
-      return span;
     }
 
     /** @deprecated */
@@ -1391,6 +1470,7 @@ import { createRegistryLabelResolver, registryLangKeyCandidates as _registryLang
         this.ensureTextureManifest(),
         this.ensureIconIndices(),
         this.ensureIconStylesheets(),
+        this.ensureCategoryIconStylesheets(),
       ]);
       await this.preloadTagMembersForLayout(layout);
       container.replaceChildren();

@@ -65,6 +65,42 @@ export const GTCEU_TAG_PREFIX_PATTERN_OVERRIDES = {
   cable_gt_octal: '%s_octal_cable',
   cable_gt_hex: '%s_hex_cable',
   small_gear: 'small_%s_gear',
+  pipe_tiny_fluid: '%s_tiny_fluid_pipe',
+  pipe_small_fluid: '%s_small_fluid_pipe',
+  pipe_normal_fluid: '%s_normal_fluid_pipe',
+  pipe_large_fluid: '%s_large_fluid_pipe',
+  pipe_huge_fluid: '%s_huge_fluid_pipe',
+  pipe_quadruple_fluid: '%s_quadruple_fluid_pipe',
+  pipe_nonuple_fluid: '%s_nonuple_fluid_pipe',
+  pipe_small_item: '%s_small_item_pipe',
+  pipe_normal_item: '%s_normal_item_pipe',
+  pipe_large_item: '%s_large_item_pipe',
+  pipe_huge_item: '%s_huge_item_pipe',
+  pipe_small_restrictive: '%s_small_restrictive_pipe',
+  pipe_normal_restrictive: '%s_normal_restrictive_pipe',
+  pipe_large_restrictive: '%s_large_restrictive_pipe',
+  pipe_huge_restrictive: '%s_huge_restrictive_pipe',
+};
+
+/** GTToolType.idFormat overrides (default is {@code %s_<name>}). */
+export const GT_TOOL_ID_FORMAT_OVERRIDES = {
+  lv_drill: 'lv_%s_drill',
+  mv_drill: 'mv_%s_drill',
+  hv_drill: 'hv_%s_drill',
+  ev_drill: 'ev_%s_drill',
+  iv_drill: 'iv_%s_drill',
+  lv_chainsaw: 'lv_%s_chainsaw',
+  hv_chainsaw: 'hv_%s_chainsaw',
+  iv_chainsaw: 'iv_%s_chainsaw',
+  lv_wrench: 'lv_%s_wrench',
+  hv_wrench: 'hv_%s_wrench',
+  iv_wrench: 'iv_%s_wrench',
+  lv_wirecutter: 'lv_%s_wire_cutter',
+  hv_wirecutter: 'hv_%s_wire_cutter',
+  iv_wirecutter: 'iv_%s_wire_cutter',
+  lv_screwdriver: 'lv_%s_screwdriver',
+  hv_screwdriver: 'hv_%s_screwdriver',
+  iv_screwdriver: 'iv_%s_screwdriver',
 };
 
 export function splitRegistryId(registryId) {
@@ -107,6 +143,57 @@ export function extractMaterialFromIdPattern(path, pattern) {
     return material || null;
   }
   return null;
+}
+
+export function buildGtToolPatterns(langTable) {
+  const patterns = [];
+  const table = langTable && typeof langTable === 'object' ? langTable : {};
+  const prefix = `item.${GTCEU_NAMESPACE}.tool.`;
+  for (const key of Object.keys(table)) {
+    if (!key.startsWith(prefix)) continue;
+    const toolName = key.slice(prefix.length);
+    if (!toolName || toolName.includes('.')) continue;
+    const template = table[key];
+    if (typeof template !== 'string' || !template.includes('%s')) continue;
+    const pattern = GT_TOOL_ID_FORMAT_OVERRIDES[toolName] || `%s_${toolName}`;
+    patterns.push({ toolName, pattern, templateKey: key });
+  }
+  patterns.sort((a, b) => b.pattern.length - a.pattern.length);
+  return patterns;
+}
+
+export function resolveGtToolTemplateKey(namespace, toolName, langTable = null) {
+  const table = langTable && typeof langTable === 'object' ? langTable : {};
+  const own = `item.${namespace}.tool.${toolName}`;
+  if (table[own] != null) return own;
+  const gtceu = `item.${GTCEU_NAMESPACE}.tool.${toolName}`;
+  if (namespace !== GTCEU_NAMESPACE && table[gtceu] != null) return gtceu;
+  return null;
+}
+
+export function translateGtToolItem(namespace, path, translateKey, langTable = null) {
+  if (!isComposedRegistryNamespace(namespace) || !path) return null;
+
+  for (const entry of buildGtToolPatterns(langTable)) {
+    const materialPath = extractMaterialFromIdPattern(path, entry.pattern);
+    if (!materialPath) continue;
+    const templateKey = resolveGtToolTemplateKey(namespace, entry.toolName, langTable)
+      ?? entry.templateKey;
+    const matLabel = resolveKey(translateKey, materialKey(namespace, materialPath));
+    if (!matLabel) continue;
+    const composed = composeFromTemplate(templateKey, matLabel, translateKey);
+    if (composed) return composed;
+  }
+  return null;
+}
+
+export function translateBudIndicator(namespace, path, translateKey) {
+  if (!path || !path.endsWith('_bud_indicator')) return null;
+  const materialPath = path.slice(0, -'_bud_indicator'.length);
+  if (!materialPath) return null;
+  const matLabel = resolveKey(translateKey, materialKey(namespace, materialPath));
+  if (!matLabel) return null;
+  return composeFromTemplate('block.bud_indicator', matLabel, translateKey);
 }
 
 export function buildTagPrefixPatterns(langTable) {
@@ -166,6 +253,17 @@ function materialKey(namespace, materialPath) {
 
 function langKeyPresent(langTable, key) {
   return langTable != null && typeof langTable === 'object' && langTable[key] != null;
+}
+
+/** TFG fluids use GT bucket items; modpack often has only {@code item.gtceu.bucket}, not {@code item.tfg.bucket}. */
+export function resolveBucketTemplateKey(namespace, langTable = null) {
+  const table = langTable && typeof langTable === 'object' ? langTable : {};
+  const own = `item.${namespace}.bucket`;
+  if (table[own] != null) return own;
+  if (namespace === TFG_NAMESPACE && table[`item.${GTCEU_NAMESPACE}.bucket`] != null) {
+    return `item.${GTCEU_NAMESPACE}.bucket`;
+  }
+  return null;
 }
 
 function firstPresentFluidTemplate(langTable, keys) {
@@ -314,10 +412,16 @@ export function translateComposedItem(namespace, path, translateKey, langTable =
   const itemOverride = tryItemSpecificLang(namespace, path, translateKey, langTable);
   if (itemOverride) return itemOverride;
 
-  const bucketKey = `item.${namespace}.bucket`;
-  if (path.endsWith('_bucket') && langTable?.[bucketKey] != null) {
+  const budLabel = translateBudIndicator(namespace, path, translateKey);
+  if (budLabel) return budLabel;
+
+  const toolLabel = translateGtToolItem(namespace, path, translateKey, langTable);
+  if (toolLabel) return toolLabel;
+
+  const bucketTemplateKey = resolveBucketTemplateKey(namespace, langTable);
+  if (path.endsWith('_bucket') && bucketTemplateKey != null) {
     const fluidPath = path.slice(0, -'_bucket'.length);
-    const bucketTemplate = resolveKey(translateKey, bucketKey);
+    const bucketTemplate = resolveKey(translateKey, bucketTemplateKey);
     const fluidLabel = translateComposedFluid(namespace, fluidPath, translateKey, langTable);
     if (bucketTemplate && fluidLabel) {
       return formatLangTemplate(bucketTemplate, fluidLabel);
@@ -361,10 +465,29 @@ export function collectComposedItemLangKeys(namespace, path, langTable = null) {
 
   if (path.endsWith('_bucket')) {
     keys.add(`item.${namespace}.bucket`);
+    if (namespace === TFG_NAMESPACE) {
+      keys.add(`item.${GTCEU_NAMESPACE}.bucket`);
+    }
     const fluidPath = path.slice(0, -'_bucket'.length);
     for (const k of collectComposedFluidLangKeys(namespace, fluidPath, langTable)) {
       keys.add(k);
     }
+    return keys;
+  }
+
+  if (path.endsWith('_bud_indicator')) {
+    keys.add('block.bud_indicator');
+    keys.add(materialKey(namespace, path.slice(0, -'_bud_indicator'.length)));
+    return keys;
+  }
+
+  for (const entry of buildGtToolPatterns(langTable)) {
+    const materialPath = extractMaterialFromIdPattern(path, entry.pattern);
+    if (!materialPath) continue;
+    const templateKey = resolveGtToolTemplateKey(namespace, entry.toolName, langTable)
+      ?? entry.templateKey;
+    keys.add(templateKey);
+    keys.add(materialKey(namespace, materialPath));
     return keys;
   }
 

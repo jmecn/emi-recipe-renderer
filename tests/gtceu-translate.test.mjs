@@ -87,6 +87,16 @@ test('translateComposedItem resolves TFG material.tfg.* with shared tagprefix', 
   assert.equal(label, '胶乳锭');
 });
 
+test('translateComposedItem resolves TFG bucket via item.gtceu.bucket template', () => {
+  const lang = {
+    'item.gtceu.bucket': '%s桶',
+    'material.tfg.acetylene': '乙炔',
+    'gtceu.fluid.gas_generic': '%s气体',
+  };
+  const label = translateComposedItem('tfg', 'acetylene_bucket', (k) => lang[k] ?? k, lang);
+  assert.equal(label, '乙炔气体桶');
+});
+
 test('translateComposedItem resolves wire_gt_single with modpack tagprefix key', () => {
   const lang = {
     'tagprefix.wire_gt_single': '1x%s导线',
@@ -175,4 +185,92 @@ test('formatLangTemplate replaces sequential placeholders', () => {
 test('pickGtceuFluidLangKey selects gas_generic for element-like materials', () => {
   assert.equal(pickGtceuFluidLangKey('primary', 'air', zhCn), 'gtceu.fluid.gas_generic');
   assert.equal(pickGtceuFluidLangKey('gas', 'oxygen', zhCn), 'gtceu.fluid.gas_generic');
+});
+
+test('translateComposedItem resolves GT fluid pipes via pipe tagprefix overrides', () => {
+  const lang = {
+    'tagprefix.pipe_huge_fluid': '巨型%s流体管道',
+    'material.gtceu.aluminium': '铝',
+  };
+  const label = translateComposedItem('gtceu', 'aluminium_huge_fluid_pipe', (k) => lang[k] ?? k, lang);
+  assert.equal(label, '巨型铝流体管道');
+});
+
+test('translateComposedItem resolves GT tools via item.gtceu.tool templates', () => {
+  const lang = {
+    'item.gtceu.tool.axe': '%s斧',
+    'material.gtceu.bismuth_bronze': '铋青铜',
+  };
+  const label = translateComposedItem('gtceu', 'bismuth_bronze_axe', (k) => lang[k] ?? k, lang);
+  assert.equal(label, '铋青铜斧');
+});
+
+test('translateComposedItem resolves wrench and wire_cutter tool types', () => {
+  const lang = {
+    'item.gtceu.tool.wrench': '%s扳手',
+    'item.gtceu.tool.wire_cutter': '%s剪线钳',
+    'item.gtceu.tool.mining_hammer': '%s采矿锤',
+    'material.gtceu.copper': '铜',
+  };
+  assert.equal(
+    translateComposedItem('gtceu', 'copper_wrench', (k) => lang[k] ?? k, lang),
+    '铜扳手',
+  );
+  assert.equal(
+    translateComposedItem('gtceu', 'copper_wire_cutter', (k) => lang[k] ?? k, lang),
+    '铜剪线钳',
+  );
+  assert.equal(
+    translateComposedItem('gtceu', 'copper_mining_hammer', (k) => lang[k] ?? k, lang),
+    '铜采矿锤',
+  );
+});
+
+test('translateComposedItem resolves electric tools with idFormat overrides', () => {
+  const lang = {
+    'item.gtceu.tool.lv_wirecutter': '%s剪线钳（LV）',
+    'item.gtceu.tool.hv_wrench': '%s扳手（HV）',
+    'material.gtceu.copper': '铜',
+    'material.gtceu.aluminium': '铝',
+  };
+  assert.equal(
+    translateComposedItem('gtceu', 'lv_copper_wire_cutter', (k) => lang[k] ?? k, lang),
+    '铜剪线钳（LV）',
+  );
+  assert.equal(
+    translateComposedItem('gtceu', 'hv_aluminium_wrench', (k) => lang[k] ?? k, lang),
+    '铝扳手（HV）',
+  );
+});
+
+test('translateComposedItem resolves TFG tools via gtceu tool template fallback', () => {
+  const lang = {
+    'item.gtceu.tool.axe': '%s斧',
+    'material.tfg.arsenic_bronze': '砷青铜',
+  };
+  const label = translateComposedItem('tfg', 'arsenic_bronze_axe', (k) => lang[k] ?? k, lang);
+  assert.equal(label, '砷青铜斧');
+});
+
+test('translateComposedItem resolves bud indicators via block.bud_indicator', () => {
+  const lang = {
+    'block.bud_indicator': '%s 表面芽',
+    'material.gtceu.amethyst': '紫水晶',
+  };
+  const label = translateComposedItem('gtceu', 'amethyst_bud_indicator', (k) => lang[k] ?? k, lang);
+  assert.equal(label, '紫水晶 表面芽');
+});
+
+test('collectComposedItemLangKeys includes pipe and tool closure keys', () => {
+  const pipeKeys = collectComposedItemLangKeys('gtceu', 'copper_small_fluid_pipe', {
+    'tagprefix.pipe_small_fluid': '小型%s流体管道',
+  });
+  assert.ok(pipeKeys.has('tagprefix.pipe_small_fluid'));
+  assert.ok(pipeKeys.has('material.gtceu.copper'));
+
+  const toolKeys = collectComposedItemLangKeys('gtceu', 'copper_pickaxe', {
+    'item.gtceu.tool.pickaxe': '%s镐',
+  });
+  assert.ok(toolKeys.has('item.gtceu.tool.pickaxe'));
+  assert.ok(toolKeys.has('material.gtceu.copper'));
 });
