@@ -611,8 +611,7 @@ import { createRegistryLabelResolver, registryLangKeyCandidates as _registryLang
     const id = entry.ids?.[0] || entry.id;
     if (!id) return '';
     const label = renderer ? renderer.translateRegistry(id, 'item') : id;
-    const count = formatItemCount(entry.amount);
-    return count ? `${label} x${count}` : label;
+    return label;
   }
 
   function formatItemEntryTooltip(entry, renderer) {
@@ -663,8 +662,7 @@ import { createRegistryLabelResolver, registryLangKeyCandidates as _registryLang
       const id = parsed.ids?.[0];
       if (!id) return '';
       const label = renderer ? renderer.translateRegistry(id, 'item') : id;
-      const count = formatItemCount(parsed.amount);
-      return count ? `${label} x${count}` : label;
+      return label;
     }
     if (parsed.kind === 'tag' && parsed.tag) {
       const tagLabel = renderer ? renderer.translateTag(parsed.tag) : parsed.tag;
@@ -703,13 +701,11 @@ import { createRegistryLabelResolver, registryLangKeyCandidates as _registryLang
           return `${label} (${formatFluidMb(fluid.amount)})`;
         }
         const label = renderer ? renderer.translateRegistry(ingredient.id, 'item') : ingredient.id;
-        const count = formatItemCount(ingredient.amount);
-        return count ? `${label} x${count}` : label;
+        return label;
       }
       if (ingredient.id) {
         const label = renderer ? renderer.translateRegistry(ingredient.id, 'item') : ingredient.id;
-        const count = formatItemCount(ingredient.amount);
-        return count ? `${label} x${count}` : label;
+        return label;
       }
     }
     return `${w.type} (${w.role || '?'})`;
@@ -1262,6 +1258,7 @@ import { createRegistryLabelResolver, registryLangKeyCandidates as _registryLang
       const page = Number.isInteger(entry?.page) ? atlas?.pages?.[entry.page] : null;
       const bgImage = buildAtlasBackgroundImage(page?.sources);
       if (entry && page && bgImage) {
+        span.style.display = 'inline-block';
         span.style.width = `${atlas.cellSize}px`;
         span.style.height = `${atlas.cellSize}px`;
         span.style.backgroundImage = bgImage;
