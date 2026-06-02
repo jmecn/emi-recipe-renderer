@@ -1,17 +1,13 @@
 /**
- * Registry display labels from merged lang tables (same rules as EmiRecipeRenderer).
+ * Registry display labels: precomputed {@code items-lang} table at runtime (no GT compose).
  */
 
-import {
-  isComposedRegistryNamespace,
-  splitRegistryId,
-  translateComposedRegistry,
-} from './gtceu-translate.js';
+import { splitRegistryId } from './gtceu-translate.js';
+import { lookupRegistryLabel, stripRegistryId } from './registry-label-table.mjs';
+
+export { stripRegistryId, lookupRegistryLabel, buildRegistryLabelTable } from './registry-label-table.mjs';
 
 export const FALLBACK_LOCALE = 'en_us';
-
-/** Namespaces that resolve labels via material + tagprefix (or fluid templates) before flat keys. */
-export const COMPOSED_FIRST_NAMESPACES = new Set(['gtceu', 'tfg', 'greate']);
 
 export function normalizeLocale(locale) {
   return String(locale || FALLBACK_LOCALE).trim().toLowerCase().replace('-', '_');
@@ -22,17 +18,6 @@ export function registryNamespace(registryId) {
   const bare = stripRegistryId(registryId);
   const { namespace } = splitRegistryId(bare);
   return namespace || 'minecraft';
-}
-
-/** Plain registry id: strip SNBT `{...}` and export NBT hash suffix `id@hex`. */
-export function stripRegistryId(id) {
-  if (!id) return id;
-  let s = String(id);
-  const brace = s.indexOf('{');
-  if (brace >= 0) s = s.slice(0, brace);
-  const at = s.indexOf('@');
-  if (at >= 0) s = s.slice(0, at);
-  return s;
 }
 
 /** Lang key order aligned with Forge LangKeyCollector#addRegistryKeys. */
@@ -62,23 +47,20 @@ export function translateKeyFromTables(tables, key) {
   return k;
 }
 
-function isRegistryKind(kind) {
-  return kind === 'item' || kind === 'block' || kind === 'fluid';
-}
-
 /**
  * @param {object} options
- * @param {Record<string, string>} options.current
+ * @param {Record<string, string>} [options.labelsByRegistryId] precomputed {@code items-lang} labels
+ * @param {Record<string, string>} [options.current] kept for {@link #translate} in tests
  * @param {Record<string, string>} [options.fallback]
  * @param {Record<string, string>} [options.overrides]
  * @param {Record<string, string>} [options.nameKeysByRegistryId]
  */
 export function createRegistryLabelResolver(options) {
+  const labelsByRegistryId = options.labelsByRegistryId || null;
   const fallback = options.fallback || {};
   const current = options.current || {};
   const overrides = options.overrides || {};
   const nameKeysByRegistryId = options.nameKeysByRegistryId || {};
-  const merged = { ...fallback, ...current };
 
   function translate(key) {
     if (key == null || key === '') return '';
@@ -89,47 +71,13 @@ export function createRegistryLabelResolver(options) {
     return k;
   }
 
-  function isResolvedLabel(label, key) {
-    return label != null && label !== key && !String(label).includes('%s');
-  }
-
-  function translateDefaultRules(bare, registryId, kind) {
-    const exportedKey = nameKeysByRegistryId[bare];
-    if (exportedKey) {
-      const label = translate(exportedKey);
-      if (isResolvedLabel(label, exportedKey)) return label;
-    }
-    for (const candidate of registryLangKeyCandidates(kind, registryId)) {
-      const label = translate(candidate);
-      if (isResolvedLabel(label, candidate)) return label;
-    }
-    return bare || String(registryId || '');
-  }
-
   return {
     translate,
     translateRegistry(registryId, kind = 'item') {
-      const bare = stripRegistryId(registryId);
-      const ns = registryNamespace(registryId);
-      const translateFn = (k) => translate(k);
-
-      switch (ns) {
-        case 'gtceu':
-        case 'tfg':
-        case 'greate':
-          if (isRegistryKind(kind)) {
-            const composed = translateComposedRegistry(bare, kind, translateFn, merged);
-            if (composed) return composed;
-          }
-          return translateDefaultRules(bare, registryId, kind);
-        default:
-          return translateDefaultRules(bare, registryId, kind);
+      if (labelsByRegistryId && Object.keys(labelsByRegistryId).length > 0) {
+        return lookupRegistryLabel(labelsByRegistryId, registryId);
       }
+      return lookupRegistryLabel(null, registryId);
     },
   };
-}
-
-/** @deprecated use {@link COMPOSED_FIRST_NAMESPACES} + {@link registryNamespace} */
-export function usesComposedLabelsFirst(namespace) {
-  return COMPOSED_FIRST_NAMESPACES.has(namespace) || isComposedRegistryNamespace(namespace);
 }

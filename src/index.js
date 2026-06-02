@@ -14,7 +14,12 @@ import {
   stripMinecraftFormatting,
 } from './minecraft-text.js';
 import { splitRegistryId } from './gtceu-translate.js';
-import { createRegistryLabelResolver, registryLangKeyCandidates as _registryLangKeyCandidates } from './registry-label.mjs';
+import {
+  buildRegistryLabelTable,
+  createRegistryLabelResolver,
+  normalizeLocale as normalizeRegistryLocale,
+  registryLangKeyCandidates as _registryLangKeyCandidates,
+} from './registry-label.mjs';
 
   const PATHS = {
     bundle: 'bundle.json',
@@ -26,6 +31,7 @@ import { createRegistryLabelResolver, registryLangKeyCandidates as _registryLang
     iconsDir: 'icons',
     categoryIconsDir: 'categories/icons',
     langDir: 'lang',
+    itemsLangDir: 'items-lang',
     itemNameKeys: 'items/name-keys.json',
   };
 
@@ -188,7 +194,7 @@ import { createRegistryLabelResolver, registryLangKeyCandidates as _registryLang
   }
 
   function normalizeLocale(locale) {
-    return String(locale || FALLBACK_LOCALE).trim().toLowerCase().replace('-', '_');
+    return normalizeRegistryLocale(locale);
   }
 
   function registryLangKeyCandidates(kind, registryId) {
@@ -761,6 +767,10 @@ import { createRegistryLabelResolver, registryLangKeyCandidates as _registryLang
       this._itemNameKeysPromise = null;
       /** In-memory lang tables: always load en_us first, then active locale (see {@link #_refreshActiveLang}). */
       this._langTables = { fallback: {}, current: {} };
+      this._registryLabelsById = options.registryLabels && typeof options.registryLabels === 'object'
+        ? options.registryLabels
+        : null;
+      this._registryLabelsPromise = null;
       this._tooltipEl = options.tooltipElement
         || (typeof options.tooltipElementId === 'string'
           ? document.getElementById(options.tooltipElementId)
@@ -798,6 +808,8 @@ import { createRegistryLabelResolver, registryLangKeyCandidates as _registryLang
       this._itemNameKeys = null;
       this._itemNameKeysPromise = null;
       this._langTables = { fallback: {}, current: {} };
+      this._registryLabelsById = null;
+      this._registryLabelsPromise = null;
       this.textureManifest = null;
       this.textureManifestPromise = null;
       this.routeShardCache = new Map();
@@ -868,18 +880,45 @@ import { createRegistryLabelResolver, registryLangKeyCandidates as _registryLang
       return this._itemNameKeysPromise;
     }
 
+    /**
+     * Precomputed registry labels from {@code items-lang/<locale>.json}.
+     * @returns {Promise<Record<string, string>>}
+     */
+    async ensureRegistryLabels() {
+      if (this._registryLabelsById) {
+        return this._registryLabelsById;
+      }
+      if (this._registryLabelsPromise) {
+        return this._registryLabelsPromise;
+      }
+      this._registryLabelsPromise = (async () => {
+        const loc = normalizeLocale(this.locale);
+        const resourceUrl = this.resolveResourceUrl(`${PATHS.itemsLangDir}/${loc}.json`);
+        try {
+          const data = await getSharedJsonResource('items-lang', resourceUrl, null);
+          this._registryLabelsById = buildRegistryLabelTable(data);
+        } catch {
+          this._registryLabelsById = Object.create(null);
+        }
+        return this._registryLabelsById;
+      })();
+      return this._registryLabelsPromise;
+    }
+
+    /** Inject labels from the site shell (avoids a second fetch). */
+    setRegistryLabels(labels) {
+      this._registryLabelsById = labels && typeof labels === 'object' ? labels : Object.create(null);
+      this._registryLabelsPromise = null;
+    }
+
     translateRegistry(registryId, kind = 'item') {
-      const tables = this._langTables || { fallback: {}, current: {} };
       return createRegistryLabelResolver({
-        current: tables.current,
-        fallback: tables.fallback,
-        overrides: this._langOverrides,
-        nameKeysByRegistryId: this._itemNameKeys || {},
+        labelsByRegistryId: this._registryLabelsById || Object.create(null),
       }).translateRegistry(registryId, kind);
     }
 
     async translateRegistryAsync(registryId, kind = 'item') {
-      await this.ensureItemNameKeys();
+      await this.ensureRegistryLabels();
       return this.translateRegistry(registryId, kind);
     }
 
@@ -920,6 +959,8 @@ import { createRegistryLabelResolver, registryLangKeyCandidates as _registryLang
 
     async setLocale(locale) {
       this.locale = normalizeLocale(locale);
+      this._registryLabelsById = null;
+      this._registryLabelsPromise = null;
       await this._refreshActiveLang();
     }
 
@@ -953,6 +994,7 @@ import { createRegistryLabelResolver, registryLangKeyCandidates as _registryLang
     async loadIndex() {
       await this.ensureBundle();
       await this._refreshActiveLang();
+      await this.ensureRegistryLabels();
       return parseBundleV2(this._bundle);
     }
 
