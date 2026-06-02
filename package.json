@@ -1,6 +1,6 @@
 {
   "name": "emi-recipe-renderer",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Browser renderer for exported EMI recipe layouts",
   "license": "MIT",
   "engines": {
@@ -18,16 +18,20 @@
     "LICENSE"
   ],
   "main": "./dist/emi.min.js",
+  "module": "./dist/emi.esm.js",
+  "types": "./dist/emi.d.ts",
   "style": "./dist/emi.min.css",
   "unpkg": "./dist/emi.min.js",
   "jsdelivr": "./dist/emi.min.js",
   "browser": "./dist/emi.min.js",
   "exports": {
     ".": {
-      "import": "./dist/emi.js",
+      "types": "./dist/emi.d.ts",
+      "import": "./dist/emi.esm.js",
       "default": "./dist/emi.min.js"
     },
     "./emi.js": "./dist/emi.js",
+    "./emi.esm.js": "./dist/emi.esm.js",
     "./emi.min.js": "./dist/emi.min.js",
     "./emi.css": "./dist/emi.css",
     "./emi.min.css": "./dist/emi.min.css",

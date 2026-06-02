@@ -2547,19 +2547,25 @@ import {
   EmiRecipeRenderer.stripMinecraftFormatting = stripMinecraftFormatting;
   EmiRecipeRenderer.setFormattedText = applyMinecraftFormattedContent;
   EmiRecipeRenderer.hasMinecraftFormatting = hasMinecraftFormatting;
+  EmiRecipeRenderer.displaySizeFromMeta = EmiRecipeRenderer._displaySizeFromMeta;
+  EmiRecipeRenderer.displaySizeFromLayout = EmiRecipeRenderer._displaySizeFromLayout;
+
+const libraryExports = {
+  EmiRecipeRenderer,
+  initEmiSlotCarousels,
+  hideEmiTagPopover,
+  showEmiTagPopover: showTagPopover,
+  MISSING_ICON_ID,
+  stripMinecraftFormatting,
+  applyMinecraftFormattedContent,
+  hasMinecraftFormatting,
+  stripRegistryId,
+};
 
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = {
-    EmiRecipeRenderer,
-    initEmiSlotCarousels,
-    hideEmiTagPopover,
-    showEmiTagPopover: showTagPopover,
-    MISSING_ICON_ID,
-    stripMinecraftFormatting,
-    applyMinecraftFormattedContent,
-    hasMinecraftFormatting,
-  };
+  module.exports = libraryExports;
 }
+
 globalThis.EmiRecipeRenderer = EmiRecipeRenderer;
 globalThis.stripMinecraftFormatting = stripMinecraftFormatting;
 globalThis.applyMinecraftFormattedContent = applyMinecraftFormattedContent;
@@ -2568,3 +2574,17 @@ globalThis.hideEmiTagPopover = hideEmiTagPopover;
 globalThis.showEmiTagPopover = showTagPopover;
 globalThis.EmiMissingIconId = MISSING_ICON_ID;
 globalThis.stripEmiRegistryId = stripRegistryId;
+
+export {
+  EmiRecipeRenderer,
+  initEmiSlotCarousels,
+  hideEmiTagPopover,
+  showTagPopover as showEmiTagPopover,
+  MISSING_ICON_ID,
+  stripMinecraftFormatting,
+  applyMinecraftFormattedContent,
+  hasMinecraftFormatting,
+  stripRegistryId,
+};
+
+export { applyMinecraftFormattedContent as setFormattedText };

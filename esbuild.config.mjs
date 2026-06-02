@@ -3,11 +3,9 @@ import { copyFileSync, mkdirSync } from 'node:fs';
 
 const watch = process.argv.includes('--watch');
 
-const buildOptions = {
+const shared = {
   entryPoints: ['src/index.js'],
-  outfile: 'dist/emi.js',
   bundle: true,
-  format: 'iife',
   platform: 'browser',
   target: ['es2020'],
   sourcemap: true,
@@ -16,26 +14,28 @@ const buildOptions = {
   },
 };
 
+const iife = { ...shared, format: 'iife' };
+const esm = { ...shared, format: 'esm' };
+
 mkdirSync('dist', { recursive: true });
 copyFileSync('src/emi.css', 'dist/emi.css');
+copyFileSync('src/index.d.ts', 'dist/emi.d.ts');
+
+const builds = [
+  { ...iife, outfile: 'dist/emi.js' },
+  { ...iife, outfile: 'dist/emi.min.js', minify: true },
+  { ...esm, outfile: 'dist/emi.esm.js' },
+  { ...esm, outfile: 'dist/emi.esm.min.js', minify: true },
+];
 
 if (watch) {
-  const ctx = await esbuild.context(buildOptions);
-  const minCtx = await esbuild.context({
-    ...buildOptions,
-    outfile: 'dist/emi.min.js',
-    minify: true,
-  });
-  await ctx.watch();
-  await minCtx.watch();
+  const contexts = await Promise.all(builds.map((opts) => esbuild.context(opts)));
+  await Promise.all(contexts.map((ctx) => ctx.watch()));
   console.log('watching…');
 } else {
-  await esbuild.build(buildOptions);
-  await esbuild.build({
-    ...buildOptions,
-    outfile: 'dist/emi.min.js',
-    minify: true,
-  });
+  await Promise.all(builds.map((opts) => esbuild.build(opts)));
   copyFileSync('dist/emi.css', 'dist/emi.min.css');
-  console.log('built dist/emi.js, dist/emi.min.js, dist/emi.css, dist/emi.min.css');
+  console.log(
+    'built dist/emi.js, dist/emi.min.js, dist/emi.esm.js, dist/emi.esm.min.js, dist/emi.css, dist/emi.min.css',
+  );
 }
