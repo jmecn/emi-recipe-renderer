@@ -4,7 +4,7 @@
   "description": "Browser renderer for exported EMI recipe layouts",
   "license": "MIT",
   "engines": {
-    "node": ">=18"
+    "node": ">=24"
   },
   "type": "module",
   "files": [
