@@ -18,6 +18,15 @@ export declare function showEmiTagPopover(
   tagKind?: string,
 ): Promise<void>;
 
+export type EmiThemeName = 'light' | 'dark';
+
+export declare function normalizeEmiTheme(value: unknown): EmiThemeName | null;
+
+export declare function applyEmiTheme(
+  theme: EmiThemeName | null | undefined,
+  options?: { themeRoot?: HTMLElement | null },
+): EmiThemeName | null;
+
 export interface EmiDisplaySize {
   width: number;
   height: number;
@@ -81,6 +90,10 @@ export interface EmiRendererOptions {
   tagPopoverElementId?: string;
   onItemClick?: (itemId: string, context?: Record<string, unknown>) => void;
   onTagClick?: (tag: unknown, context?: Record<string, unknown>) => void;
+  /** Preset overlay theme; sets {@code data-emi-theme} on {@code themeRoot}. */
+  theme?: EmiThemeName;
+  /** Defaults to {@code document.documentElement}. */
+  themeRoot?: HTMLElement | null;
 }
 
 export interface EmiMountOptions extends EmiRendererOptions {
@@ -133,6 +146,7 @@ export declare class EmiRecipeRenderer {
   static mountAll(options?: EmiMountOptions): Promise<EmiMountAllResult>;
 
   setLocale(locale: string): void;
+  setTheme(theme: EmiThemeName): void;
   resolveResourceUrl(relativePath: string): string;
   loadIndex(): Promise<unknown>;
   loadRecipeMeta(recipeId: string): Promise<{

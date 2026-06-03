@@ -20,6 +20,7 @@ import {
   normalizeLocale as normalizeRegistryLocale,
   registryLangKeyCandidates as _registryLangKeyCandidates,
 } from './registry-label.mjs';
+import { applyEmiTheme, normalizeEmiTheme, resolveEmiThemeRoot } from './emi-theme.js';
 
   const PATHS = {
     bundle: 'bundle.json',
@@ -783,6 +784,9 @@ import {
         || document.getElementById('tag-popover');
       this.onItemClick = typeof options.onItemClick === 'function' ? options.onItemClick : null;
       this.onTagClick = typeof options.onTagClick === 'function' ? options.onTagClick : null;
+      this._themeRoot = resolveEmiThemeRoot(options.themeRoot);
+      this._theme = normalizeEmiTheme(options.theme);
+      if (this._theme) applyEmiTheme(this._theme, { themeRoot: this._themeRoot });
       this.textureManifest = null;
       this.textureManifestPromise = null;
       this.routeShardCache = new Map();
@@ -962,6 +966,16 @@ import {
       this._registryLabelsById = null;
       this._registryLabelsPromise = null;
       await this._refreshActiveLang();
+    }
+
+    /**
+     * @param {'light' | 'dark'} theme
+     */
+    setTheme(theme) {
+      const name = normalizeEmiTheme(theme);
+      if (!name) return;
+      this._theme = name;
+      applyEmiTheme(name, { themeRoot: this._themeRoot });
     }
 
     mergeTranslations(overrides) {
@@ -1883,6 +1897,8 @@ import {
         tagPopoverElementId: options.tagPopoverElementId,
         onItemClick: options.onItemClick,
         onTagClick: options.onTagClick,
+        theme: options.theme,
+        themeRoot: options.themeRoot,
       };
     }
 
@@ -2555,6 +2571,8 @@ const libraryExports = {
   initEmiSlotCarousels,
   hideEmiTagPopover,
   showEmiTagPopover: showTagPopover,
+  applyEmiTheme,
+  normalizeEmiTheme,
   MISSING_ICON_ID,
   stripMinecraftFormatting,
   applyMinecraftFormattedContent,
@@ -2580,6 +2598,8 @@ export {
   initEmiSlotCarousels,
   hideEmiTagPopover,
   showTagPopover as showEmiTagPopover,
+  applyEmiTheme,
+  normalizeEmiTheme,
   MISSING_ICON_ID,
   stripMinecraftFormatting,
   applyMinecraftFormattedContent,

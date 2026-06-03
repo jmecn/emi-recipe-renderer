@@ -6,12 +6,14 @@
 }
 
 
-:root {
+:root,
+[data-emi-theme="dark"] {
   --border: #3a3a44;
   --panel: #25252b;
   --text: #e8e8ec;
   --muted: #9a9aa8;
   --slot-hover: #6cb6ff;
+  --emi-link-hover: var(--slot-hover);
   --emi-tooltip-bg: rgba(16, 16, 20, 0.95);
   --emi-tooltip-text: #e8e8ec;
   --emi-tooltip-border: var(--border);
@@ -19,9 +21,12 @@
   --emi-popover-scrim: rgba(0, 0, 0, 0.45);
   --emi-popover-panel-shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
   --emi-popover-slot-hover-bg: rgba(108, 182, 255, 0.12);
+  --emi-popover-stage-bg: #1e1e24;
+  --emi-popover-footer-bg: #1a1a1e;
 }
 
-/* Host apps using html[data-theme="light"] (TFG viewers) */
+/* API: renderer.setTheme('light') → data-emi-theme on themeRoot; legacy: html[data-theme] */
+[data-emi-theme="light"],
 html[data-theme="light"] {
   --emi-tooltip-bg: #ffffff;
   --emi-tooltip-text: #111318;
@@ -29,7 +34,9 @@ html[data-theme="light"] {
   --emi-tooltip-shadow: 0 12px 28px rgba(15, 18, 24, 0.16);
   --emi-popover-scrim: rgba(15, 18, 24, 0.28);
   --emi-popover-panel-shadow: 0 10px 28px rgba(16, 18, 22, 0.12);
-  --emi-popover-slot-hover-bg: color-mix(in srgb, #ff0e0b 10%, transparent);
+  --emi-popover-slot-hover-bg: color-mix(in srgb, var(--slot-hover) 12%, transparent);
+  --emi-popover-stage-bg: #f0f2f5;
+  --emi-popover-footer-bg: #ffffff;
 }
 
 .emi-recipe {
@@ -458,7 +465,7 @@ html[data-theme="light"] {
 
 .tag-popover-title-link:hover,
 .tag-popover-title-link:focus-visible {
-  color: var(--accent);
+  color: var(--emi-link-hover, var(--slot-hover));
   outline: none;
 }
 .tag-popover-emi-id {
@@ -473,7 +480,7 @@ html[data-theme="light"] {
   padding: 14px;
   display: flex;
   justify-content: center;
-  background: #1e1e24;
+  background: var(--emi-popover-stage-bg);
 }
 
 .tag-popover-stage {
@@ -569,7 +576,7 @@ html[data-theme="light"] {
   font-size: 0.72rem;
   color: var(--muted);
   word-break: break-all;
-  background: #1a1a1e;
+  background: var(--emi-popover-footer-bg);
   border-top: 1px solid var(--border);
 }
 
