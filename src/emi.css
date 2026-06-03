@@ -12,6 +12,24 @@
   --text: #e8e8ec;
   --muted: #9a9aa8;
   --slot-hover: #6cb6ff;
+  --emi-tooltip-bg: rgba(16, 16, 20, 0.95);
+  --emi-tooltip-text: #e8e8ec;
+  --emi-tooltip-border: var(--border);
+  --emi-tooltip-shadow: none;
+  --emi-popover-scrim: rgba(0, 0, 0, 0.45);
+  --emi-popover-panel-shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
+  --emi-popover-slot-hover-bg: rgba(108, 182, 255, 0.12);
+}
+
+/* Host apps using html[data-theme="light"] (TFG viewers) */
+html[data-theme="light"] {
+  --emi-tooltip-bg: #ffffff;
+  --emi-tooltip-text: #111318;
+  --emi-tooltip-border: #d7dbe3;
+  --emi-tooltip-shadow: 0 12px 28px rgba(15, 18, 24, 0.16);
+  --emi-popover-scrim: rgba(15, 18, 24, 0.28);
+  --emi-popover-panel-shadow: 0 10px 28px rgba(16, 18, 22, 0.12);
+  --emi-popover-slot-hover-bg: color-mix(in srgb, #ff0e0b 10%, transparent);
 }
 
 .emi-recipe {
@@ -336,14 +354,15 @@
   z-index: 1200;
   max-width: 320px;
   padding: 8px 10px;
-  background: rgba(16, 16, 20, 0.95);
-  border: 1px solid var(--border);
+  background: var(--emi-tooltip-bg);
+  border: 1px solid var(--emi-tooltip-border, var(--border));
   border-radius: 4px;
-  color: var(--text);
+  color: var(--emi-tooltip-text);
   font-size: 0.8rem;
   pointer-events: none;
   display: none;
   line-height: 1.4;
+  box-shadow: var(--emi-tooltip-shadow);
 }
 
 .emi-slot-tag-input {
@@ -369,7 +388,7 @@
   justify-content: center;
   padding: 24px 16px;
   overflow: auto;
-  background: rgba(0, 0, 0, 0.45);
+  background: var(--emi-popover-scrim);
 }
 
 .tag-popover[hidden] {
@@ -382,7 +401,7 @@
   color: var(--text);
   border: 1px solid var(--border);
   border-radius: 8px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
+  box-shadow: var(--emi-popover-panel-shadow);
   max-width: min(calc(100vw - 32px), calc(16 * 36px + 28px));
 }
 
@@ -418,7 +437,7 @@
 .tag-popover-close:hover,
 .tag-popover-close:focus-visible {
   color: var(--text);
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--emi-popover-slot-hover-bg, rgba(255, 255, 255, 0.08));
   outline: none;
 }
 

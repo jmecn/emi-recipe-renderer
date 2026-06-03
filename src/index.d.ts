@@ -146,4 +146,6 @@ export declare class EmiRecipeRenderer {
   createAtlasSpanForIconKey(lookupKey: string): HTMLSpanElement;
   createAtlasSpanForCategoryIcon(categoryId: string): HTMLSpanElement;
   preloadTagMembersForMeta(meta: { widgets?: unknown[] }): Promise<void>;
+  ensureIconStylesheets(): Promise<void>;
+  ensureCategoryIconStylesheets?(): Promise<void>;
 }
