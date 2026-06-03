@@ -848,6 +848,16 @@ import { applyEmiTheme, normalizeEmiTheme, resolveEmiThemeRoot } from './emi-the
       this._resetLoadedResources();
     }
 
+    /** Re-query shell overlay nodes when the renderer was created before they mounted. */
+    ensureOverlayElements() {
+      if (!this._tooltipEl) {
+        this._tooltipEl = document.getElementById('tooltip');
+      }
+      if (!this._tagPopoverEl) {
+        this._tagPopoverEl = document.getElementById('tag-popover');
+      }
+    }
+
     /**
      * Resolve a lang/*.json key: overrides → active locale → en_us → key.
      * @param {string} key
@@ -1891,6 +1901,7 @@ import { applyEmiTheme, normalizeEmiTheme, resolveEmiThemeRoot } from './emi-the
         resourceVersion: options.resourceVersion,
         lang: options.lang,
         translations: options.translations,
+        registryLabels: options.registryLabels,
         tooltipElement: options.tooltipElement,
         tagPopoverElement: options.tagPopoverElement,
         tooltipElementId: options.tooltipElementId,
@@ -1900,6 +1911,24 @@ import { applyEmiTheme, normalizeEmiTheme, resolveEmiThemeRoot } from './emi-the
         theme: options.theme,
         themeRoot: options.themeRoot,
       };
+    }
+
+    static _resolveMountRenderer(baseUrl, options) {
+      if (options.renderer instanceof EmiRecipeRenderer) {
+        const renderer = options.renderer;
+        if (typeof options.onItemClick === 'function') {
+          renderer.onItemClick = options.onItemClick;
+        }
+        if (typeof options.onTagClick === 'function') {
+          renderer.onTagClick = options.onTagClick;
+        }
+        renderer.ensureOverlayElements();
+        return renderer;
+      }
+      return new EmiRecipeRenderer({
+        baseUrl,
+        ...EmiRecipeRenderer._mountRendererOptions(options),
+      });
     }
 
     static _collectMountTargets(root, selector) {
@@ -2026,10 +2055,7 @@ import { applyEmiTheme, normalizeEmiTheme, resolveEmiThemeRoot } from './emi-the
         throw new Error('emi-recipe: missing data-recipe-id');
       }
       const baseUrl = (options.baseUrl || 'export').trim();
-      const renderer = new EmiRecipeRenderer({
-        baseUrl,
-        ...EmiRecipeRenderer._mountRendererOptions(options),
-      });
+      const renderer = EmiRecipeRenderer._resolveMountRenderer(baseUrl, options);
       try {
         const index = await renderer.loadIndex();
         await EmiRecipeRenderer._mountOne(renderer, index, el, recipeId);
@@ -2056,7 +2082,6 @@ import { applyEmiTheme, normalizeEmiTheme, resolveEmiThemeRoot } from './emi-the
       const selector = options.selector || '.emi-recipe[data-recipe-id]';
       const baseUrl = (options.baseUrl || 'export').trim();
       const { nodes, items } = EmiRecipeRenderer._collectMountTargets(root, selector);
-      const mountOpts = EmiRecipeRenderer._mountRendererOptions(options);
       const stats = { mounted: 0, failed: 0, errors: [] };
 
       if (items.length === 0) {
@@ -2070,7 +2095,7 @@ import { applyEmiTheme, normalizeEmiTheme, resolveEmiThemeRoot } from './emi-the
         };
       }
 
-      const renderer = new EmiRecipeRenderer({ baseUrl, ...mountOpts });
+      const renderer = EmiRecipeRenderer._resolveMountRenderer(baseUrl, options);
       let index;
       try {
         index = await renderer.loadIndex();
@@ -2116,7 +2141,6 @@ import { applyEmiTheme, normalizeEmiTheme, resolveEmiThemeRoot } from './emi-the
     static async _mountAllLazy(options = {}) {
       const root = options.root || document;
       const baseUrl = (options.baseUrl || 'export').trim();
-      const mountOpts = EmiRecipeRenderer._mountRendererOptions(options);
       const { nodes, items } = EmiRecipeRenderer._collectMountTargets(
         root,
         '.emi-recipe[data-recipe-id]',
@@ -2138,7 +2162,7 @@ import { applyEmiTheme, normalizeEmiTheme, resolveEmiThemeRoot } from './emi-the
         };
       }
 
-      const renderer = new EmiRecipeRenderer({ baseUrl, ...mountOpts });
+      const renderer = EmiRecipeRenderer._resolveMountRenderer(baseUrl, options);
       let index;
       try {
         index = await renderer.loadIndex();
@@ -2325,7 +2349,7 @@ import { applyEmiTheme, normalizeEmiTheme, resolveEmiThemeRoot } from './emi-the
   function listPopoverItems(parsed, renderer) {
     return parsed.entries.map((entry) => ({
       lookupKey: lookupIconKey(entry) || entry.ids?.[0] || MISSING_ICON_ID,
-      tooltip: formatPopoverEntryTooltip(entry, renderer),
+      tooltipFor: () => formatPopoverEntryTooltip(entry, renderer),
       remainderIcon: entry.remainderIcon || null,
       quantity: entry.fluid ? null : entry,
     }));
@@ -2351,10 +2375,13 @@ import { applyEmiTheme, normalizeEmiTheme, resolveEmiThemeRoot } from './emi-the
     if (showTagMark) renderer.appendTagIndicator(inner);
 
     cell.appendChild(inner);
-    const tooltipText = spec.tooltip || '';
-    cell.addEventListener('mouseenter', () => showTooltip(tooltipText, cell, renderer._tooltipEl));
+    const tooltipFor = () => {
+      if (typeof spec.tooltipFor === 'function') return spec.tooltipFor();
+      return spec.tooltip || '';
+    };
+    cell.addEventListener('mouseenter', () => showTooltip(tooltipFor(), cell, renderer._tooltipEl));
     cell.addEventListener('mouseleave', () => hideTooltip(renderer._tooltipEl));
-    cell.addEventListener('focus', () => showTooltip(spec.tooltip, cell, renderer._tooltipEl));
+    cell.addEventListener('focus', () => showTooltip(tooltipFor(), cell, renderer._tooltipEl));
     cell.addEventListener('blur', () => hideTooltip(renderer._tooltipEl));
     renderer.bindSlotItemNavigation(cell, spec.lookupKey, {
       source: 'tag-popover',
@@ -2366,7 +2393,7 @@ import { applyEmiTheme, normalizeEmiTheme, resolveEmiThemeRoot } from './emi-the
   function createTagPopoverSlot(renderer, itemId, showTagMark) {
     return createPopoverSlot(renderer, {
       lookupKey: itemId,
-      tooltip: renderer.translateRegistry(itemId, 'item'),
+      tooltipFor: () => renderer.translateRegistry(itemId, 'item'),
       remainderIcon: null,
       quantity: null,
     }, showTagMark);
@@ -2382,6 +2409,7 @@ import { applyEmiTheme, normalizeEmiTheme, resolveEmiThemeRoot } from './emi-the
     featuredIndex = 0,
     onTitleClick = null,
   }) {
+    renderer.ensureOverlayElements?.();
     const pop = renderer._tagPopoverEl;
     if (!pop) return;
     installTagPopoverDismiss(pop);
@@ -2539,7 +2567,7 @@ import { applyEmiTheme, normalizeEmiTheme, resolveEmiThemeRoot } from './emi-the
     const registryKind = tagKind === 'fluid' ? 'fluid' : 'item';
     const items = ids.map((id) => ({
       lookupKey: id,
-      tooltip: renderer.translateRegistry(id, registryKind),
+      tooltipFor: () => renderer.translateRegistry(id, registryKind),
       remainderIcon: null,
       quantity: null,
     }));

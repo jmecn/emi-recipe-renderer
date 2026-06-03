@@ -84,6 +84,9 @@ export interface EmiRendererOptions {
   locale?: string;
   lang?: Record<string, unknown>;
   translations?: Record<string, unknown>;
+  registryLabels?: Record<string, string>;
+  /** Reuse an existing renderer (locale / label updates apply to mounted recipes). */
+  renderer?: EmiRecipeRenderer;
   tooltipElement?: HTMLElement | null;
   tagPopoverElement?: HTMLElement | null;
   tooltipElementId?: string;
@@ -147,6 +150,7 @@ export declare class EmiRecipeRenderer {
 
   setLocale(locale: string): void;
   setTheme(theme: EmiThemeName): void;
+  ensureOverlayElements(): void;
   resolveResourceUrl(relativePath: string): string;
   loadIndex(): Promise<unknown>;
   loadRecipeMeta(recipeId: string): Promise<{
