@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import { installRendererDomStubs } from './test-helpers.mjs';
 import { applyEmiTheme, normalizeEmiTheme } from '../src/emi-theme.js';
 
 test('normalizeEmiTheme accepts light and dark only', () => {
@@ -20,6 +21,7 @@ test('applyEmiTheme sets data-emi-theme on themeRoot', () => {
 });
 
 test('EmiRecipeRenderer setTheme updates themeRoot', async () => {
+  installRendererDomStubs();
   const root = { dataset: {} };
   const { EmiRecipeRenderer } = await import('../src/index.js');
   const renderer = new EmiRecipeRenderer({

@@ -10,6 +10,7 @@ test('named ESM exports match globals', () => {
   assert.equal(typeof mod.EmiRecipeRenderer, 'function');
   assert.equal(mod.EmiRecipeRenderer, globalThis.EmiRecipeRenderer);
   assert.equal(mod.hideEmiTagPopover, globalThis.hideEmiTagPopover);
+  assert.equal(typeof mod.applyEmiTheme, 'function');
   assert.equal(mod.stripRegistryId, globalThis.stripEmiRegistryId);
   assert.equal(mod.setFormattedText, mod.applyMinecraftFormattedContent);
 });
