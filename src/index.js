@@ -2613,6 +2613,8 @@ if (typeof module !== 'undefined' && module.exports) {
 }
 
 globalThis.EmiRecipeRenderer = EmiRecipeRenderer;
+globalThis.applyEmiTheme = applyEmiTheme;
+globalThis.normalizeEmiTheme = normalizeEmiTheme;
 globalThis.stripMinecraftFormatting = stripMinecraftFormatting;
 globalThis.applyMinecraftFormattedContent = applyMinecraftFormattedContent;
 globalThis.initEmiSlotCarousels = initEmiSlotCarousels;

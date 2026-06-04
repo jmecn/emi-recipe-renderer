@@ -1,6 +1,6 @@
 {
   "name": "emi-recipe-renderer",
-  "version": "0.6.4",
+  "version": "0.6.5",
   "description": "Browser renderer for exported EMI recipe layouts",
   "license": "MIT",
   "engines": {
