@@ -23,6 +23,22 @@
   --emi-popover-slot-hover-bg: rgba(108, 182, 255, 0.12);
   --emi-popover-stage-bg: #1e1e24;
   --emi-popover-footer-bg: #1a1a1e;
+  --mc-0: #AAAAAA;
+  --mc-1: #0000AA;
+  --mc-2: #00AA00;
+  --mc-3: #00AAAA;
+  --mc-4: #AA0000;
+  --mc-5: #AA00AA;
+  --mc-6: #FFAA00;
+  --mc-7: #AAAAAA;
+  --mc-8: #555555;
+  --mc-9: #5555FF;
+  --mc-a: #55FF55;
+  --mc-b: #55FFFF;
+  --mc-c: #FF5555;
+  --mc-d: #FF55FF;
+  --mc-e: #FFFF55;
+  --mc-f: #FFFFFF;
 }
 
 /* API: renderer.setTheme('light') → data-emi-theme on themeRoot; legacy: html[data-theme] */
@@ -43,7 +59,31 @@ html[data-theme="light"] {
   --emi-popover-slot-hover-bg: color-mix(in srgb, var(--slot-hover) 12%, transparent);
   --emi-popover-stage-bg: #f0f2f5;
   --emi-popover-footer-bg: #ffffff;
+  --mc-7: #666666;
+  --mc-8: #333333;
+  --mc-a: #228B22;
+  --mc-b: #008B8B;
+  --mc-d: #8B008B;
+  --mc-e: #8B8000;
+  --mc-f: #111318;
 }
+
+.mc-0 { color: var(--mc-0); }
+.mc-1 { color: var(--mc-1); }
+.mc-2 { color: var(--mc-2); }
+.mc-3 { color: var(--mc-3); }
+.mc-4 { color: var(--mc-4); }
+.mc-5 { color: var(--mc-5); }
+.mc-6 { color: var(--mc-6); }
+.mc-7 { color: var(--mc-7); }
+.mc-8 { color: var(--mc-8); }
+.mc-9 { color: var(--mc-9); }
+.mc-a { color: var(--mc-a); }
+.mc-b { color: var(--mc-b); }
+.mc-c { color: var(--mc-c); }
+.mc-d { color: var(--mc-d); }
+.mc-e { color: var(--mc-e); }
+.mc-f { color: var(--mc-f); }
 
 .emi-recipe {
   display: block;

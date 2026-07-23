@@ -21,6 +21,7 @@ export const MINECRAFT_COLORS = {
 
 const DEFAULT_STYLE = Object.freeze({
   color: null,
+  baseColor: null,
   bold: false,
   italic: false,
   underline: false,
@@ -36,7 +37,11 @@ function cloneStyle(style) {
 }
 
 function applyStyle(span, style) {
-  if (style.color) span.style.color = style.color;
+  if (style.color) {
+    span.classList.add(`mc-${style.color}`);
+  } else if (style.baseColor) {
+    span.style.color = style.baseColor;
+  }
   if (style.bold) span.style.fontWeight = 'bold';
   if (style.italic) span.style.fontStyle = 'italic';
   const deco = [];
@@ -56,7 +61,7 @@ function appendSegment(parent, text, style) {
 function applyFormattingCode(code, style) {
   const key = code.toLowerCase();
   if (Object.prototype.hasOwnProperty.call(MINECRAFT_COLORS, key)) {
-    style.color = MINECRAFT_COLORS[key];
+    style.color = key;
     style.bold = false;
     style.italic = false;
     style.underline = false;
@@ -99,7 +104,7 @@ export function applyMinecraftFormattedContent(element, text, baseColor = null) 
   if (!str) return;
 
   const style = cloneStyle(DEFAULT_STYLE);
-  if (baseColor) style.color = baseColor;
+  if (baseColor) style.baseColor = baseColor;
 
   let buf = '';
   for (let i = 0; i < str.length; i += 1) {
